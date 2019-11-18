@@ -34,15 +34,15 @@ namespace WindesMusic
                 while (TestID == true)
                 {
 
-                    TemporaryPlaylistID = rnd.Next(0, 999999);
-                    if(data.GetRecords($"SELECT PlaylistID FROM Playlist WHERE PlaylistID = {TemporaryPlaylistID}") == null)
+                    TemporaryPlaylistID = rnd.Next(0, 9999);
+                    if(data.GetRecordsInt($"SELECT PlaylistID FROM Playlist WHERE PlaylistID = {TemporaryPlaylistID}", "PlaylistID") == null)
                     {
                         TestID = false;
                     }
                 }
             }
             PlaylistID = TemporaryPlaylistID;
-            SongPlaylist = data.GetRecords($"SELECT SongID FROM Song WHERE SongID IN (SELECT SongID FROM PlaylistToSong WHERE PlaylistID = {SongPlaylistID})");
+            SongPlaylist = data.GetRecordsInt($"SELECT SongID FROM Song WHERE SongID IN (SELECT SongID FROM PlaylistToSong WHERE PlaylistID = {SongPlaylistID})", "SongID");
         }
 
         public void CreateNewPlaylist(string Name, int UserID)
@@ -73,7 +73,7 @@ namespace WindesMusic
 
         public void RefreshPlaylist()
         {
-            SongPlaylist = data.GetRecords($"SELECT SongID FROM Song WHERE SongID IN (SELECT SongID FROM PlaylistToSong WHERE PlaylistID = {PlaylistID})");
+            SongPlaylist = data.GetRecordsInt($"SELECT SongID FROM Song WHERE SongID IN (SELECT SongID FROM PlaylistToSong WHERE PlaylistID = {PlaylistID})", "SongID");
         }
 
         public void AddPlaylistSongToQueue(MusicQueue MQueue, int SongID)

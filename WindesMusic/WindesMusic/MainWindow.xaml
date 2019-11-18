@@ -23,24 +23,12 @@
                 <Separator Width="100" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                 <Button Style="{StaticResource MenuButton}" Content="+ Create Playlist" Margin="25,5,0,5"/>
                 <ScrollViewer HorizontalAlignment="Left" Height="126" Margin="10,10,0,0" VerticalAlignment="Top" Width="140">
-                    <StackPanel Height="250">
-                        <Button Style="{StaticResource MenuButton}" Content="Playlist" Margin="25,0,0,5"/>
-                        <Button Style="{StaticResource MenuButton}" Content="Playlist" Margin="25,0,0,5"/>
-                        <Button Style="{StaticResource MenuButton}" Content="Playlist" Margin="25,0,0,5"/>
-                        <Button Style="{StaticResource MenuButton}" Content="Playlist" Margin="25,0,0,5"/>
-                        <Button Style="{StaticResource MenuButton}" Content="Playlist" Margin="25,0,0,5"/>
-                        <Button Style="{StaticResource MenuButton}" Content="Playlist" Margin="25,0,0,5"/>
-                        <Button Style="{StaticResource MenuButton}" Content="Playlist" Margin="25,0,0,5"/>
-                        <Button Style="{StaticResource MenuButton}" Content="Playlist" Margin="25,0,0,5"/>
-                        <Button Style="{StaticResource MenuButton}" Content="Playlist" Margin="25,0,0,5"/>
-                        <Button Style="{StaticResource MenuButton}" Content="Playlist" Margin="25,0,0,5"/>
-                        <Button Style="{StaticResource MenuButton}" Content="Playlist" Margin="25,0,0,5"/>
-                        <Button Style="{StaticResource MenuButton}" Content="Playlist" Margin="25,0,0,5"/>
+                    <StackPanel Name="PlaylistList" Height="250">
+
                     </StackPanel>
                 </ScrollViewer>
 
             </StackPanel>
-
 
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" Background="DarkGray" Height="60" Margin="-150.4,0,-0.4,0">
                 <Button x:Name="StartAndPauze" Click="Play_Button_Click" Height="25" Width="25" HorizontalAlignment="Left" Margin="125,0,0,0">
@@ -65,7 +53,14 @@
                         <ColumnDefinition Width="3*"/>
                     </Grid.ColumnDefinitions>
                     <Button HorizontalAlignment="Center" Grid.Column="0" Content="sd" Margin="25,0,0,5"/>
-                </Grid>-->
+                </Grid>
+
+            </StackPanel>
+            <StackPanel x:Name="PlaylistName" Height="295" VerticalAlignment="Top" Width="643" Margin="0,0,0,0">
+                <StackPanel x:Name="SongList" Height="225" Margin="0,70,0,0">
+                    
+                </StackPanel>
+            </StackPanel>-->
 
             </StackPanel>
         </DockPanel>
