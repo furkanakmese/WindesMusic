@@ -29,9 +29,14 @@ namespace WindesMusic
             base.OnContentRendered(e);
 
             Database db = new Database();
-            db.GetUserData(Properties.Settings.Default.UserID);
-            // Properties.Settings.Default.UserID = 0;
-            // Properties.Settings.Default.Save();
+            User user = db.GetUserData(Properties.Settings.Default.UserID);
+            foreach(var item in user.Playlists)
+            {
+                Button btnPlaylist = new Button();
+                btnPlaylist.Height = 30;
+                btnPlaylist.Content = item.PlaylistName;
+                stackPlaylists.Children.Add(btnPlaylist);
+            }
         }
     }
 }

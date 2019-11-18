@@ -8,7 +8,7 @@
         Title="PlaylistsWindow" Height="450" Width="800">
     <Grid>
         <TextBlock x:Name="lblTitle" HorizontalAlignment="Left" Margin="31,33,0,0" TextWrapping="Wrap" Text="Your playlists" VerticalAlignment="Top" FontSize="22"/>
-        <ListBox x:Name="listPlaylists" HorizontalAlignment="Left" Height="237" Margin="31,93,0,0" VerticalAlignment="Top" Width="362"/>
+        <StackPanel x:Name="stackPlaylists" HorizontalAlignment="Left" Height="253" Margin="31,98,0,0" VerticalAlignment="Top" Width="262"/>
 
     </Grid>
 </Window>

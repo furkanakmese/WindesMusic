@@ -10,7 +10,13 @@ namespace WindesMusic
     {
         Database data = new Database();
         public List<int> SongPlaylist;
-        public int PlaylistID;
+        public int PlaylistID { get; set; }
+        public string PlaylistName { get; set; }
+
+        public Playlist()
+        {
+
+        }
 
         public Playlist(int? SongPlaylistID)
         {

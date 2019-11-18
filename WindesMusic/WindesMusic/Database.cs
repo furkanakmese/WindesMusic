@@ -144,21 +144,18 @@ namespace WindesMusic
                 command.Parameters.Add(idParam);
 
                 DbDataReader reader = command.ExecuteReader();
-
                 if (reader.HasRows)
                 {
                     while (reader.Read())
                     {
-                        // Playlist playlistResult = new Playlist(null);
+                        Playlist playlistResult = new Playlist();
                         userResult.Id = (int)reader["Id"];
                         userResult.Email = (string)reader["Email"];
-                        Console.WriteLine(reader["PlaylistID"]);
-                        // playlistResult.PlaylistID = (int) reader["PlaylistID"];
-                        // userResult.Playlists.Add(playlistResult);
+                        playlistResult.PlaylistID = (int) reader["PlaylistID"];
+                        playlistResult.PlaylistName = (string) reader["PlaylistName"];
+                        userResult.Playlists.Add(playlistResult);
                     }
                 }
-
-                foreach (var item in userResult.Playlists) Console.WriteLine("id is " + item.PlaylistID);
 
                 _connection.Close();
                 return userResult;
