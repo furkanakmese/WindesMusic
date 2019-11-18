@@ -44,7 +44,7 @@ namespace WindesMusic
                 _connection.Close();
             }
         }
-        public List<int> GetRecords(string Query)
+        public List<int> GetRecordsInt(string Query, string ReturnItems)
         {
             using (_connection = factory.CreateConnection())
             {
@@ -65,13 +65,44 @@ namespace WindesMusic
                 {
                     while (reader.Read())
                     {
-                        results.Add((int)reader["SongID"]);
+                        results.Add((int)reader[$"{ReturnItems}"]);
                     }
                 }
                 _connection.Close();
                 return results;
             }
         }
+
+        public List<string> GetRecordsString(string Query, string ReturnItems)
+        {
+            using (_connection = factory.CreateConnection())
+            {
+                if (_connection == null)
+                {
+                    return null;
+                }
+                _connection.ConnectionString = _connectionString;
+
+                _connection.Open();
+                DbCommand command = factory.CreateCommand();
+                List<string> results = new List<string>();
+
+                command.Connection = _connection;
+                command.CommandText = Query;
+
+                using (DbDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        results.Add((string)reader[$"{ReturnItems}"]);
+                    }
+                }
+                _connection.Close();
+                return results;
+            }
+        }
+
+        
         // this function sends the login data to the database and returns a user object, empty if the data is wrong
         public User Login(string email, string password)
         {
