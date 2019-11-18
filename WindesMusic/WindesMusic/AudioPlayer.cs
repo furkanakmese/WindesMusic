@@ -23,7 +23,7 @@ namespace WindesMusic
             {
                 if (audioFile == null)
                 {
-                    audioFile = new AudioFileReader("Feint - Words.mp3");
+                    audioFile = new AudioFileReader("Feint2.mp3");
                     outputDevice.Init(audioFile);
                 }
                 outputDevice.Play();
@@ -53,20 +53,17 @@ namespace WindesMusic
         //recieves change in slider value and calculates new position in song.
         public void SetCurrentPlaceInSong(double sliderValue)
         {
-            sliderValue = sliderValue / 100 * audioFile.TotalTime.TotalSeconds;
-            double currentPlaceInSong = audioFile.CurrentTime.TotalSeconds;
-            int newTime;
-            if (sliderValue + currentPlaceInSong > audioFile.TotalTime.TotalSeconds)
+            if (audioFile == null)
+                return;
+            sliderValue *= audioFile.TotalTime.TotalSeconds;
+            int newTime = (int)sliderValue;
+            if (newTime > audioFile.TotalTime.TotalSeconds)
             {
                 newTime = (int)audioFile.TotalTime.TotalSeconds;
             }
-            else if (sliderValue + currentPlaceInSong < 0)
+            else if (newTime < 0)
             {
                 newTime = 0;
-            }
-            else
-            {
-                newTime = (int)(sliderValue + currentPlaceInSong);
             }
             TimeSpan toPlaceInSong = new TimeSpan(0, 0, 0, newTime, 0);
             audioFile.CurrentTime = toPlaceInSong;

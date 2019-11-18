@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -23,7 +23,7 @@ namespace WindesMusic
     /// </summary>
     public partial class MainWindow : Window
     {
-        private AudioPlayer AudioPlyer = new AudioPlayer();
+        private AudioPlayer audioPlayer = new AudioPlayer();
         private DispatcherTimer dispatcherTimer;
         public MainWindow()
         {
@@ -32,48 +32,56 @@ namespace WindesMusic
             //  DispatcherTimer setup
             dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(UpdateSongSlider);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             dispatcherTimer.Start();
         }
 
-        //stop button, executes stop function(OnPlayBackStopped).
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        //start, and pause and resume button.
+        private void Play_Button_Click(object sender, RoutedEventArgs e)
         {
-            AudioPlyer.OnButtonStopClick(sender, e);
+            audioPlayer.OnButtonPlayClick(sender, e);
         }
 
-        //start, and pause and resume button.
-        private void Button_Click_2(object sender, RoutedEventArgs e)
+        //stop button, executes stop function(OnPlayBackStopped).
+        private void Stop_Button_Click(object sender, RoutedEventArgs e)
         {
-            AudioPlyer.OnButtonPlayClick(sender, e);
+            audioPlayer.OnButtonStopClick(sender, e);
         }
 
         //volume slider
-        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void Volume_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            AudioPlyer.SetVolume((float)e.NewValue / 100);
+            audioPlayer.SetVolume((float)e.NewValue / 100);
         }
 
-        private void Slider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        private void Place_In_Song_Slider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
-            if (e.HorizontalChange >= PlaceInSongSlider.Maximum)
+            var slider = (Slider)sender;
+            var change = slider.Value/100;
+            if (change >= PlaceInSongSlider.Maximum)
             {
-                AudioPlyer.SetCurrentPlaceInSong(PlaceInSongSlider.Maximum);
+                audioPlayer.SetCurrentPlaceInSong(PlaceInSongSlider.Maximum);
             }
             else
             {
-                AudioPlyer.SetCurrentPlaceInSong(e.HorizontalChange);
+                audioPlayer.SetCurrentPlaceInSong(change);
             }
+            dispatcherTimer.Start();
         }
 
         private void UpdateSongSlider(object sender, EventArgs e)
         {
-            PlaceInSongSlider.Value = AudioPlyer.CurrentPlaceInSong();
+            PlaceInSongSlider.Value = audioPlayer.CurrentPlaceInSong();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Mute_Button_Click(object sender, RoutedEventArgs e)
         {
-            AudioPlyer.Mute();
+            audioPlayer.Mute();
+        }
+
+        private void PlaceInSongSlider_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        {
+            dispatcherTimer.Stop();
         }
     }
 }
