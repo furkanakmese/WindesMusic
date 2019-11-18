@@ -13,5 +13,17 @@ namespace WindesMusic
     /// </summary>
     public partial class App : Application
     {
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            if (WindesMusic.Properties.Settings.Default.UserID == 0)
+            {
+                LoginWindow login = new LoginWindow();
+                login.Show();
+            } else
+            {
+                PlaylistsWindow main = new PlaylistsWindow();
+                main.Show();
+            }
+        }
     }
 }
