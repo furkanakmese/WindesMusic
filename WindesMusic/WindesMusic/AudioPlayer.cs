@@ -51,7 +51,7 @@ namespace WindesMusic
         }
 
         //recieves change in slider value and calculates new position in song.
-        public void setCurrentPlaceInSong(double sliderValue)
+        public void SetCurrentPlaceInSong(double sliderValue)
         {
             sliderValue = sliderValue / 100 * audioFile.TotalTime.TotalSeconds;
             double currentPlaceInSong = audioFile.CurrentTime.TotalSeconds;
@@ -81,7 +81,7 @@ namespace WindesMusic
         }
 
         //volume slider (outputDevice.Volume has values 0 - 1).
-        public void setVolume(float volume)
+        public void SetVolume(float volume)
         {
             outputDevice.Volume = volume;
         }

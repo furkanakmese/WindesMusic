@@ -42,7 +42,7 @@
             </StackPanel>
 
             <StackPanel DockPanel.Dock="Bottom" Background="DarkGray" Height="75" Margin="-150.4,0,-0.4,0">
-                <Slider Width="100" Height="20"></Slider>
+                <Slider x:Name="PlaceInSongSlider" Width="100" Height="20" Maximum="100" Thumb.DragCompleted="Slider_DragCompleted"></Slider>
                 <Label HorizontalAlignment="Center">Song</Label>
                 <Grid Height="18" HorizontalAlignment="Center"  VerticalAlignment="Top" Width="150" Margin="347,5,346.6,0">
                     <Grid.ColumnDefinitions>
@@ -56,6 +56,7 @@
                 </Grid>
                 
             </StackPanel>
+            
 
 
 
