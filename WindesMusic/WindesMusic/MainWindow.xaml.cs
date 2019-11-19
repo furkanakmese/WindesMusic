@@ -92,7 +92,7 @@ namespace WindesMusic
             List<string> PlaylistNames = new List<string>();
             PlaylistList.Children.Clear();
             PlaylistIDs = database1.GetRecordsInt($"SELECT PlaylistID FROM Playlist WHERE UserID = 1", "PlaylistID");
-            PlaylistNames = database1.GetRecordsString($"SELECT Name FROM Playlist WHERE UserID = 1", "Name");
+            PlaylistNames = database1.GetRecordsString($"SELECT PlaylistName FROM Playlist WHERE UserID = 1", "PlaylistName");
             Thickness thickness = new Thickness(25, 0, 0, 5);
             Style style = new Style();
             
