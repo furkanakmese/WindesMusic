@@ -35,6 +35,8 @@ namespace WindesMusic
             dispatcherTimer.Tick += new EventHandler(UpdateSongSlider);
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             dispatcherTimer.Start();
+
+           
         }
 
         //start, and pause and resume button.
