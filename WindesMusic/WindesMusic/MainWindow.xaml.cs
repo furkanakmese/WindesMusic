@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -133,6 +134,12 @@ namespace WindesMusic
                 SongList.Children.Add(SongBlock);
             }
         }
-        
+
+        private void NewPlaylistButtonClick(object sender, RoutedEventArgs e)
+        {
+            NewPlaylistWindow NewPlaylist = new NewPlaylistWindow();
+            NewPlaylist.Show();
+            NewPlaylist.Closed += (object sender2, EventArgs e2) => OnContentRendered(e);           
+        }
     }
 }

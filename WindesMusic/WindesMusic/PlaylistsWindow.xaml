@@ -9,6 +9,8 @@
     <Grid>
         <TextBlock x:Name="lblTitle" HorizontalAlignment="Left" Margin="31,33,0,0" TextWrapping="Wrap" Text="Your playlists" VerticalAlignment="Top" FontSize="22"/>
         <StackPanel x:Name="stackPlaylists" HorizontalAlignment="Left" Height="253" Margin="31,98,0,0" VerticalAlignment="Top" Width="262"/>
+        <TextBox x:Name="inputSearch" HorizontalAlignment="Left" Height="29" Margin="196,33,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="293" FontSize="16"/>
+        <Button x:Name="btnSearch" Content="Search" HorizontalAlignment="Left" Margin="494,33,0,0" VerticalAlignment="Top" Width="77" Height="29" FontSize="14" Click="btnSearch_Click"/>
 
     </Grid>
 </Window>
