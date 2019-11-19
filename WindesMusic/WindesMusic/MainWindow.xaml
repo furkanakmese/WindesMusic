@@ -8,7 +8,8 @@
         Title="MainWindow" Height="450" Width="800"
         FontFamily="Arial"
         Background="{DynamicResource MainColor}"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
     <Grid x:Name="Main">
         <DockPanel LastChildFill="False">
             <StackPanel DockPanel.Dock="Top" Height="50" Background="DarkGray" Margin="150,0,-0.4,0" Orientation="Horizontal">
@@ -21,10 +22,9 @@
                 <Button Style="{StaticResource MenuButton}" Content="Recommended" Margin="25,0,0,5"/>
                 <Button Style="{StaticResource MenuButton}" Content="Playlists" Margin="25,20,0,5"/>
                 <Separator Width="100" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-                <Button Style="{StaticResource MenuButton}" Content="+ Create Playlist" Margin="25,5,0,5"/>
+                <Button Style="{StaticResource MenuButton}" Click="NewPlaylistButtonClick" Content="+ Create Playlist" Margin="25,5,0,5"/>
                 <ScrollViewer HorizontalAlignment="Left" Height="126" Margin="10,10,0,0" VerticalAlignment="Top" Width="140">
                     <StackPanel Name="PlaylistList" Height="250">
-
                     </StackPanel>
                 </ScrollViewer>
 
@@ -54,7 +54,7 @@
                     </Grid.ColumnDefinitions>
                     <Button HorizontalAlignment="Center" Grid.Column="0" Content="sd" Margin="25,0,0,5"/>
                 </Grid>-->
-                
+
             </StackPanel>
             <StackPanel x:Name="PlaylistName" Height="295" VerticalAlignment="Top" Width="643" Margin="0,0,0,0">
                 <StackPanel x:Name="SongList" Height="225" Margin="0,70,0,0">
