@@ -47,7 +47,7 @@ namespace WindesMusic
 
         public void CreateNewPlaylist(string Name, int UserID)
         {
-            data.SetValues($"INSERT INTO Playlist VALUES({PlaylistID}, '{Name}', {UserID})");
+            data.SetValues($"INSERT INTO Playlist(PlaylistName, UserID) VALUES('{Name}', {UserID})");
         }
 
         public void ChangePlaylistName(string Name)
