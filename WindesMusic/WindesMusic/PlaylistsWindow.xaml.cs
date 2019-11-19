@@ -49,7 +49,7 @@ namespace WindesMusic
             List<Song> resultList = db.GetSearchResults(inputSearch.Text);
             if(resultList.Count > 0)
             {
-                if(inputSearch.Text.Trim() != "")
+                if(inputSearch.Text.Trim() != "" && !inputSearch.Text.Trim().Contains("_"))
                 {
                     foreach (var item in resultList)
                     {
