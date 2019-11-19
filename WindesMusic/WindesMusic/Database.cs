@@ -128,6 +128,7 @@ namespace WindesMusic
                 var sha1 = new SHA1CryptoServiceProvider();
                 var data = Encoding.ASCII.GetBytes(password);
                 var sha1data = sha1.ComputeHash(data);
+                Console.WriteLine(Encoding.ASCII.GetString(sha1data));
 
                 var passwordParam = command.CreateParameter();
                 passwordParam.ParameterName = "@password";
