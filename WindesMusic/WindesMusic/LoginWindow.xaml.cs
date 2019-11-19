@@ -52,7 +52,7 @@ namespace WindesMusic
 
                     if (resultUser.Email != null)
                     {
-                        PlaylistsWindow main = new PlaylistsWindow();
+                        MainWindow main = new MainWindow();
                         main.Show();
                     }
                     else

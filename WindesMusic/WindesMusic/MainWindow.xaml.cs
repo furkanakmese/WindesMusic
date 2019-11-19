@@ -33,7 +33,7 @@ namespace WindesMusic
             //  DispatcherTimer setup
             dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(UpdateSongSlider);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             dispatcherTimer.Start();
         }
 
