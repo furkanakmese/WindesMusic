@@ -3,11 +3,11 @@ using System;
 
 namespace WindesMusic
 {
-    class AudioPlayer
+    public class AudioPlayer
     {
         private WaveOutEvent outputDevice;
         private AudioFileReader audioFile;
-        private bool isPlaying = true;
+        private bool isPlaying = false;
         private float volume = 1;
 
         public AudioPlayer()
@@ -19,7 +19,7 @@ namespace WindesMusic
         //start, and pause and resume button.
         public void OnButtonPlayClick(object sender, EventArgs args)
         {
-            if (isPlaying)
+            if (!isPlaying)
             {
                 if (audioFile == null)
                 {
@@ -27,12 +27,12 @@ namespace WindesMusic
                     outputDevice.Init(audioFile);
                 }
                 outputDevice.Play();
-                isPlaying = false;
+                isPlaying = true;
             }
             else
             {
                 outputDevice.Pause();
-                isPlaying = true;
+                isPlaying = false;
             }
         }
 
@@ -40,7 +40,7 @@ namespace WindesMusic
         public void OnButtonStopClick(object sender, EventArgs args)
         {
             outputDevice?.Stop();
-            isPlaying = true;
+            isPlaying = false;
         }
 
         //stop function, disposes of AudiofileReader.
@@ -57,9 +57,11 @@ namespace WindesMusic
                 return;
             sliderValue *= audioFile.TotalTime.TotalSeconds;
             int newTime = (int)sliderValue;
-            if (newTime > audioFile.TotalTime.TotalSeconds)
+            if (newTime >= audioFile.TotalTime.TotalSeconds)
             {
                 newTime = (int)audioFile.TotalTime.TotalSeconds;
+                OnButtonStopClick(this, new EventArgs());
+                return;
             }
             else if (newTime < 0)
             {
@@ -73,7 +75,12 @@ namespace WindesMusic
         public double CurrentPlaceInSong()
         {
             if (audioFile == null)
+            {
+                //OnButtonStopClick doesn't trigger at end of audio file. This ensures the next song can be played.
+                OnButtonStopClick(this, new EventArgs());
                 return 0;
+            }
+
             return audioFile.CurrentTime.TotalSeconds / audioFile.TotalTime.TotalSeconds * 100;
         }
 

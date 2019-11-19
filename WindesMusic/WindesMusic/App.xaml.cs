@@ -21,7 +21,7 @@ namespace WindesMusic
                 login.Show();
             } else
             {
-                PlaylistsWindow main = new PlaylistsWindow();
+                MainWindow main = new MainWindow();
                 main.Show();
             }
         }
