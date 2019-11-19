@@ -60,7 +60,7 @@ namespace WindesMusic
         private void Place_In_Song_Slider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
             var slider = (Slider)sender;
-            var change = slider.Value/100;
+            var change = slider.Value / 100;
             if (change >= PlaceInSongSlider.Maximum)
             {
                 audioPlayer.SetCurrentPlaceInSong(PlaceInSongSlider.Maximum);
@@ -97,8 +97,8 @@ namespace WindesMusic
             PlaylistNames = database1.GetRecordsString($"SELECT PlaylistName FROM Playlist WHERE UserID = 1", "PlaylistName");
             Thickness thickness = new Thickness(25, 0, 0, 5);
             Style style = new Style();
-            
-            for(int i = 0; i < PlaylistIDs.Count; i++)
+
+            for (int i = 0; i < PlaylistIDs.Count; i++)
             {
                 var PlaylistButton = new Button
                 {
@@ -124,16 +124,30 @@ namespace WindesMusic
             List<string> SongNames = new List<string>();
             SongNames = data.GetRecordsString($"SELECT Name FROM Song WHERE SongID IN(SELECT SongID FROM PlaylistToSong WHERE PlaylistID = {PlaylistID})", "Name");
             Playlist playlist = new Playlist(PlaylistID);
-            Thickness thickness = new Thickness(25, 0, 0, 5);
-            for(int i = 0; i < playlist.SongPlaylist.Count; i++)
+            Thickness thickness = new Thickness(10, 2, 0, 5);
+            Thickness thickness2 = new Thickness(10, 0, 0, 5);
+            for (int i = 0; i < playlist.SongPlaylist.Count; i++)
             {
+                StackPanel sp = new StackPanel();
+                sp.Orientation = Orientation.Horizontal;
+                sp.VerticalAlignment = VerticalAlignment.Stretch;
+                sp.HorizontalAlignment = HorizontalAlignment.Stretch;
+                var PlayButton = new Button
+                {
+                    Name = $"__{playlist.SongPlaylist[i]}",
+                    Content = "Play",
+                    Margin = thickness2
+                };
+                PlayButton.Click += PlaySongFromPlaylist;
                 var SongBlock = new TextBlock
                 {
                     Name = $"_{playlist.SongPlaylist[i]}",
                     Text = $"{SongNames[i]}",
                     Margin = thickness
                 };
-                SongList.Children.Add(SongBlock);
+                sp.Children.Add(PlayButton);
+                sp.Children.Add(SongBlock);
+                SongList.Children.Add(sp);
             }
         }
 
@@ -141,7 +155,16 @@ namespace WindesMusic
         {
             NewPlaylistWindow NewPlaylist = new NewPlaylistWindow();
             NewPlaylist.Show();
-            NewPlaylist.Closed += (object sender2, EventArgs e2) => OnContentRendered(e);           
+            NewPlaylist.Closed += (object sender2, EventArgs e2) => OnContentRendered(e);
+        }
+
+        private void PlaySongFromPlaylist(object sender, RoutedEventArgs e)
+        {
+            Button _ButtonSong = sender as Button;
+            string SongIDName = _ButtonSong.Name;
+            SongIDName = SongIDName.Substring(2);
+            int SongID = Convert.ToInt32(SongIDName);
+            audioPlayer.PlayChosenSong(SongID);
         }
     }
 }

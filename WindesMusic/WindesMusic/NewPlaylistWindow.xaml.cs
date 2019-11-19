@@ -28,7 +28,7 @@ namespace WindesMusic
         {
             Database data = new Database();
             string PlaylistName = InputName.Text;
-            data.SetValues($"INSERT INTO Playlist VALUES (1123, '{PlaylistName}', {WindesMusic.Properties.Settings.Default.UserID})");       
+            data.SetValues($"INSERT INTO Playlist(PlaylistName, UserID) VALUES ('{PlaylistName}', {WindesMusic.Properties.Settings.Default.UserID})");       
             this.Close();
         }
     }
