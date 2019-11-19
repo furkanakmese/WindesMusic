@@ -67,6 +67,7 @@
       <DependentUpon>PlaylistsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="AudioPlayer.cs" />
+    <Compile Include="Song.cs" />
     <Compile Include="User.cs" />
     <Page Include="LoginWindow.xaml">
       <SubType>Designer</SubType>

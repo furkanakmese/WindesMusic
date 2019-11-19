@@ -129,6 +129,8 @@ namespace WindesMusic
                 var data = Encoding.ASCII.GetBytes(password);
                 var sha1data = sha1.ComputeHash(data);
 
+                Console.WriteLine(Encoding.ASCII.GetString(sha1data));
+
                 var passwordParam = command.CreateParameter();
                 passwordParam.ParameterName = "@password";
                 passwordParam.Value = Encoding.ASCII.GetString(sha1data);
@@ -190,6 +192,52 @@ namespace WindesMusic
 
                 _connection.Close();
                 return userResult;
+            }
+        }
+
+        public List<Song> GetSearchResults(string criteria)
+        {
+            using (_connection = factory.CreateConnection())
+            {
+                if (_connection == null)
+                {
+                    System.Console.WriteLine("Connection problems");
+                }
+                _connection.ConnectionString = _connectionString;
+
+                _connection.Open();
+                DbCommand command = factory.CreateCommand();
+                List<Song> listResult = new List<Song>();
+
+                command.Connection = _connection;
+                command.CommandText = "SELECT * FROM Song WHERE Name LIKE '%' + @criteria + '%' OR Artist LIKE '%' + @criteria + '%' OR Album LIKE '%' + @criteria + '%'";
+
+                var criteriaParam = command.CreateParameter();
+                criteriaParam.ParameterName = "@criteria";
+                criteriaParam.Value = criteria.Trim();
+
+                command.Parameters.Add(criteriaParam);
+
+                DbDataReader reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        Song searchResult = new Song();
+                        searchResult.SongID = (int)reader["SongID"];
+                        searchResult.SongName = (string)reader["Name"];
+                        searchResult.Artist = (string)reader["Artist"];
+                        searchResult.Album = (string)reader["Album"];
+                        searchResult.Year = (int)reader["Year"];
+                        listResult.Add(searchResult);
+                    }
+                } else
+                {
+                    Console.WriteLine(criteria);
+                }
+
+                _connection.Close();
+                return listResult;
             }
         }
     }
