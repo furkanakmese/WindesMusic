@@ -1,5 +1,6 @@
 ﻿using NAudio.Wave;
 using System;
+using System.Text;
 
 namespace WindesMusic
 {
@@ -14,6 +15,23 @@ namespace WindesMusic
         {
             outputDevice = new WaveOutEvent();
             outputDevice.PlaybackStopped += OnPlaybackStopped;
+        }
+
+        public void PlayChosenSong(int songID)
+        {
+            StringBuilder fileName = new StringBuilder();
+            fileName.Append(songID.ToString());
+            fileName.Append(".mp3");
+
+            if (audioFile != null)
+            {
+                OnButtonStopClick(this, new EventArgs());
+            }
+
+            audioFile = new AudioFileReader(fileName.ToString());
+            outputDevice.Init(audioFile);
+            outputDevice.Play();
+            isPlaying = true;
         }
 
         //start, and pause and resume button.
@@ -56,22 +74,22 @@ namespace WindesMusic
             if (audioFile == null)
                 return;
             sliderValue *= audioFile.TotalTime.TotalSeconds;
-            int newTime = (int)sliderValue;
-            if (newTime >= audioFile.TotalTime.TotalSeconds)
+            int NewTimeSeconds = Convert.ToInt32(Math.Floor(sliderValue));
+            int NewTimeMilliSeconds = Convert.ToInt32(Math.Floor((sliderValue - NewTimeSeconds)*1000));
+            if (NewTimeSeconds >= audioFile.TotalTime.TotalSeconds)
             {
-                newTime = (int)audioFile.TotalTime.TotalSeconds;
                 OnButtonStopClick(this, new EventArgs());
                 return;
             }
-            else if (newTime < 0)
+            else if (NewTimeSeconds < 0)
             {
-                newTime = 0;
+                NewTimeSeconds = 0;
             }
-            TimeSpan toPlaceInSong = new TimeSpan(0, 0, 0, newTime, 0);
+            TimeSpan toPlaceInSong = new TimeSpan(0, 0, 0, NewTimeSeconds, NewTimeMilliSeconds);
             audioFile.CurrentTime = toPlaceInSong;
         }
 
-        //returns percentage of place in song.
+        //returns percentage of place in song (0-100). 0 means no song is playing. 
         public double CurrentPlaceInSong()
         {
             if (audioFile == null)

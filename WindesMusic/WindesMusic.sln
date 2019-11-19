@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindesMusic", "WindesMusic\WindesMusic.csproj", "{7C2802FA-6544-4981-901A-9AF104880FB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioPlayerTests", "AudioPlayerTests\AudioPlayerTests.csproj", "{CD28F65C-AD65-43DF-A3D3-94823A5C821A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestWindesMusic", "AudioPlayerTests\UnitTestWindesMusic.csproj", "{CD28F65C-AD65-43DF-A3D3-94823A5C821A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
