@@ -33,7 +33,7 @@
             </StackPanel>
 
             <StackPanel DockPanel.Dock="Bottom" Height="75" Margin="-150.4,0,-0.4,0" Background="DarkGray">
-                <Slider HorizontalAlignment="Center" Width="250" Height="20" Margin="0,7.5,0,-2.5"/>
+                <Slider x:Name="PlaceInSongSlider" HorizontalAlignment="Center" Width="250" Height="20" Margin="0,7.5,0,-2.5"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -64,9 +64,10 @@
                 </Grid>
 
             </StackPanel>
-
-
-
+                <StackPanel x:Name="PlaylistName" Height="295" VerticalAlignment="Top" Width="643" Margin="0,0,0,0">
+                <StackPanel x:Name="SongList" Height="225" Margin="0,70,0,0">
+                </StackPanel>
+            </StackPanel>
         </DockPanel>
     </Grid>
 </Window>
