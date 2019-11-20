@@ -33,7 +33,7 @@
             </StackPanel>
 
             <StackPanel DockPanel.Dock="Bottom" Height="75" Margin="-150.4,0,-0.4,0" Background="DarkGray">
-                <Slider HorizontalAlignment="Center" Width="250" Height="20" Margin="0,7.5,0,-2.5"/>
+                <Slider x:Name="PlaceInSongSlider" HorizontalAlignment="Center" Width="250" Height="20" Margin="0,7.5,0,-2.5"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
