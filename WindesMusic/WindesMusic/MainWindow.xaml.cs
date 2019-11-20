@@ -95,8 +95,7 @@ namespace WindesMusic
             PlaylistList.Children.Clear();
             PlaylistIDs = database1.GetRecordsInt($"SELECT PlaylistID FROM Playlist WHERE UserID = 1", "PlaylistID");
             PlaylistNames = database1.GetRecordsString($"SELECT PlaylistName FROM Playlist WHERE UserID = 1", "PlaylistName");
-            Thickness thickness = new Thickness(25, 0, 0, 5);
-            Style style = new Style();
+            Thickness thickness = new Thickness(15, 0, 0, 5);
 
             for (int i = 0; i < PlaylistIDs.Count; i++)
             {
@@ -106,7 +105,10 @@ namespace WindesMusic
                     Name = $"_{PlaylistIDs[i]}",
                     Content = $"{PlaylistNames[i]}",
                     Margin = thickness
+                   
                 };
+                StaticResourceExtension menuButton = new StaticResourceExtension("MenuButton");
+                PlaylistButton.Style = (Style)FindResource("MenuButton");
                 PlaylistButton.Click += ButtonClickPlaylist;
                 PlaylistList.Children.Add(PlaylistButton);
             }
@@ -161,10 +163,11 @@ namespace WindesMusic
         private void PlaySongFromPlaylist(object sender, RoutedEventArgs e)
         {
             Button _ButtonSong = sender as Button;
-            string SongIDName = _ButtonSong.Name;
-            SongIDName = SongIDName.Substring(2);
-            int SongID = Convert.ToInt32(SongIDName);
-            audioPlayer.PlayChosenSong(SongID);
+            string SongID = _ButtonSong.Name;
+            SongID = SongID.Substring(2);
+            int Song = Convert.ToInt32(SongID);
+
+            audioPlayer.PlayChosenSong(Song);
         }
     }
 }
