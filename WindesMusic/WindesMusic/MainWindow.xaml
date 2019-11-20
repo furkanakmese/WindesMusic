@@ -10,57 +10,63 @@
         Background="{DynamicResource MainColor}"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen">
-    <Grid x:Name="Main">
+    <Grid x:Name="MainGrid">
+        <Frame x:Name="MainFrame" Margin="150,50,-0.4,76" NavigationUIVisibility="Hidden"/>
         <DockPanel LastChildFill="False">
-            <StackPanel DockPanel.Dock="Top" Height="50" Background="DarkGray" Margin="150,0,-0.4,0" Orientation="Horizontal">
-                <TextBox Margin="10,5,0,5.6" Style="{StaticResource placeHolder}" Background="DarkGray" FontSize="30" Tag="Search" Width="616" HorizontalAlignment="Stretch"/>
+            <StackPanel DockPanel.Dock="Top" Height="50" Background="DarkGray" Margin="150,0,0,0" Orientation="Horizontal">
+                <TextBox Margin="10,5,0,5.6" Style="{StaticResource placeHolder}" Background="DarkGray" FontSize="30" Tag="Search" Width="616" HorizontalAlignment="Stretch" GotFocus="SearchbarGotFocus" SelectionBrush="#FFFFCB05"/>
             </StackPanel>
 
             <StackPanel DockPanel.Dock="Left" Width="150" Margin="0,-49.6,0,50" Background="DimGray">
-                <Image Source="Images/WindesheimLogo.png" HorizontalAlignment="Left" Height="41" Margin="25,5,0,5"/>
-                <Button Style="{StaticResource MenuButton}" Content="Account" Margin="25,25,0,5"/>
-                <Button Style="{StaticResource MenuButton}" Content="Recommended" Margin="25,0,0,5"/>
-                <Button Style="{StaticResource MenuButton}" Content="Playlists" Margin="25,20,0,5"/>
+                <Image Source="Img/WindesheimLogoMetTekst.jpg" HorizontalAlignment="Left" Height="41" Margin="20,5,0,5"/>
+                <Button Style="{StaticResource MenuButton}" Content="Account" Margin="25,25,0,5" Click="BtnClickAccount"/>
+                <Button Style="{StaticResource MenuButton}" Content="Recommended" Margin="25,0,0,5" Click="BtnClickRecommended"/>
+                <Button Style="{StaticResource MenuButton}" Content="Playlists" Margin="25,20,0,5" Click="BtnClickPlaylists"/>
                 <Separator Width="100" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                 <Button Style="{StaticResource MenuButton}" Click="NewPlaylistButtonClick" Content="+ Create Playlist" Margin="25,5,0,5"/>
                 <ScrollViewer HorizontalAlignment="Left" Height="126" Margin="10,10,0,0" VerticalAlignment="Top" Width="140">
                     <StackPanel Name="PlaylistList" Height="250">
+                        
                     </StackPanel>
                 </ScrollViewer>
 
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" Background="DarkGray" Height="60" Margin="-150.4,0,-0.4,0">
-                <Button x:Name="StartAndPauze" Click="Play_Button_Click" Height="25" Width="25" HorizontalAlignment="Left" Margin="125,0,0,0">
-                    <Image Source="Images/Pauzeknop.jpg" x:Name="PlayButton" Width="15" Height="15" Margin="0"/>
-                </Button>
-                <Button x:Name="Stop" Click="Stop_Button_Click" Height="25" Width="25" Margin="5,0,0,0">
-                    <Image Source="Images/Stopknop.png" Width="15" Height="15"></Image>
-                </Button>
-                <StackPanel  Orientation="Vertical" Background="DarkGray" Margin="50,0,0,0">
-                    <Label Name="NameOfSong" HorizontalAlignment="Center" VerticalAlignment="Bottom" Padding="0" Margin="0,10,0,5">Song</Label>
-                    <Slider x:Name="PlaceInSongSlider" Thumb.DragCompleted="Place_In_Song_Slider_DragCompleted" Thumb.DragStarted="PlaceInSongSlider_DragStarted" Maximum="100" HorizontalAlignment="Center" Width="300" Height="20" Margin="0,0,0,0"/>
-                </StackPanel>
-                <Slider x:Name="volumeSlider" ValueChanged="Volume_Slider_ValueChanged" Maximum="100" Minimum="0" Value="100" Width="100" Height="20" TickFrequency="10" Margin="50,0,0,0" />
-
-
-                <!--<Grid Height="18" HorizontalAlignment="Center"  VerticalAlignment="Top" Width="150" Margin="347,5,346.6,0">
+            <StackPanel DockPanel.Dock="Bottom" Height="75" Margin="-150.4,0,-0.4,0" Background="DarkGray">
+                <Slider HorizontalAlignment="Center" Width="250" Height="20" Margin="0,7.5,0,-2.5"/>
+                <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="3*"/>
-                        <ColumnDefinition Width="3*"/>
-                        <ColumnDefinition Width="3*"/>
-                        <ColumnDefinition Width="3*"/>
-                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Button HorizontalAlignment="Center" Grid.Column="0" Content="sd" Margin="25,0,0,5"/>
-                </Grid>-->
+                    <Label HorizontalAlignment="Center" Grid.Column="0" Content="Song - Artist" Margin="360,0,140,0" />
+                    <Button Grid.Column="1" Content="Queue"/>
+                    <Button Grid.Column="2" Content="Mute/Unmute"/>
+                    <Slider HorizontalAlignment="Right" Width="100" Grid.Column="3"/>
+                </Grid>
+
+                <Grid Width="250">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0" Content="Shuffle" HorizontalAlignment="Left"/>
+                    <Button Grid.Column="1" Content="Previous"/>
+                    <Button Grid.Column="2" Content="Play/Pause" HorizontalAlignment="Center"/>
+                    <Button Grid.Column="3" Content="Next"/>
+                    <Button Grid.Column="4" Content="Repeat" HorizontalAlignment="Right"/>
+                </Grid>
 
             </StackPanel>
-            <StackPanel x:Name="PlaylistName" Height="295" VerticalAlignment="Top" Width="643" Margin="0,0,0,0">
-                <StackPanel x:Name="SongList" Height="225" Margin="0,70,0,0">
 
-                </StackPanel>
-            </StackPanel>
+
+
         </DockPanel>
     </Grid>
 </Window>

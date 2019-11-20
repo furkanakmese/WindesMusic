@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:WindesMusic"
              Startup="Application_Startup">
     <Application.Resources>
-        <SolidColorBrush x:Key="MainColor" Color="SlateGray"/>
+        <SolidColorBrush x:Key="MainColor" Color="#2b2f32"/>
 
         <SolidColorBrush x:Key="mouseOverColor" Color="White" />
         <Style TargetType="Label" x:Key="mouseOverStyle"/>
