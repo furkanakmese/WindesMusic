@@ -79,7 +79,6 @@ namespace WindesMusic
             return results;
         }
 
-        
         // this function sends the login data to the database and returns a user object, empty if the data is wrong
         public User Login(string email, string password)
         {
@@ -169,6 +168,34 @@ namespace WindesMusic
 
             _connection.Close();
             return listResult; 
+        }
+
+        public List<Song> GetSongsInPlaylist(int PlaylistID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            List<Song> listResult = new List<Song>();
+            _command.CommandText = "SELECT * FROM Song WHERE SongID IN(SELECT SongID FROM PlaylistToSong WHERE PlaylistID = @PlaylistID)";
+
+            var criteriaParam = _command.CreateParameter();
+            criteriaParam.ParameterName = "@PlaylistID";
+            criteriaParam.Value = PlaylistID;
+            _command.Parameters.Add(criteriaParam);
+            _reader = _command.ExecuteReader();
+
+            while (_reader.Read())
+            {
+                Song searchResult = new Song();
+                searchResult.SongID = (int)_reader["SongID"];
+                searchResult.SongName = (string)_reader["Name"];
+                searchResult.Artist = (string)_reader["Artist"];
+                searchResult.Album = (string)_reader["Album"];
+                searchResult.Year = (int)_reader["Year"];
+                listResult.Add(searchResult);
+            }
+
+            _connection.Close();
+            return listResult;
         }
     }
 }

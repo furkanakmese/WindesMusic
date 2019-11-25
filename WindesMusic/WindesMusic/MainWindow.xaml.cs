@@ -123,32 +123,53 @@ namespace WindesMusic
             PlaylistIDName = PlaylistIDName.Substring(1);
             int PlaylistID = Convert.ToInt32(PlaylistIDName);
 
-            List<string> SongNames = new List<string>();
-            SongNames = data.GetRecordsString($"SELECT Name FROM Song WHERE SongID IN(SELECT SongID FROM PlaylistToSong WHERE PlaylistID = {PlaylistID})", "Name");
             Playlist playlist = new Playlist(PlaylistID);
+            playlist.SongPlaylist = data.GetSongsInPlaylist(PlaylistID);
             Thickness thickness = new Thickness(10, 2, 0, 5);
             Thickness thickness2 = new Thickness(10, 0, 0, 5);
             for (int i = 0; i < playlist.SongPlaylist.Count; i++)
             {
+                Song playlistSong = playlist.SongPlaylist[i];
                 StackPanel sp = new StackPanel();
                 sp.Orientation = Orientation.Horizontal;
                 sp.VerticalAlignment = VerticalAlignment.Stretch;
                 sp.HorizontalAlignment = HorizontalAlignment.Stretch;
                 var PlayButton = new Button
                 {
-                    Name = $"__{playlist.SongPlaylist[i]}",
+                    Name = $"__{playlistSong.SongID}",
                     Content = "Play",
                     Margin = thickness2
                 };
                 PlayButton.Click += PlaySongFromPlaylist;
-                var SongBlock = new TextBlock
+                var SongBlockName = new TextBlock
                 {
-                    Name = $"_{playlist.SongPlaylist[i]}",
-                    Text = $"{SongNames[i]}",
+                    Name = $"_{playlistSong.SongID}",
+                    Text = $"{playlistSong.SongName}",
+                    Margin = thickness
+                };
+                var SongBlockArtist = new TextBlock
+                {
+                    Name = $"_{playlistSong.SongID}",
+                    Text = $"{playlistSong.Artist}",
+                    Margin = thickness
+                };
+                var SongBlockAlbum = new TextBlock
+                {
+                    Name = $"_{playlistSong.SongID}",
+                    Text = $"{playlistSong.Album}",
+                    Margin = thickness
+                };
+                var SongBlockYear = new TextBlock
+                {
+                    Name = $"_{playlistSong.SongID}",
+                    Text = $"{playlistSong.Year}",
                     Margin = thickness
                 };
                 sp.Children.Add(PlayButton);
-                sp.Children.Add(SongBlock);
+                sp.Children.Add(SongBlockName);
+                sp.Children.Add(SongBlockArtist);
+                sp.Children.Add(SongBlockAlbum);
+                sp.Children.Add(SongBlockYear);
                 SongList.Children.Add(sp);
             }
         }
