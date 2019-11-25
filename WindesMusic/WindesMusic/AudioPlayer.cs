@@ -14,7 +14,7 @@ namespace WindesMusic
         public AudioPlayer()
         {
             outputDevice = new WaveOutEvent();
-            outputDevice.PlaybackStopped += OnPlaybackStopped;
+            //outputDevice.PlaybackStopped += OnPlaybackStopped;
         }
 
         public void PlayChosenSong(string songID)
@@ -23,15 +23,37 @@ namespace WindesMusic
             fileName.Append(songID);
             fileName.Append(".mp3");
 
+
+            
             if (audioFile != null)
             {
                 OnButtonStopClick();
             }
+            
 
             audioFile = new AudioFileReader(fileName.ToString());
             outputDevice.Init(audioFile);
             outputDevice.Play();
             isPlaying = true;
+        }
+        public void PlayChosenSong()
+        {
+            if (MusicQueue.SongQueue.Count != 0)
+            {
+                StringBuilder fileName = new StringBuilder();
+                fileName.Append(MusicQueue.SongQueue.Dequeue());
+                fileName.Append(".mp3");
+
+                if (audioFile != null)
+                {
+                    OnButtonStopClick();
+                }
+
+                audioFile = new AudioFileReader(fileName.ToString());
+                outputDevice.Init(audioFile);
+                outputDevice.Play();
+                isPlaying = true;
+            }
         }
 
         //start, and pause and resume button.
@@ -59,13 +81,18 @@ namespace WindesMusic
         {
             outputDevice?.Stop();
             isPlaying = false;
+            if (MusicQueue.SongQueue.Count != 0)
+            {
+                this.PlayChosenSong();
+            }
         }
 
         //stop function, disposes of AudiofileReader.
-        private void OnPlaybackStopped(object sender, StoppedEventArgs args)
+        public void OnPlaybackStopped(object sender, StoppedEventArgs args)
         {
             audioFile.Dispose();
             audioFile = null;
+
         }
 
         //recieves change in slider value and calculates new position in song.

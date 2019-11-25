@@ -31,22 +31,36 @@ namespace WindesMusic
             SongsInPlaylist = PlaylistSongs;
             mainWindow = main;
             _PlaylistName = NameOfPlaylist;
+            _PlaylistID = playlistId;
             Thickness thickness = new Thickness(10, 2, 0, 5);
             Thickness thickness2 = new Thickness(10, 0, 0, 5);
+            Thickness thickness3 = new Thickness(250, 10, 260, 5);
+            Thickness thickness4 = new Thickness(250, 10, 0, 5);
+            SolidColorBrush whiteText = new SolidColorBrush(System.Windows.Media.Colors.White);
+            StackPanel spPlaylist = new StackPanel();
+            spPlaylist.Orientation = Orientation.Horizontal;
+            spPlaylist.VerticalAlignment = VerticalAlignment.Stretch;
+            spPlaylist.HorizontalAlignment = HorizontalAlignment.Stretch;
             var PlaylistBlock = new TextBlock
             {
                 Text = $"{NameOfPlaylist}",
-                Margin = thickness
+                FontSize = 25,
+                Foreground = whiteText,
+                Margin = thickness4
             };
             var PlayPlaylistButton = new Button
             {
                 Name = $"_{_PlaylistID}",
                 Content = "Play",
-                Margin = thickness
+                FontSize = 30,
+                Margin = thickness3
             };
             PlayPlaylistButton.Click += PlayPlaylist;
 
+            //spPlaylist.Children.Add(PlaylistBlock);
+            //spPlaylist.Children.Add(PlayPlaylistButton);
             PlaylistName.Children.Add(PlaylistBlock);
+            PlaylistName.Children.Add(PlayPlaylistButton);
             foreach (Song playlistSong in PlaylistSongs)
             {
                 StackPanel sp = new StackPanel();
@@ -64,24 +78,28 @@ namespace WindesMusic
                 {
                     Name = $"_{playlistSong.SongID}",
                     Text = $"{playlistSong.SongName}",
+                    Foreground = whiteText,
                     Margin = thickness
                 };
                 var SongBlockArtist = new TextBlock
                 {
                     Name = $"_{playlistSong.SongID}",
                     Text = $"{playlistSong.Artist}",
+                    Foreground = whiteText,
                     Margin = thickness
                 };
                 var SongBlockAlbum = new TextBlock
                 {
                     Name = $"_{playlistSong.SongID}",
                     Text = $"{playlistSong.Album}",
+                    Foreground = whiteText,
                     Margin = thickness
                 };
                 var SongBlockYear = new TextBlock
                 {
                     Name = $"_{playlistSong.SongID}",
                     Text = $"{playlistSong.Year}",
+                    Foreground = whiteText,
                     Margin = thickness
                 };
                 sp.Children.Add(PlayButton);
@@ -96,6 +114,8 @@ namespace WindesMusic
 
         private void PlaySongFromPlaylist(object sender, RoutedEventArgs e)
         {
+            mainWindow.audioPlayer.OnButtonStopClick();
+
             Button _ButtonSong = sender as Button;
             string SongID = _ButtonSong.Name;
             SongID = SongID.Substring(2);
@@ -105,8 +125,9 @@ namespace WindesMusic
         private void PlayPlaylist(object sender, RoutedEventArgs e)
         {
             Playlist playlist = new Playlist(_PlaylistID);
-            MusicQueue MQueue = playlist.CreateQueueFromPlaylist();
-
+            playlist.SongPlaylist = db.GetSongsInPlaylist(_PlaylistID);
+            MusicQueue.SongQueue = playlist.CreateQueueFromPlaylist();
+            mainWindow.audioPlayer.PlayChosenSong();
         }
     }
 }

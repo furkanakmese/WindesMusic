@@ -45,9 +45,9 @@ namespace WindesMusic
         {
             if(MQueue != null)
             {
-                Queue<int> CopySongQueue = new Queue<int>(MQueue.SongQueue);
+                //Queue<int> CopySongQueue = new Queue<int>(MQueue.SongQueue);
                 data.CreateNewPlaylist(Name, UserID);
-                for(int i = 0; i < MQueue.SongQueue.Count(); i++)
+                //for(int i = 0; i < MQueue.SongQueue.Count(); i++)
                 { 
                     //data.AddSongToPlaylist(CopySongQueue.Dequeue());
                 }
@@ -55,13 +55,15 @@ namespace WindesMusic
         }
 
         //Creates a queue with the songs in the order of the playlist
-        public MusicQueue CreateQueueFromPlaylist()
+        public Queue<int> CreateQueueFromPlaylist()
         {
-            MusicQueue SongQueue = new MusicQueue();
+            List<int> SongList = new List<int>();
+            Queue<int> SongQueue;
             foreach(Song PlaylistSong in SongPlaylist)
             {
-                SongQueue.AddSongToQueue(PlaylistSong.SongID);
-            }        
+                SongList.Add(PlaylistSong.SongID);
+            }
+            SongQueue = new Queue<int>(SongList);
             return SongQueue;
         }
     }
