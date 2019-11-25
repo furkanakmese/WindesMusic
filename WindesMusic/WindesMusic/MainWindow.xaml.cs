@@ -75,7 +75,7 @@ namespace WindesMusic
 
         private void UpdateSongSlider(object sender, EventArgs e)
         {
-            PlaceInSongSlider.Value = audioPlayer.CurrentPlaceInSong();
+            PlaceInSongSlider.Value = audioPlayer.CurrentPlaceInSongPercentage();
         }
 
         private void MuteButtonClick(object sender, RoutedEventArgs e)

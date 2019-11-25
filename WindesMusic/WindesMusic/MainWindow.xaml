@@ -33,7 +33,7 @@
             </StackPanel>
 
             <StackPanel DockPanel.Dock="Bottom" Height="75" Margin="-150.4,0,-0.4,0" Background="DarkGray">
-                <Slider x:Name="PlaceInSongSlider" HorizontalAlignment="Center" Width="250" Height="20" Margin="0,7.5,0,-2.5"/>
+                <Slider x:Name="PlaceInSongSlider" HorizontalAlignment="Center" Width="250" Height="20" Margin="0,7.5,0,-2.5" Thumb.DragCompleted="PlaceInSongSliderDragCompleted" Thumb.DragStarted="PlaceInSongSliderDragStarted"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -43,8 +43,8 @@
                     </Grid.ColumnDefinitions>
                     <Label HorizontalAlignment="Center" Grid.Column="0" Content="Song - Artist" Margin="360,0,140,0" />
                     <Button Grid.Column="1" Content="Queue"/>
-                    <Button Grid.Column="2" Content="Mute/Unmute"/>
-                    <Slider HorizontalAlignment="Right" Width="100" Grid.Column="3"/>
+                    <Button Click="MuteButtonClick" Grid.Column="2" Content="Mute/Unmute"/>
+                    <Slider ValueChanged="VolumeSliderValueChanged" HorizontalAlignment="Right" Width="100" Grid.Column="3"/>
                 </Grid>
 
                 <Grid Width="250">
@@ -58,7 +58,7 @@
 
                     <Button Grid.Column="0" Content="Shuffle" HorizontalAlignment="Left"/>
                     <Button Grid.Column="1" Content="Previous"/>
-                    <Button Grid.Column="2" Content="Play/Pause" HorizontalAlignment="Center"/>
+                    <Button Grid.Column="2" Content="Play/Pause" Click="PlayButtonClick" HorizontalAlignment="Center" Height="17" Margin="13.4,0,13,-0.2" VerticalAlignment="Top"/>
                     <Button Grid.Column="3" Content="Next"/>
                     <Button Grid.Column="4" Content="Repeat" HorizontalAlignment="Right"/>
                 </Grid>
