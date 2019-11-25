@@ -17,10 +17,10 @@ namespace WindesMusic
             outputDevice.PlaybackStopped += OnPlaybackStopped;
         }
 
-        public void PlayChosenSong(int songID)
+        public void PlayChosenSong(string songID)
         {
             StringBuilder fileName = new StringBuilder();
-            fileName.Append(songID.ToString());
+            fileName.Append(songID);
             fileName.Append(".mp3");
 
             if (audioFile != null)
