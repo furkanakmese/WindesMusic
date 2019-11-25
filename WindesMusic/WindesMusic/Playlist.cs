@@ -22,33 +22,6 @@ namespace WindesMusic
         {
             PlaylistID = PlaylistId;
         }
-        
-
-        public void CreateNewPlaylist(string Name, int UserID)
-        {
-            data.SetValues($"INSERT INTO Playlist(PlaylistName, UserID) VALUES('{Name}', {UserID})");
-        }
-
-        public void ChangePlaylistName(string Name)
-        {
-            data.SetValues($"UPDATE Playlist SET Name = '{Name}' WHERE PlaylistID = {PlaylistID}");
-        }
-
-        public void DeletePlaylist()
-        {
-            data.SetValues($"DELETE FROM PlaylistToSong WHERE PlaylistID = {PlaylistID}");
-            data.SetValues($"DELETE FROM Playlist WHERE PlaylistID = {PlaylistID}");
-        }
-
-        public void AddSongToPlaylist(int DesiredSong)//rename DesiredSong to SongID?
-        {
-            data.SetValues($"INSERT INTO PlaylistToSong(PlaylistID, SongID) VALUES ({PlaylistID}, {DesiredSong})");
-        }
-
-        public void RemoveSongFromPlaylist(int SongToDelete)
-        {
-            data.SetValues($"DELETE FROM PlaylistToSong WHERE PlaylistID = {PlaylistID} AND SongID = {SongToDelete}");
-        }
 
         public void RefreshPlaylist()
         {
@@ -73,10 +46,10 @@ namespace WindesMusic
             if(MQueue != null)
             {
                 Queue<int> CopySongQueue = new Queue<int>(MQueue.SongQueue);
-                this.CreateNewPlaylist(Name, UserID);
+                data.CreateNewPlaylist(Name, UserID);
                 for(int i = 0; i < MQueue.SongQueue.Count(); i++)
                 { 
-                    this.AddSongToPlaylist(CopySongQueue.Dequeue());
+                    //data.AddSongToPlaylist(CopySongQueue.Dequeue());
                 }
             }
         }

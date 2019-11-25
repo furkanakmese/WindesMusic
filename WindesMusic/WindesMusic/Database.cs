@@ -58,7 +58,7 @@ namespace WindesMusic
             {
                 results.Add((int)_reader[$"{ReturnItems}"]);
             }
-            
+
             _connection.Close();
             return results;
         }
@@ -74,7 +74,7 @@ namespace WindesMusic
             {
                 results.Add((string)_reader[$"{ReturnItems}"]);
             }
-            
+
             _connection.Close();
             return results;
         }
@@ -84,7 +84,7 @@ namespace WindesMusic
         {
             OpenConnection();
             _command.Parameters.Clear();
-            User userResult = new User();    
+            User userResult = new User();
             _command.CommandText = "SELECT * FROM Users WHERE Email=@email AND Password=@password";
 
             var emailParam = _command.CreateParameter();
@@ -138,7 +138,7 @@ namespace WindesMusic
                 userResult.Playlists.Add(playlistResult);
             }
             _connection.Close();
-            return userResult; 
+            return userResult;
         }
 
         // method to retieve search results
@@ -167,7 +167,7 @@ namespace WindesMusic
             }
 
             _connection.Close();
-            return listResult; 
+            return listResult;
         }
 
         public List<Song> GetSongsInPlaylist(int PlaylistID)
@@ -196,6 +196,131 @@ namespace WindesMusic
 
             _connection.Close();
             return listResult;
+        }
+
+        public void CreateNewPlaylist(string Name, int UserID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "INSERT INTO Playlist(PlaylistName, UserID) VALUES(@Name, @UserID)";
+
+            var criteriaParamName = _command.CreateParameter();
+            criteriaParamName.ParameterName = "@Name";
+            criteriaParamName.Value = Name;
+            _command.Parameters.Add(criteriaParamName);
+
+            var criteriaParamUserID = _command.CreateParameter();
+            criteriaParamUserID.ParameterName = "@UserID";
+            criteriaParamUserID.Value = UserID;
+            _command.Parameters.Add(criteriaParamUserID);
+
+            _command.ExecuteNonQuery();
+        }
+
+        public void ChangePlaylistName(int PlaylistID, string Name)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "UPDATE Playlist SET Name = @Name WHERE PlaylistID = @PlaylistID";
+
+            var criteriaParamName = _command.CreateParameter();
+            criteriaParamName.ParameterName = "@Name";
+            criteriaParamName.Value = Name;
+            _command.Parameters.Add(criteriaParamName);
+
+            var criteriaParamPlaylistID = _command.CreateParameter();
+            criteriaParamPlaylistID.ParameterName = "@PlaylistID";
+            criteriaParamPlaylistID.Value = PlaylistID;
+            _command.Parameters.Add(criteriaParamPlaylistID);
+
+            _command.ExecuteNonQuery();
+            _connection.Close();
+        }
+
+        public void DeletePlaylist(int PlaylistID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "DELETE FROM PlaylistToSong WHERE PlaylistID = @PlaylistID";
+
+            var criteriaParamPlaylistID = _command.CreateParameter();
+            criteriaParamPlaylistID.ParameterName = "@PlaylistID";
+            criteriaParamPlaylistID.Value = PlaylistID;
+            _command.Parameters.Add(criteriaParamPlaylistID);
+
+            _command.ExecuteNonQuery();
+
+            _command.Parameters.Clear();
+            _command.CommandText = "DELETE FROM Playlist WHERE PlaylistID = @PlaylistID";
+            _command.Parameters.Add(criteriaParamPlaylistID);
+
+            _command.ExecuteNonQuery();
+            _connection.Close();
+        }
+
+        public void AddSongToPlaylist(int PlaylistID, int SongID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "INSERT INTO PlaylistToSong(PlaylistID, SongID) VALUES (@PlaylistID, @SongID)";
+
+            var criteriaParamPlaylistID = _command.CreateParameter();
+            criteriaParamPlaylistID.ParameterName = "@PlaylistID";
+            criteriaParamPlaylistID.Value = PlaylistID;
+            _command.Parameters.Add(criteriaParamPlaylistID);
+
+            var criteriaParamSongID = _command.CreateParameter();
+            criteriaParamSongID.ParameterName = "@SongID";
+            criteriaParamSongID.Value = SongID;
+            _command.Parameters.Add(criteriaParamPlaylistID);
+
+            _command.ExecuteNonQuery();
+            _connection.Close();
+        }
+
+        public void RemoveSongFromPlaylist(int PlaylistID, int SongID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "DELETE FROM PlaylistToSong WHERE PlaylistID = @PlaylistID AND SongID = @SongToDelete";
+
+            var criteriaParamPlaylistID = _command.CreateParameter();
+            criteriaParamPlaylistID.ParameterName = "@PlaylistID";
+            criteriaParamPlaylistID.Value = PlaylistID;
+            _command.Parameters.Add(criteriaParamPlaylistID);
+
+            var criteriaParamSongID = _command.CreateParameter();
+            criteriaParamSongID.ParameterName = "@SongID";
+            criteriaParamSongID.Value = SongID;
+            _command.Parameters.Add(criteriaParamPlaylistID);
+
+            _command.ExecuteNonQuery();
+            _connection.Close();
+        }
+        
+
+        public string GetNameFromPlaylist(int PlaylistID)
+        {
+            string Result = "";
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "SELECT PlaylistName FROM Playlist WHERE PlaylistID = @PlaylistID";
+
+            var criteriaParamPlaylistID = _command.CreateParameter();
+            criteriaParamPlaylistID.ParameterName = "@PlaylistID";
+            criteriaParamPlaylistID.Value = PlaylistID;
+            _command.Parameters.Add(criteriaParamPlaylistID);
+
+            _reader = _command.ExecuteReader();
+
+            while (_reader.Read())
+            {
+                Result = (string)_reader["PlaylistName"];
+            }
+
+            _connection.Close();
+            return Result;
+
         }
     }
 }
