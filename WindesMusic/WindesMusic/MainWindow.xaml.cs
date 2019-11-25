@@ -47,10 +47,21 @@ namespace WindesMusic
         }
 
         //stop button, executes stop function(OnPlayBackStopped).
-        private void StopButtonClick(object sender, RoutedEventArgs e)
+        private void StopButtonClick()
         {
-            audioPlayer.OnButtonStopClick(sender, e);
+            audioPlayer.OnButtonStopClick();
         }
+
+        private void PreviousButtonClick(object sender, RoutedEventArgs e)
+        {
+            StopButtonClick();
+        }
+
+        private void NextButtonClick(object sender, RoutedEventArgs e)
+        {
+            StopButtonClick();
+        }
+
 
         //volume slider
         private void VolumeSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

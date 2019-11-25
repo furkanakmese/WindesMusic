@@ -25,7 +25,7 @@ namespace WindesMusic
 
             if (audioFile != null)
             {
-                OnButtonStopClick(this, new EventArgs());
+                OnButtonStopClick();
             }
 
             audioFile = new AudioFileReader(fileName.ToString());
@@ -55,7 +55,7 @@ namespace WindesMusic
         }
 
         //stop button, executes stop function(OnPlayBackStopped).
-        public void OnButtonStopClick(object sender, EventArgs args)
+        public void OnButtonStopClick()
         {
             outputDevice?.Stop();
             isPlaying = false;
@@ -78,7 +78,7 @@ namespace WindesMusic
             int NewTimeMilliSeconds = Convert.ToInt32(Math.Floor((sliderValue - NewTimeSeconds) * 1000));
             if (NewTimeSeconds >= audioFile.TotalTime.TotalSeconds)
             {
-                OnButtonStopClick(this, new EventArgs());
+                OnButtonStopClick();
                 return;
             }
             else if (NewTimeSeconds < 0)
@@ -95,7 +95,7 @@ namespace WindesMusic
             if (audioFile == null)
             {
                 //OnButtonStopClick doesn't trigger at end of audio file. This ensures the next song can be played.
-                OnButtonStopClick(this, new EventArgs());
+                OnButtonStopClick();
                 return 0;
             }
 
