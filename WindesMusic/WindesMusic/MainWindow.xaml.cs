@@ -24,7 +24,7 @@ namespace WindesMusic
     /// </summary>
     public partial class MainWindow : Window
     {
-        private AudioPlayer audioPlayer = new AudioPlayer();
+        public AudioPlayer audioPlayer = new AudioPlayer();
         private DispatcherTimer dispatcherTimer;
 
         public MainWindow()
@@ -131,7 +131,7 @@ namespace WindesMusic
             int PlaylistID = Convert.ToInt32(PlaylistIDName);
             List<Song> ListOfSongs = data.GetSongsInPlaylist(PlaylistID);
             string PlaylistName = data.GetNameFromPlaylist(PlaylistID);
-            PlaylistSongsPage SongsPage = new PlaylistSongsPage(PlaylistName, ListOfSongs);
+            PlaylistSongsPage SongsPage = new PlaylistSongsPage(PlaylistID, PlaylistName, ListOfSongs, this);
             this.Main.Content = SongsPage;
             
             
@@ -142,16 +142,6 @@ namespace WindesMusic
             NewPlaylistWindow NewPlaylist = new NewPlaylistWindow();
             NewPlaylist.Show();
             NewPlaylist.Closed += (object sender2, EventArgs e2) => OnContentRendered(e);
-        }
-
-        private void PlaySongFromPlaylist(object sender, RoutedEventArgs e)
-        {
-            Button _ButtonSong = sender as Button;
-            string SongID = _ButtonSong.Name;
-            SongID = SongID.Substring(2);
-            //int Song = Convert.ToInt32(SongID);
-
-            audioPlayer.PlayChosenSong(SongID);
         }
     }
 }
