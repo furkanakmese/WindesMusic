@@ -75,7 +75,7 @@ namespace WindesMusic
                 return;
             sliderValue *= audioFile.TotalTime.TotalSeconds;
             int NewTimeSeconds = Convert.ToInt32(Math.Floor(sliderValue));
-            int NewTimeMilliSeconds = Convert.ToInt32(Math.Floor((sliderValue - NewTimeSeconds)*1000));
+            int NewTimeMilliSeconds = Convert.ToInt32(Math.Floor((sliderValue - NewTimeSeconds) * 1000));
             if (NewTimeSeconds >= audioFile.TotalTime.TotalSeconds)
             {
                 OnButtonStopClick(this, new EventArgs());
@@ -90,7 +90,7 @@ namespace WindesMusic
         }
 
         //returns percentage of place in song (0-100). 0 means no song is playing. 
-        public double CurrentPlaceInSong()
+        public double CurrentPlaceInSongPercentage()
         {
             if (audioFile == null)
             {
@@ -102,11 +102,12 @@ namespace WindesMusic
             return audioFile.CurrentTime.TotalSeconds / audioFile.TotalTime.TotalSeconds * 100;
         }
 
-        //volume slider (outputDevice.Volume has values 0 - 1).
-        public void SetVolume(float volume)
-        {
-            outputDevice.Volume = volume;
-        }
+        public TimeSpan TotalTimeSong() { return audioFile.TotalTime; }
+
+        public TimeSpan CurrentPlaceInSong() { return audioFile.CurrentTime; }
+
+        //volume slider (outputDevice.Volume sends values ranging 0 to 1).
+        public void SetVolume(float volume) { outputDevice.Volume = volume; }
 
         //Saves soundlevel for later and mutes sound.
         public void Mute()
