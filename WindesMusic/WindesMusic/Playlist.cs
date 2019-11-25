@@ -8,14 +8,14 @@ namespace WindesMusic
 {
     public class Playlist
     {
-        Database data = new Database();
-        public List<Song> SongPlaylist;
+        private Database data = new Database();
+        public List<Song> SongPlaylist { get; set; }
+
         public int PlaylistID { get; set; }
         public string PlaylistName { get; set; }
 
         public Playlist()
         {
-
         }
 
         public Playlist(int PlaylistId)
@@ -40,7 +40,7 @@ namespace WindesMusic
             data.SetValues($"DELETE FROM Playlist WHERE PlaylistID = {PlaylistID}");
         }
 
-        public void AddSongToPlaylist(int DesiredSong)
+        public void AddSongToPlaylist(int DesiredSong)//rename DesiredSong to SongID?
         {
             data.SetValues($"INSERT INTO PlaylistToSong(PlaylistID, SongID) VALUES ({PlaylistID}, {DesiredSong})");
         }
