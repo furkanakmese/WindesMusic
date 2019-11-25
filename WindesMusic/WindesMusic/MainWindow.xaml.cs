@@ -37,7 +37,7 @@ namespace WindesMusic
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             dispatcherTimer.Start();
 
-           
+            Main.Content = new Playlists();
         }
 
         //start, and pause and resume button.
