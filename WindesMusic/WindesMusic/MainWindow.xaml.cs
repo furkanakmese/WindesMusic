@@ -91,22 +91,17 @@ namespace WindesMusic
         {
             base.OnContentRendered(e);
             Database database1 = new Database();
-            List<int> PlaylistIDs = new List<int>();
-            List<string> PlaylistNames = new List<string>();
-            PlaylistList.Children.Clear();
-            PlaylistIDs = database1.GetRecordsInt($"SELECT PlaylistID FROM Playlist WHERE UserID = 1", "PlaylistID");
-            PlaylistNames = database1.GetRecordsString($"SELECT PlaylistName FROM Playlist WHERE UserID = 1", "PlaylistName");
+            User user = database1.GetUserData(WindesMusic.Properties.Settings.Default.UserID);
             Thickness thickness = new Thickness(15, 0, 0, 5);
-
-            for (int i = 0; i < PlaylistIDs.Count; i++)
+            foreach (var item in user.Playlists)
             {
                 var PlaylistButton = new Button
                 {
                     //Style = StaticResource MenuButton,
-                    Name = $"_{PlaylistIDs[i]}",
-                    Content = $"{PlaylistNames[i]}",
+                    Name = $"_{item.PlaylistID}",
+                    Content = $"{item.PlaylistName}",
                     Margin = thickness
-                   
+
                 };
                 StaticResourceExtension menuButton = new StaticResourceExtension("MenuButton");
                 PlaylistButton.Style = (Style)FindResource("MenuButton");
@@ -123,56 +118,12 @@ namespace WindesMusic
             string PlaylistIDName = _ButtonPlaylist.Name;
             PlaylistIDName = PlaylistIDName.Substring(1);
             int PlaylistID = Convert.ToInt32(PlaylistIDName);
-
-            Playlist playlist = new Playlist(PlaylistID);
-            playlist.SongPlaylist = data.GetSongsInPlaylist(PlaylistID);
-            Thickness thickness = new Thickness(10, 2, 0, 5);
-            Thickness thickness2 = new Thickness(10, 0, 0, 5);
-            for (int i = 0; i < playlist.SongPlaylist.Count; i++)
-            {
-                Song playlistSong = playlist.SongPlaylist[i];
-                StackPanel sp = new StackPanel();
-                sp.Orientation = Orientation.Horizontal;
-                sp.VerticalAlignment = VerticalAlignment.Stretch;
-                sp.HorizontalAlignment = HorizontalAlignment.Stretch;
-                var PlayButton = new Button
-                {
-                    Name = $"__{playlistSong.SongID}",
-                    Content = "Play",
-                    Margin = thickness2
-                };
-                PlayButton.Click += PlaySongFromPlaylist;
-                var SongBlockName = new TextBlock
-                {
-                    Name = $"_{playlistSong.SongID}",
-                    Text = $"{playlistSong.SongName}",
-                    Margin = thickness
-                };
-                var SongBlockArtist = new TextBlock
-                {
-                    Name = $"_{playlistSong.SongID}",
-                    Text = $"{playlistSong.Artist}",
-                    Margin = thickness
-                };
-                var SongBlockAlbum = new TextBlock
-                {
-                    Name = $"_{playlistSong.SongID}",
-                    Text = $"{playlistSong.Album}",
-                    Margin = thickness
-                };
-                var SongBlockYear = new TextBlock
-                {
-                    Name = $"_{playlistSong.SongID}",
-                    Text = $"{playlistSong.Year}",
-                    Margin = thickness
-                };
-                sp.Children.Add(PlayButton);
-                sp.Children.Add(SongBlockName);
-                sp.Children.Add(SongBlockArtist);
-                sp.Children.Add(SongBlockAlbum);
-                sp.Children.Add(SongBlockYear);
-                SongList.Children.Add(sp);
-            }
+            List<Song> ListOfSongs = data.GetSongsInPlaylist(PlaylistID);
+            string PlaylistName = data.GetNameFromPlaylist(PlaylistID);
+            PlaylistSongsPage SongsPage = new PlaylistSongsPage(PlaylistName, ListOfSongs);
+            this.Main.Content = SongsPage;
+            
+            
         }
 
         private void NewPlaylistButtonClick(object sender, RoutedEventArgs e)
