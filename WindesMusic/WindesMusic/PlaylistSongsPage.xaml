@@ -11,8 +11,9 @@
       >
 
     <Grid x:Name="PlaylistSongsPageMainGrid">
-        <StackPanel x:Name="PlaylistName" Height="450" VerticalAlignment="Top" Width="644" Margin="0,0,0,0">
-            <ScrollViewer Height="450" Margin="0,00,0,0">
+        <StackPanel x:Name="PlaylistSongs" Height="450" VerticalAlignment="Top" Width="644" Margin="0,0,0,0">
+            <StackPanel x:Name="PlaylistName" Height="100" VerticalAlignment="Top" Width="644" Margin="0,0,0,0"/>
+            <ScrollViewer Height="350" Margin="0,0,0,0">
                 <StackPanel x:Name="SongList" Height="300" Margin="0,70,0,0"/>
             </ScrollViewer>
         </StackPanel>

@@ -8,11 +8,11 @@ namespace WindesMusic
 {
     public class MusicQueue
     {
-        public Queue<int> SongQueue;
+        public static Queue<int> SongQueue = new Queue<int>();
 
         public MusicQueue()
         {
-            SongQueue = new Queue<int>();
+            
         }
 
         public void AddSongToQueue(int SongID)
