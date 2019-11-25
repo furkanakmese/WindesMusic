@@ -63,6 +63,9 @@
     <Compile Include="NewPlaylistWindow.xaml.cs">
       <DependentUpon>NewPlaylistWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Playlists.xaml.cs">
+      <DependentUpon>Playlists.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PlaylistsWindow.xaml.cs">
       <DependentUpon>PlaylistsWindow.xaml</DependentUpon>
     </Compile>
@@ -89,6 +92,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="NewPlaylistWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Playlists.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
