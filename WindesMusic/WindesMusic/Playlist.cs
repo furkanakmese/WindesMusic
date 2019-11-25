@@ -9,7 +9,8 @@ namespace WindesMusic
     public class Playlist
     {
         private Database data = new Database();
-        public List<int> SongPlaylist { get; set; }
+        public List<Song> SongPlaylist { get; set; }
+
         public int PlaylistID { get; set; }
         public string PlaylistName { get; set; }
 
@@ -17,32 +18,11 @@ namespace WindesMusic
         {
         }
 
-        public Playlist(int? SongPlaylistID)
+        public Playlist(int PlaylistId)
         {
-            int TemporaryPlaylistID = 0;
-            //Sets TemporaryPlaylistID to the given number if the number isn't null
-            if (SongPlaylistID != null)
-            {
-                TemporaryPlaylistID = SongPlaylistID.GetValueOrDefault();
-            }
-            //Creates a random number and checks the database if it's already in use, if it is in use, the loop starts again and a new number is generated
-            else
-            {
-                Random rnd = new Random();
-                bool TestID = true;
-                while (TestID == true)
-                {
-
-                    TemporaryPlaylistID = rnd.Next(0, 9999);
-                    if(data.GetRecordsInt($"SELECT PlaylistID FROM Playlist WHERE PlaylistID = {TemporaryPlaylistID}", "PlaylistID") == null)
-                    {
-                        TestID = false;
-                    }
-                }
-            }
-            PlaylistID = TemporaryPlaylistID;
-            SongPlaylist = data.GetRecordsInt($"SELECT SongID FROM Song WHERE SongID IN (SELECT SongID FROM PlaylistToSong WHERE PlaylistID = {SongPlaylistID})", "SongID");
+            PlaylistID = PlaylistId;
         }
+        
 
         public void CreateNewPlaylist(string Name, int UserID)
         {
@@ -72,7 +52,7 @@ namespace WindesMusic
 
         public void RefreshPlaylist()
         {
-            SongPlaylist = data.GetRecordsInt($"SELECT SongID FROM Song WHERE SongID IN (SELECT SongID FROM PlaylistToSong WHERE PlaylistID = {PlaylistID})", "SongID");
+            SongPlaylist = data.GetSongsInPlaylist(PlaylistID);
         }
 
         public void AddPlaylistSongToQueue(MusicQueue MQueue, int SongID)
@@ -105,10 +85,10 @@ namespace WindesMusic
         public MusicQueue CreateQueueFromPlaylist()
         {
             MusicQueue SongQueue = new MusicQueue();
-            foreach (int SongID in SongPlaylist)
+            foreach(Song PlaylistSong in SongPlaylist)
             {
-                SongQueue.AddSongToQueue(SongID);
-            }
+                SongQueue.AddSongToQueue(PlaylistSong.SongID);
+            }        
             return SongQueue;
         }
     }
