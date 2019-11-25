@@ -26,6 +26,7 @@ namespace WindesMusic
     {
         private AudioPlayer audioPlayer = new AudioPlayer();
         private DispatcherTimer dispatcherTimer;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -40,24 +41,24 @@ namespace WindesMusic
         }
 
         //start, and pause and resume button.
-        private void Play_Button_Click(object sender, RoutedEventArgs e)
+        private void PlayButtonClick(object sender, RoutedEventArgs e)
         {
             audioPlayer.OnButtonPlayClick(sender, e);
         }
 
         //stop button, executes stop function(OnPlayBackStopped).
-        private void Stop_Button_Click(object sender, RoutedEventArgs e)
+        private void StopButtonClick(object sender, RoutedEventArgs e)
         {
             audioPlayer.OnButtonStopClick(sender, e);
         }
 
         //volume slider
-        private void Volume_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void VolumeSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             audioPlayer.SetVolume((float)e.NewValue / 100);
         }
 
-        private void Place_In_Song_Slider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        private void PlaceInSongSliderDragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
             var slider = (Slider)sender;
             var change = slider.Value / 100;
@@ -77,12 +78,12 @@ namespace WindesMusic
             PlaceInSongSlider.Value = audioPlayer.CurrentPlaceInSong();
         }
 
-        private void Mute_Button_Click(object sender, RoutedEventArgs e)
+        private void MuteButtonClick(object sender, RoutedEventArgs e)
         {
             audioPlayer.Mute();
         }
 
-        private void PlaceInSongSlider_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        private void PlaceInSongSliderDragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
         {
             dispatcherTimer.Stop();
         }
@@ -165,9 +166,9 @@ namespace WindesMusic
             Button _ButtonSong = sender as Button;
             string SongID = _ButtonSong.Name;
             SongID = SongID.Substring(2);
-            int Song = Convert.ToInt32(SongID);
+            //int Song = Convert.ToInt32(SongID);
 
-            audioPlayer.PlayChosenSong(Song);
+            audioPlayer.PlayChosenSong(SongID);
         }
     }
 }
