@@ -17,11 +17,11 @@ namespace UnitTestWindesMusic
 
             //pause song en keep time in song stored.
             audioPlayer.OnButtonPlayClick(this, new System.EventArgs());
-            double currentTimeInSong = audioPlayer.CurrentPlaceInSong();
+            double currentTimeInSong = audioPlayer.CurrentPlaceInSongPercentage();
             Thread.Sleep(2000);
 
             //check if song stopped playing.
-            Assert.AreEqual(currentTimeInSong, audioPlayer.CurrentPlaceInSong(), $"{currentTimeInSong} - {audioPlayer.CurrentPlaceInSong()}");
+            Assert.AreEqual(currentTimeInSong, audioPlayer.CurrentPlaceInSongPercentage(), $"{currentTimeInSong} - {audioPlayer.CurrentPlaceInSongPercentage()}");
         }
 
 
@@ -35,12 +35,12 @@ namespace UnitTestWindesMusic
 
             //pause playing song.
             audioPlayer.OnButtonPlayClick(this, new System.EventArgs());
-            double currentTimeInSong = audioPlayer.CurrentPlaceInSong();
+            double currentTimeInSong = audioPlayer.CurrentPlaceInSongPercentage();
 
             //resume playing song.
             audioPlayer.OnButtonPlayClick(this, new System.EventArgs());
             Thread.Sleep(1000);
-            Assert.IsTrue(currentTimeInSong < audioPlayer.CurrentPlaceInSong());
+            Assert.IsTrue(currentTimeInSong < audioPlayer.CurrentPlaceInSongPercentage());
         }
 
         [TestMethod]
@@ -54,7 +54,7 @@ namespace UnitTestWindesMusic
             //press stop button and check if song stopped playing.
             audioPlayer.OnButtonStopClick(this, new System.EventArgs());
             Thread.Sleep(10);
-            Assert.IsTrue(audioPlayer.CurrentPlaceInSong() == 0);
+            Assert.IsTrue(audioPlayer.CurrentPlaceInSongPercentage() == 0);
         }
 
         [TestMethod]
@@ -68,7 +68,7 @@ namespace UnitTestWindesMusic
             //simulate slider set song to end and check if song stopped playing.
             audioPlayer.SetCurrentPlaceInSong(1);
             Thread.Sleep(1000);
-            Assert.IsTrue(audioPlayer.CurrentPlaceInSong() == 0);
+            Assert.IsTrue(audioPlayer.CurrentPlaceInSongPercentage() == 0);
         }
 
         [TestMethod]
@@ -87,7 +87,7 @@ namespace UnitTestWindesMusic
             Thread.Sleep(1000);
 
             //a millisecond inaccuracy allowed. 
-            Assert.AreEqual(50, audioPlayer.CurrentPlaceInSong(), 0.001);
+            Assert.AreEqual(50, audioPlayer.CurrentPlaceInSongPercentage(), 0.001);
         }
     }
 }
