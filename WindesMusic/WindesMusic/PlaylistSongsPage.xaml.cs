@@ -20,12 +20,17 @@ namespace WindesMusic
     /// </summary>
     public partial class PlaylistSongsPage : Page
     {
+        Database db = new Database();
+        private int _PlaylistID;
+        private string _PlaylistName;
         List<Song> SongsInPlaylist;
-        public PlaylistSongsPage(string NameOfPlaylist, List<Song> PlaylistSongs)
+        MainWindow mainWindow;
+        public PlaylistSongsPage(int playlistId, string NameOfPlaylist, List<Song> PlaylistSongs, MainWindow main)
         {
             InitializeComponent();
             SongsInPlaylist = PlaylistSongs;
-
+            mainWindow = main;
+            _PlaylistName = NameOfPlaylist;
             Thickness thickness = new Thickness(10, 2, 0, 5);
             Thickness thickness2 = new Thickness(10, 0, 0, 5);
             var PlaylistBlock = new TextBlock
@@ -33,6 +38,13 @@ namespace WindesMusic
                 Text = $"{NameOfPlaylist}",
                 Margin = thickness
             };
+            var PlayPlaylistButton = new Button
+            {
+                Name = $"_{_PlaylistID}",
+                Content = "Play",
+                Margin = thickness
+            };
+            PlayPlaylistButton.Click += PlayPlaylist;
 
             PlaylistName.Children.Add(PlaylistBlock);
             foreach (Song playlistSong in PlaylistSongs)
@@ -47,7 +59,7 @@ namespace WindesMusic
                     Content = "Play",
                     Margin = thickness2
                 };
-                //PlayButton.Click += PlaySongFromPlaylist;
+                PlayButton.Click += PlaySongFromPlaylist;
                 var SongBlockName = new TextBlock
                 {
                     Name = $"_{playlistSong.SongID}",
@@ -81,6 +93,20 @@ namespace WindesMusic
             }
             
         }
-        
+
+        private void PlaySongFromPlaylist(object sender, RoutedEventArgs e)
+        {
+            Button _ButtonSong = sender as Button;
+            string SongID = _ButtonSong.Name;
+            SongID = SongID.Substring(2);
+            mainWindow.audioPlayer.PlayChosenSong(SongID);
+        }
+
+        private void PlayPlaylist(object sender, RoutedEventArgs e)
+        {
+            Playlist playlist = new Playlist(_PlaylistID);
+            MusicQueue MQueue = playlist.CreateQueueFromPlaylist();
+
+        }
     }
 }
