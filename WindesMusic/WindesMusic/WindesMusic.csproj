@@ -73,6 +73,9 @@
       <DependentUpon>PlaylistsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="AudioPlayer.cs" />
+    <Compile Include="SearchResults.xaml.cs">
+      <DependentUpon>SearchResults.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Song.cs" />
     <Compile Include="User.cs" />
     <Page Include="LoginWindow.xaml">
@@ -107,6 +110,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PlaylistsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SearchResults.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

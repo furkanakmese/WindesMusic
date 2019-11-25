@@ -38,6 +38,15 @@ namespace WindesMusic
             dispatcherTimer.Start();
 
             Main.Content = new Playlists();
+            inputSearch.KeyDown += InputSearch_KeyDown;
+        }
+
+        private void InputSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+            {
+                Main.Content = new SearchResults(inputSearch.Text);
+            }
         }
 
         //start, and pause and resume button.
