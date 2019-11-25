@@ -33,7 +33,7 @@
             </StackPanel>
 
             <StackPanel DockPanel.Dock="Bottom" Height="75" Margin="-150.4,0,-0.4,0" Background="DarkGray">
-                <Slider x:Name="PlaceInSongSlider" HorizontalAlignment="Center" Width="250" Height="20" Margin="0,7.5,0,-2.5" Thumb.DragCompleted="PlaceInSongSliderDragCompleted" Thumb.DragStarted="PlaceInSongSliderDragStarted"/>
+                <Slider x:Name="PlaceInSongSlider" HorizontalAlignment="Center" Width="250" Height="20" Margin="0,7.5,0,-2.5" Thumb.DragCompleted="PlaceInSongSliderDragCompleted" Thumb.DragStarted="PlaceInSongSliderDragStarted" Maximum="100"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -44,7 +44,7 @@
                     <Label HorizontalAlignment="Center" Grid.Column="0" Content="Song - Artist" Margin="360,0,140,0" />
                     <Button Grid.Column="1" Content="Queue"/>
                     <Button Click="MuteButtonClick" Grid.Column="2" Content="Mute/Unmute"/>
-                    <Slider ValueChanged="VolumeSliderValueChanged" HorizontalAlignment="Right" Width="100" Grid.Column="3"/>
+                    <Slider ValueChanged="VolumeSliderValueChanged" HorizontalAlignment="Right" Maximum="100" Value="100" Width="100" Grid.Column="3"/>
                 </Grid>
 
                 <Grid Width="250">
@@ -57,9 +57,9 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="0" Content="Shuffle" HorizontalAlignment="Left"/>
-                    <Button Grid.Column="1" Content="Previous"/>
+                    <Button Grid.Column="1" Content="Previous" Click="PreviousButtonClick"/>
                     <Button Grid.Column="2" Content="Play/Pause" Click="PlayButtonClick" HorizontalAlignment="Center" Height="17" Margin="13.4,0,13,-0.2" VerticalAlignment="Top"/>
-                    <Button Grid.Column="3" Content="Next"/>
+                    <Button Grid.Column="3" Content="Next" Click="NextButtonClick"/>
                     <Button Grid.Column="4" Content="Repeat" HorizontalAlignment="Right"/>
                 </Grid>
 

@@ -52,7 +52,7 @@ namespace UnitTestWindesMusic
             Thread.Sleep(3000);
 
             //press stop button and check if song stopped playing.
-            audioPlayer.OnButtonStopClick(this, new System.EventArgs());
+            audioPlayer.OnButtonStopClick();
             Thread.Sleep(10);
             Assert.IsTrue(audioPlayer.CurrentPlaceInSongPercentage() == 0);
         }
