@@ -26,6 +26,7 @@ namespace WindesMusic
     {
         private AudioPlayer audioPlayer = new AudioPlayer();
         private DispatcherTimer dispatcherTimer;
+        private Database db = new Database();
 
         public MainWindow()
         {
@@ -38,6 +39,15 @@ namespace WindesMusic
             dispatcherTimer.Start();
 
             Main.Content = new Playlists();
+            inputSearch.KeyDown += InputSearch_KeyDown;
+        }
+
+        private void InputSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+            {
+                Main.Content = new SearchResults(inputSearch.Text);
+            }
         }
 
         //start, and pause and resume button.
@@ -87,15 +97,15 @@ namespace WindesMusic
         {
             dispatcherTimer.Stop();
         }
+
         protected override void OnContentRendered(EventArgs e)
         {
             base.OnContentRendered(e);
-            Database database1 = new Database();
             List<int> PlaylistIDs = new List<int>();
             List<string> PlaylistNames = new List<string>();
             PlaylistList.Children.Clear();
-            PlaylistIDs = database1.GetRecordsInt($"SELECT PlaylistID FROM Playlist WHERE UserID = 1", "PlaylistID");
-            PlaylistNames = database1.GetRecordsString($"SELECT PlaylistName FROM Playlist WHERE UserID = 1", "PlaylistName");
+            PlaylistIDs = db.GetRecordsInt($"SELECT PlaylistID FROM Playlist WHERE UserID = 1", "PlaylistID");
+            PlaylistNames = db.GetRecordsString($"SELECT PlaylistName FROM Playlist WHERE UserID = 1", "PlaylistName");
             Thickness thickness = new Thickness(15, 0, 0, 5);
 
             for (int i = 0; i < PlaylistIDs.Count; i++)
@@ -118,14 +128,13 @@ namespace WindesMusic
         private void ButtonClickPlaylist(object sender, RoutedEventArgs e)
         {
             SongList.Children.Clear();
-            Database data = new Database();
             Button _ButtonPlaylist = sender as Button;
             string PlaylistIDName = _ButtonPlaylist.Name;
             PlaylistIDName = PlaylistIDName.Substring(1);
             int PlaylistID = Convert.ToInt32(PlaylistIDName);
 
             Playlist playlist = new Playlist(PlaylistID);
-            playlist.SongPlaylist = data.GetSongsInPlaylist(PlaylistID);
+            playlist.SongPlaylist = db.GetSongsInPlaylist(PlaylistID);
             Thickness thickness = new Thickness(10, 2, 0, 5);
             Thickness thickness2 = new Thickness(10, 0, 0, 5);
             for (int i = 0; i < playlist.SongPlaylist.Count; i++)
