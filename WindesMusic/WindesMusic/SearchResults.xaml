@@ -10,7 +10,7 @@
 
     <Grid>
         <ScrollViewer Height="430" Width="780" Padding="12">
-            <StackPanel Name="stackResults"/>
+            <StackPanel Name="stackResults" Orientation="Vertical"/>
         </ScrollViewer>
     </Grid>
 </Page>
