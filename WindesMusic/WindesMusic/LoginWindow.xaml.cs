@@ -54,6 +54,7 @@ namespace WindesMusic
                     {
                         MainWindow main = new MainWindow();
                         main.Show();
+                        this.Close();
                     }
                     else
                     {
@@ -61,6 +62,13 @@ namespace WindesMusic
                     }
                 }
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Register register = new Register();
+            register.Show();
+            this.Close();
         }
     }
 }

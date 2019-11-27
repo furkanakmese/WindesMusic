@@ -114,6 +114,54 @@ namespace WindesMusic
             _connection.Close();
             return userResult;
         }
+
+        public User Register(string name, string email, string password)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+
+            _command.CommandText = "SELECT * FROM Users WHERE Email=@email";
+            var emailParam = _command.CreateParameter();
+            emailParam.ParameterName = "@email";
+            emailParam.Value = email;
+            _command.Parameters.Add(emailParam);
+
+            _reader = _command.ExecuteReader();
+            if(_reader.Read())
+            {
+                return new User();
+            }
+            _reader.Close();
+
+            _command.CommandText = "INSERT INTO Users(Name, Email, Password) VALUES (@name, @email, @password)";
+
+            var nameParam = _command.CreateParameter();
+            nameParam.ParameterName = "@name";
+            nameParam.Value = name;
+
+            var sha1 = new SHA1CryptoServiceProvider();
+            var data = Encoding.ASCII.GetBytes(password);
+            var sha1data = sha1.ComputeHash(data);
+
+            var passwordParam = _command.CreateParameter();
+            passwordParam.ParameterName = "@password";
+            passwordParam.Value = Encoding.ASCII.GetString(sha1data);
+
+            _command.Parameters.Add(nameParam);
+            _command.Parameters.Add(passwordParam);
+            // _reader = _command.ExecuteReader();
+            
+            if(_command.ExecuteNonQuery() > 0)
+            {
+                _connection.Close();
+                return Login(email, password);
+            } else
+            {
+                _connection.Close();
+                return new User();
+            }
+        }
+
         // method for retrieving user data after login or on startup using ID
         public User GetUserData(int id)
         {

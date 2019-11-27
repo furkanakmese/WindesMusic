@@ -7,13 +7,15 @@
         mc:Ignorable="d"
         Title="LoginWindow" Height="450" Width="800"
         FontFamily="Arial"
-        Background="{DynamicResource MainColor}">
+        Background="{DynamicResource MainColor}"
+        WindowStartupLocation="CenterScreen">
 
     <Grid x:Name="Login">
-        <Label Content="Mini Spotify"  HorizontalContentAlignment="Center" HorizontalAlignment="Center" Height="47" Margin="50" VerticalAlignment="Top" Width="191"  FontSize="30" FontFamily="Arial"/>
+        <Label Content="Windes Music"  HorizontalContentAlignment="Center" HorizontalAlignment="Center" Height="47" Margin="300,49,289.333,0" VerticalAlignment="Top" Width="204"  FontSize="30" FontFamily="Arial"/>
         <TextBox Name="InputEmail" Style="{StaticResource placeHolder}"  Tag="Email" HorizontalAlignment="Center" BorderThickness="0,0,0,1" Height="23" Margin="150" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120"/>
         <PasswordBox Name="InputPassword" HorizontalAlignment="Left" Margin="337,178,0,0" VerticalAlignment="Top" Width="120" Height="20"/>
         <Button Name="LoginBtn" Click="LoginBtn_Click" Content="Log in" HorizontalAlignment="Center" Margin="0,225,0,0" VerticalAlignment="Top" Width="120"/>
         <TextBlock Name="lblMessage" HorizontalAlignment="Left" Margin="337,203,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
+        <Button Content="No account? register" HorizontalAlignment="Left" Margin="337,249,0,0" VerticalAlignment="Top" Width="120" Click="Button_Click"/>
     </Grid>
 </Window>
