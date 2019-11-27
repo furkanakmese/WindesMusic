@@ -39,6 +39,9 @@ namespace WindesMusic
 
             Main.Content = new Playlists();
             inputSearch.KeyDown += InputSearch_KeyDown;
+
+            Properties.Settings.Default.UserID = 0;
+            Properties.Settings.Default.Save();
         }
 
         private void InputSearch_KeyDown(object sender, KeyEventArgs e)
