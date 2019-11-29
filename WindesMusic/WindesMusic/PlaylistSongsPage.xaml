@@ -13,8 +13,16 @@
     <Grid x:Name="PlaylistSongsPageMainGrid">
         <StackPanel x:Name="PlaylistSongs" Height="450" VerticalAlignment="Top" Width="644" Margin="0,0,0,0">
             <StackPanel x:Name="PlaylistName" Height="100" VerticalAlignment="Top" Width="644" Margin="0,0,0,0"/>
-            <ScrollViewer Height="350" Margin="0,0,0,0">
-                <StackPanel x:Name="SongList" Height="300" Margin="0,70,0,0"/>
+            <ScrollViewer Height="185" Margin="0,0,0,0">
+                <Grid x:Name="SongList" VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="35"/>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                </Grid>
             </ScrollViewer>
         </StackPanel>
     </Grid>

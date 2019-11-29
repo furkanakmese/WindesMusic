@@ -24,12 +24,22 @@ namespace WindesMusic
             fileName.Append(".mp3");
 
 
-            
+            //audioFile = null;
+            /*
             if (audioFile != null)
             {
-                OnButtonStopClick();
+                audioFile.Dispose();
             }
-            
+            */
+            try{
+                audioFile.Dispose();
+            }catch(Exception e)
+            {
+
+            }
+            audioFile = null;
+
+
 
             audioFile = new AudioFileReader(fileName.ToString());
             outputDevice.Init(audioFile);
@@ -43,12 +53,24 @@ namespace WindesMusic
                 StringBuilder fileName = new StringBuilder();
                 fileName.Append(MusicQueue.SongQueue.Dequeue());
                 fileName.Append(".mp3");
-
+                //audioFile.Dispose();
+                //audioFile = null;
+                /*
                 if (audioFile != null)
                 {
-                    OnButtonStopClick();
+                    audioFile.Dispose();
                 }
+                audioFile = null;
+                */
+                try
+                {
+                    audioFile.Dispose();
+                }
+                catch (Exception e)
+                {
 
+                }
+                audioFile = null;
                 audioFile = new AudioFileReader(fileName.ToString());
                 outputDevice.Init(audioFile);
                 outputDevice.Play();
@@ -80,8 +102,16 @@ namespace WindesMusic
         public void OnButtonStopClick()
         {
             outputDevice?.Stop();
+            try
+            {
+                audioFile.Dispose();
+            }catch(Exception e)
+            {
+
+            }
+            audioFile = null;
             isPlaying = false;
-            if (MusicQueue.SongQueue.Count != 0)
+            if (MusicQueue.SongQueue.Count != 0 && audioFile ==  null)
             {
                 this.PlayChosenSong();
             }
@@ -92,7 +122,6 @@ namespace WindesMusic
         {
             audioFile.Dispose();
             audioFile = null;
-
         }
 
         //recieves change in slider value and calculates new position in song.
