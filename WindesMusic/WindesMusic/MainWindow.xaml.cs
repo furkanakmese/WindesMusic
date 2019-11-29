@@ -26,6 +26,8 @@ namespace WindesMusic
     {
         public AudioPlayer audioPlayer = new AudioPlayer();
         private DispatcherTimer dispatcherTimer;
+        private User user;
+        private Database db = new Database();
 
         public MainWindow()
         {
@@ -110,8 +112,7 @@ namespace WindesMusic
         protected override void OnContentRendered(EventArgs e)
         {
             base.OnContentRendered(e);
-            Database database1 = new Database();
-            User user = database1.GetUserData(WindesMusic.Properties.Settings.Default.UserID);
+            user = db.GetUserData(WindesMusic.Properties.Settings.Default.UserID);
             Thickness thickness = new Thickness(15, 0, 0, 5);
             foreach (var item in user.Playlists)
             {
@@ -133,17 +134,11 @@ namespace WindesMusic
         private void ButtonClickPlaylist(object sender, RoutedEventArgs e)
         {
             SongList.Children.Clear();
-            Database data = new Database();
             Button _ButtonPlaylist = sender as Button;
-            string PlaylistIDName = _ButtonPlaylist.Name;
-            PlaylistIDName = PlaylistIDName.Substring(1);
-            int PlaylistID = Convert.ToInt32(PlaylistIDName);
-            List<Song> ListOfSongs = data.GetSongsInPlaylist(PlaylistID);
-            string PlaylistName = data.GetNameFromPlaylist(PlaylistID);
-            PlaylistSongsPage SongsPage = new PlaylistSongsPage(PlaylistID, PlaylistName, ListOfSongs, this);
+            int PlaylistId = Convert.ToInt32(_ButtonPlaylist.Name.Substring(1));
+            Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == PlaylistId).FirstOrDefault();
+            PlaylistSongsPage SongsPage = new PlaylistSongsPage(relevantPlaylist.PlaylistID, relevantPlaylist.PlaylistName, relevantPlaylist.SongPlaylist, this);
             this.Main.Content = SongsPage;
-            
-            
         }
 
         private void NewPlaylistButtonClick(object sender, RoutedEventArgs e)

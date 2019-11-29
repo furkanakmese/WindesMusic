@@ -32,85 +32,131 @@ namespace WindesMusic
             mainWindow = main;
             _PlaylistName = NameOfPlaylist;
             _PlaylistID = playlistId;
-            Thickness thickness = new Thickness(10, 2, 0, 5);
-            Thickness thickness2 = new Thickness(10, 0, 0, 5);
-            Thickness thickness3 = new Thickness(250, 10, 260, 5);
-            Thickness thickness4 = new Thickness(250, 10, 0, 5);
+            Thickness SongBlockThickness = new Thickness(5, 2, 0, 0);
             SolidColorBrush whiteText = new SolidColorBrush(System.Windows.Media.Colors.White);
-            StackPanel spPlaylist = new StackPanel();
-            spPlaylist.Orientation = Orientation.Horizontal;
-            spPlaylist.VerticalAlignment = VerticalAlignment.Stretch;
-            spPlaylist.HorizontalAlignment = HorizontalAlignment.Stretch;
+
             var PlaylistBlock = new TextBlock
             {
                 Text = $"{NameOfPlaylist}",
                 FontSize = 25,
                 Foreground = whiteText,
-                Margin = thickness4
+                Margin = new Thickness(250, 10, 0, 5)
             };
             var PlayPlaylistButton = new Button
             {
                 Name = $"_{_PlaylistID}",
                 Content = "Play",
                 FontSize = 30,
-                Margin = thickness3
+                Margin = new Thickness(250, 10, 260, 5)
             };
             PlayPlaylistButton.Click += PlayPlaylist;
 
-            //spPlaylist.Children.Add(PlaylistBlock);
-            //spPlaylist.Children.Add(PlayPlaylistButton);
             PlaylistName.Children.Add(PlaylistBlock);
             PlaylistName.Children.Add(PlayPlaylistButton);
-            foreach (Song playlistSong in PlaylistSongs)
+
+            //Adds the necessary amount of rows for the playlist
+            for (int i = 0; i < PlaylistSongs.Count; i++)
             {
-                StackPanel sp = new StackPanel();
-                sp.Orientation = Orientation.Horizontal;
-                sp.VerticalAlignment = VerticalAlignment.Stretch;
-                sp.HorizontalAlignment = HorizontalAlignment.Stretch;
+                RowDefinition rowDef = new RowDefinition();
+                SongList.RowDefinitions.Add(rowDef);
+            }
+
+            for (int i = 0; i < PlaylistSongs.Count; i++)
+            {
+                Song playlistSong = PlaylistSongs[i];
+
+                // Add the play button to the Songlist grid
                 var PlayButton = new Button
                 {
                     Name = $"__{playlistSong.SongID}",
                     Content = "Play",
-                    Margin = thickness2
+                    Margin = new Thickness(5, 0, 0, 5)
                 };
+                Grid.SetRow(PlayButton, i);
+                Grid.SetColumn(PlayButton, 0);
                 PlayButton.Click += PlaySongFromPlaylist;
+
+                // Add the Songname text block to the Songlist grid
                 var SongBlockName = new TextBlock
                 {
                     Name = $"_{playlistSong.SongID}",
                     Text = $"{playlistSong.SongName}",
                     Foreground = whiteText,
-                    Margin = thickness
+                    Margin = SongBlockThickness
                 };
+                Grid.SetRow(SongBlockName, i);
+                Grid.SetColumn(SongBlockName, 1);
+
+                // Add the artist text block to the Songlist grid
                 var SongBlockArtist = new TextBlock
                 {
                     Name = $"_{playlistSong.SongID}",
                     Text = $"{playlistSong.Artist}",
                     Foreground = whiteText,
-                    Margin = thickness
+                    Margin = SongBlockThickness
                 };
+                Grid.SetRow(SongBlockArtist, i);
+                Grid.SetColumn(SongBlockArtist, 2);
+
+                // Add the album text block to the Songlist grid
                 var SongBlockAlbum = new TextBlock
                 {
                     Name = $"_{playlistSong.SongID}",
                     Text = $"{playlistSong.Album}",
                     Foreground = whiteText,
-                    Margin = thickness
+                    Margin = SongBlockThickness
                 };
+                Grid.SetRow(SongBlockAlbum, i);
+                Grid.SetColumn(SongBlockAlbum, 3);
+
+                // Add the year text block to the Songlist grid
                 var SongBlockYear = new TextBlock
                 {
                     Name = $"_{playlistSong.SongID}",
                     Text = $"{playlistSong.Year}",
                     Foreground = whiteText,
-                    Margin = thickness
+                    Margin = SongBlockThickness
                 };
-                sp.Children.Add(PlayButton);
-                sp.Children.Add(SongBlockName);
-                sp.Children.Add(SongBlockArtist);
-                sp.Children.Add(SongBlockAlbum);
-                sp.Children.Add(SongBlockYear);
-                SongList.Children.Add(sp);
+                Grid.SetRow(SongBlockYear, i);
+                Grid.SetColumn(SongBlockYear, 4);
+
+                // Add the elements to the Songlist grid Children collection
+                SongList.Children.Add(PlayButton);
+                SongList.Children.Add(SongBlockName);
+                SongList.Children.Add(SongBlockArtist);
+                SongList.Children.Add(SongBlockAlbum);
+                SongList.Children.Add(SongBlockYear);
+
+                ContextMenu menu = new ContextMenu();
+                menu.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
+                menu.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
+                MenuItem PlaylistItem = new MenuItem();
+                PlaylistItem.Name = $"Playlist_{playlistSong.SongID}";
+                PlaylistItem.Header = "Add to Playlist";
+                PlaylistItem.Click += AddToPlaylistClick;
+
+                MenuItem QueueItem = new MenuItem();
+                PlaylistItem.Name = $"Queue_{playlistSong.SongID}";
+                QueueItem.Header = "Add to Queue";
+                QueueItem.Click += AddToQueueClick;
+
+                menu.Items.Add(PlaylistItem);
+                menu.Items.Add(QueueItem);
+                SongList.ContextMenu = menu;
             }
+        }
+
+        private void AddToPlaylistClick(object sender, RoutedEventArgs e)
+        {
+            MenuItem Song = sender as MenuItem;
+            int SongID = Convert.ToInt32(Song.Name.Substring(9));
             
         }
+        private void AddToQueueClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
 
         private void PlaySongFromPlaylist(object sender, RoutedEventArgs e)
         {

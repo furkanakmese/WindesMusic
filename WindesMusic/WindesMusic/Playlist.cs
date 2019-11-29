@@ -41,6 +41,18 @@ namespace WindesMusic
             }
         }
 
+        public void AddSongToPlaylist(Song song)
+        {
+            data.AddSongToPlaylist(this.PlaylistID, song.SongID);
+        }
+
+        /*
+        public void ShowPlaylistSongsPage(MainWindow main)
+        {
+            PlaylistSongsPage SongsPage = new PlaylistSongsPage(PlaylistID, PlaylistName, PlaylistSongs, main);
+            main.Main.Content = SongsPage;
+        }
+        */
         public void CreatePlaylistFromQueue(MusicQueue MQueue, string Name, int UserID)
         {
             if(MQueue != null)

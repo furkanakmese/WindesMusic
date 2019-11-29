@@ -9,6 +9,7 @@ namespace WindesMusic
     public class MusicQueue
     {
         public static Queue<int> SongQueue = new Queue<int>();
+        public static Stack<int> PreviousSongs = new Stack<int>();
 
         public MusicQueue()
         {
@@ -18,6 +19,17 @@ namespace WindesMusic
         public void AddSongToQueue(int SongID)
         {
             SongQueue.Enqueue(SongID);
+        }
+
+        public void AddSongToPreviousQueue(int SongID)
+        {
+            PreviousSongs.Push(SongID);
+            if(PreviousSongs.Count > 10)
+            {
+                List<int> PreviousSongsList = new List<int>(PreviousSongs);
+                PreviousSongsList.RemoveAt(9);
+                PreviousSongs = new Stack<int>(PreviousSongsList);
+            }
         }
 
         public void RemoveSongFromQueue(int Key)
@@ -36,7 +48,7 @@ namespace WindesMusic
             }
             else
             {
-                return 0; //Temporary, change it later to start playing recommendations
+                return 23; //Temporary, change it later to start playing recommendations
             }
         }
 

@@ -138,7 +138,12 @@ namespace WindesMusic
                 userResult.Playlists.Add(playlistResult);
             }
             _connection.Close();
+            foreach(Playlist playlist in userResult.Playlists)
+            {
+                playlist.SongPlaylist = GetSongsInPlaylist(playlist.PlaylistID);
+            }
             return userResult;
+
         }
 
         // method to retieve search results
