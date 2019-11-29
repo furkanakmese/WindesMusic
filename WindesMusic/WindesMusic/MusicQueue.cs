@@ -6,22 +6,18 @@ using System.Threading.Tasks;
 
 namespace WindesMusic
 {
-    public class MusicQueue
+    public static class MusicQueue
     {
         public static Queue<int> SongQueue = new Queue<int>();
         public static Stack<int> PreviousSongs = new Stack<int>();
 
-        public MusicQueue()
-        {
-            
-        }
 
-        public void AddSongToQueue(int SongID)
+        public static void AddSongToQueue(int SongID)
         {
             SongQueue.Enqueue(SongID);
         }
 
-        public void AddSongToPreviousQueue(int SongID)
+        public static void AddSongToPreviousQueue(int SongID)
         {
             PreviousSongs.Push(SongID);
             if(PreviousSongs.Count > 10)
@@ -32,14 +28,14 @@ namespace WindesMusic
             }
         }
 
-        public void RemoveSongFromQueue(int Key)
+        public static void RemoveSongFromQueue(int Key)
         {
             List<int> SongList = new List<int>(SongQueue);
             SongList.RemoveAt(Key);
             SongQueue = new Queue<int>(SongList);
         }
 
-        public int GetSongFromQueue()
+        public static int GetSongFromQueue()
         {
             if (SongQueue.Count != 0)
             {
@@ -52,7 +48,7 @@ namespace WindesMusic
             }
         }
 
-        public List<int> ReturnSongsInQueue()
+        public static List<int> ReturnSongsInQueue()
         {
             List<int> ReturnList = new List<int>(SongQueue);
             return ReturnList;

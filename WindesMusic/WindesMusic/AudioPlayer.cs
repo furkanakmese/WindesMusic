@@ -23,20 +23,7 @@ namespace WindesMusic
             fileName.Append(songID);
             fileName.Append(".mp3");
 
-
-            //audioFile = null;
-            /*
-            if (audioFile != null)
-            {
-                audioFile.Dispose();
-            }
-            */
-            try{
-                audioFile.Dispose();
-            }catch(Exception e)
-            {
-
-            }
+            DisposeOfSong();
             audioFile = null;
 
 
@@ -53,23 +40,7 @@ namespace WindesMusic
                 StringBuilder fileName = new StringBuilder();
                 fileName.Append(MusicQueue.SongQueue.Dequeue());
                 fileName.Append(".mp3");
-                //audioFile.Dispose();
-                //audioFile = null;
-                /*
-                if (audioFile != null)
-                {
-                    audioFile.Dispose();
-                }
-                audioFile = null;
-                */
-                try
-                {
-                    audioFile.Dispose();
-                }
-                catch (Exception e)
-                {
-
-                }
+                DisposeOfSong();
                 audioFile = null;
                 audioFile = new AudioFileReader(fileName.ToString());
                 outputDevice.Init(audioFile);
@@ -102,13 +73,7 @@ namespace WindesMusic
         public void OnButtonStopClick()
         {
             outputDevice?.Stop();
-            try
-            {
-                audioFile.Dispose();
-            }catch(Exception e)
-            {
-
-            }
+            DisposeOfSong();
             audioFile = null;
             isPlaying = false;
             if (MusicQueue.SongQueue.Count != 0 && audioFile ==  null)
@@ -120,7 +85,7 @@ namespace WindesMusic
         //stop function, disposes of AudiofileReader.
         public void OnPlaybackStopped(object sender, StoppedEventArgs args)
         {
-            audioFile.Dispose();
+            DisposeOfSong();
             audioFile = null;
         }
 
@@ -177,6 +142,16 @@ namespace WindesMusic
             {
                 outputDevice.Volume = volume;
             }
+        }
+
+        public void DisposeOfSong()
+        {
+            try
+            {
+                audioFile.Dispose();
+            }
+            catch (NullReferenceException)
+            { }
         }
     }
 }

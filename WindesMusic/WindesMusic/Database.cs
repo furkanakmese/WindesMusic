@@ -337,7 +337,7 @@ namespace WindesMusic
             var criteriaParamSongID = _command.CreateParameter();
             criteriaParamSongID.ParameterName = "@SongID";
             criteriaParamSongID.Value = SongID;
-            _command.Parameters.Add(criteriaParamPlaylistID);
+            _command.Parameters.Add(criteriaParamSongID);
 
             _command.ExecuteNonQuery();
             _connection.Close();
