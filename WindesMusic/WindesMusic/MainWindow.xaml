@@ -25,7 +25,7 @@
                 <Separator Width="100" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                 <Button Style="{StaticResource MenuButton}" Click="NewPlaylistButtonClick" Content="+ Create Playlist" Margin="25,5,0,5"/>
                 <ScrollViewer HorizontalAlignment="Left" Height="126" Margin="10,10,0,0" VerticalAlignment="Top" Width="140">
-                    <StackPanel Name="PlaylistList" Height="250">
+                    <StackPanel Name="PlaylistList">
 
                     </StackPanel>
                 </ScrollViewer>
