@@ -108,6 +108,7 @@ namespace WindesMusic
                 userResult.Id = (int)_reader["Id"];
                 userResult.Email = (string)_reader["Email"];
                 userResult.Name = (string)_reader["Name"];
+                userResult.IsArtist = (int)_reader["IsArtist"];
                 // save user id to application settings
                 Properties.Settings.Default.UserID = userResult.Id;
                 Properties.Settings.Default.Save();
@@ -183,6 +184,7 @@ namespace WindesMusic
                 userResult.Id = (int)_reader["Id"];
                 userResult.Email = (string)_reader["Email"];
                 userResult.Name = (string)_reader["Name"];
+                userResult.IsArtist = (int)_reader["IsArtist"];
                 try
                 {
                     playlistResult.PlaylistID = (int)_reader["PlaylistID"];
@@ -201,7 +203,6 @@ namespace WindesMusic
             {
                 playlist.SongPlaylist = GetSongsInPlaylist(playlist.PlaylistID);
             }
-            Console.WriteLine("rsult is " + userResult.Email);
             return userResult;
 
         }
@@ -256,6 +257,37 @@ namespace WindesMusic
                 searchResult.Artist = (string)_reader["Artist"];
                 searchResult.Album = (string)_reader["Album"];
                 searchResult.Year = (int)_reader["Year"];
+                searchResult.Genre = (string)_reader["Genre"];
+                listResult.Add(searchResult);
+            }
+
+            _connection.Close();
+            return listResult;
+        }
+
+        public List<Song> GetRecommendedSongsForPlaylist(string songIDsString)
+        { 
+
+            OpenConnection();
+            _command.Parameters.Clear();
+            List<Song> listResult = new List<Song>();
+            _command.CommandText = "SELECT TOP 5 * FROM Song WHERE Genre = 'Pop' AND SongID != @songIDsString ORDER BY NewID()";
+
+            var criteriaParam = _command.CreateParameter();
+            criteriaParam.ParameterName = "@songIDsString";
+            criteriaParam.Value = songIDsString;
+            _command.Parameters.Add(criteriaParam);
+            _reader = _command.ExecuteReader();
+
+            while (_reader.Read())
+            {
+                Song searchResult = new Song();
+                searchResult.SongID = (int)_reader["SongID"];
+                searchResult.SongName = (string)_reader["Name"];
+                searchResult.Artist = (string)_reader["Artist"];
+                searchResult.Album = (string)_reader["Album"];
+                searchResult.Year = (int)_reader["Year"];
+                searchResult.Genre = (string)_reader["Genre"];
                 listResult.Add(searchResult);
             }
 
@@ -385,7 +417,31 @@ namespace WindesMusic
 
             _connection.Close();
             return Result;
+        }
 
+        public bool RequestArtistStatus()
+        {
+            int id = Properties.Settings.Default.UserID;
+
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "UPDATE Users SET IsArtist=1 WHERE Id=@id";
+
+            var idParam = _command.CreateParameter();
+            idParam.ParameterName = "@id";
+            idParam.Value = id;
+            _command.Parameters.Add(idParam);
+
+            if (_command.ExecuteNonQuery() > 0)
+            {
+                _connection.Close();
+                return true;
+            }
+            else
+            {
+                _connection.Close();
+                return false;
+            }
         }
     }
 }

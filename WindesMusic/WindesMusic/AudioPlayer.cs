@@ -10,6 +10,7 @@ namespace WindesMusic
         private AudioFileReader audioFile;
         private bool isPlaying = false;
         private float volume = 1;
+        private string _CurrentSong;
 
         public AudioPlayer()
         {
@@ -17,12 +18,12 @@ namespace WindesMusic
             //outputDevice.PlaybackStopped += OnPlaybackStopped;
         }
 
-        public void PlayChosenSong(string songID)
+        public void PlayChosenSong(int songID)
         {
             StringBuilder fileName = new StringBuilder();
-            fileName.Append(songID);
+            fileName.Append(songID.ToString());
             fileName.Append(".mp3");
-
+            _CurrentSong = songID.ToString();
             DisposeOfSong();
             audioFile = null;
 
@@ -33,34 +34,72 @@ namespace WindesMusic
             outputDevice.Play();
             isPlaying = true;
         }
-        public void PlayChosenSong()
+
+        public void PlayChosenSong(string songID)
         {
-            if (MusicQueue.SongQueue.Count != 0)
+            StringBuilder fileName = new StringBuilder();
+            fileName.Append(songID);
+            fileName.Append(".mp3");
+            _CurrentSong = songID;
+            DisposeOfSong();
+            audioFile = null;
+
+            try
             {
-                StringBuilder fileName = new StringBuilder();
-                fileName.Append(MusicQueue.SongQueue.Dequeue());
-                fileName.Append(".mp3");
-                DisposeOfSong();
-                audioFile = null;
                 audioFile = new AudioFileReader(fileName.ToString());
                 outputDevice.Init(audioFile);
                 outputDevice.Play();
                 isPlaying = true;
+            } catch(Exception e)
+            {
+                Console.WriteLine("File not found");
+            }
+        }
+        public void PlayChosenSong()
+        {
+            if (MusicQueue.SongQueue.Count != 0)
+            {
+                int FileNumber = MusicQueue.SongQueue.Dequeue();
+                StringBuilder fileName = new StringBuilder();
+                fileName.Append(FileNumber);
+                fileName.Append(".mp3");
+                _CurrentSong = null;
+                DisposeOfSong();
+                audioFile = null;
+                try
+                {
+                    audioFile = new AudioFileReader(fileName.ToString());
+                    outputDevice.Stop();
+                    outputDevice.Init(audioFile);
+                    outputDevice.Play();
+                    _CurrentSong = FileNumber.ToString();
+                    isPlaying = true;
+                } catch(Exception e)
+                {
+                    Console.WriteLine("File not found");
+                }
             }
         }
 
         //start, and pause and resume button.
         public void OnButtonPlayClick(object sender, EventArgs args)
         {
+            Console.WriteLine("test");
             if (!isPlaying)
             {
-                if (audioFile == null)
+                // if (audioFile == null)
+                // {
+                    // audioFile = new AudioFileReader("Feint2.mp3");
+                    // outputDevice.Init(audioFile);
+                // }
+                try
                 {
-                    audioFile = new AudioFileReader("Feint2.mp3");
-                    outputDevice.Init(audioFile);
+                    outputDevice.Play();
+                    isPlaying = true;
+                } catch(Exception e)
+                {
+                    Console.WriteLine("No song to play");
                 }
-                outputDevice.Play();
-                isPlaying = true;
             }
             else
             {
@@ -72,13 +111,31 @@ namespace WindesMusic
         //stop button, executes stop function(OnPlayBackStopped).
         public void OnButtonStopClick()
         {
+            outputDevice?.Pause();
             outputDevice?.Stop();
             DisposeOfSong();
             audioFile = null;
             isPlaying = false;
-            if (MusicQueue.SongQueue.Count != 0 && audioFile ==  null)
+            if (_CurrentSong != null)
+            {
+                MusicQueue.AddSongToPreviousQueue(_CurrentSong);
+            }
+            if (MusicQueue.SongQueue.Count != 0 && audioFile == null)
             {
                 this.PlayChosenSong();
+            }
+        }
+
+        public void OnButtonPreviousClick()
+        {
+            outputDevice?.Stop();
+            DisposeOfSong();
+            audioFile = null;
+            isPlaying = false;
+            
+            if (MusicQueue.PreviousSongs.Count != 0 && audioFile == null)
+            {
+                this.PlayChosenSong(MusicQueue.PreviousSongs.Pop());
             }
         }
 
@@ -146,12 +203,10 @@ namespace WindesMusic
 
         public void DisposeOfSong()
         {
-            try
+            if(audioFile != null)
             {
                 audioFile.Dispose();
             }
-            catch (NullReferenceException)
-            { }
         }
     }
 }

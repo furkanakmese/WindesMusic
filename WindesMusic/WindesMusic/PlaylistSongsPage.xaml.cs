@@ -25,21 +25,25 @@ namespace WindesMusic
         private string _PlaylistName;
         List<Song> SongsInPlaylist;
         MainWindow mainWindow;
+        Recommender recommender;
         User user;
-        public PlaylistSongsPage(int playlistId, string NameOfPlaylist, List<Song> PlaylistSongs, MainWindow main, User BaseUser)
+        public PlaylistSongsPage(Playlist playlist, MainWindow main, User BaseUser)
         {
             InitializeComponent();
-            SongsInPlaylist = PlaylistSongs;
+            playlist.Recommender = new Recommender();
+            playlist.Recommender.getRecommendedSongsForPlaylist(playlist.SongPlaylist, db);
+            SongsInPlaylist = playlist.SongPlaylist;
             mainWindow = main;
             user = BaseUser;
-            _PlaylistName = NameOfPlaylist;
-            _PlaylistID = playlistId;
+            _PlaylistName = playlist.PlaylistName;
+            _PlaylistID = playlist.PlaylistID;
+            user = BaseUser;
             Thickness SongBlockThickness = new Thickness(5, 2, 0, 0);
             SolidColorBrush whiteText = new SolidColorBrush(System.Windows.Media.Colors.White);
 
             var PlaylistBlock = new TextBlock
             {
-                Text = $"{NameOfPlaylist}",
+                Text = $"{playlist.PlaylistName}",
                 FontSize = 25,
                 Foreground = whiteText,
                 Margin = new Thickness(250, 10, 0, 5)
@@ -57,17 +61,9 @@ namespace WindesMusic
             PlaylistName.Children.Add(PlayPlaylistButton);
 
             //Adds the necessary amount of rows for the playlist
-            /*
-            for (int i = 0; i < PlaylistSongs.Count; i++)
+            for (int i = 0; i < playlist.SongPlaylist.Count; i++)
             {
-                RowDefinition rowDef = new RowDefinition();
-                rowDef.Name = $"Row_{i}";
-                SongList.RowDefinitions.Add(rowDef);
-            }
-            */
-
-            for (int i = 0; i < PlaylistSongs.Count; i++)
-            {
+                Song playlistSong = playlist.SongPlaylist[i];
                 RowDefinition rowDef = new RowDefinition();
                 rowDef.Name = $"Row_{i}";
                 SongList.RowDefinitions.Add(rowDef);
@@ -140,25 +136,8 @@ namespace WindesMusic
                 ContextMenu menu = new ContextMenu();
                 menu.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
                 menu.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
-                
-                /*
-                MenuItem PlaylistItem = new MenuItem();
-                PlaylistItem.Name = $"Playlist";
-                PlaylistItem.Header = "Add to Playlist";
-                PlaylistItem.Click += AddToPlaylistClick;
-
-                MenuItem QueueItem = new MenuItem();
-                QueueItem.Name = $"Queue";
-                QueueItem.Header = "Add to Queue";
-                QueueItem.Click += AddToQueueClick;
-
-                menu.Items.Add(PlaylistItem);
-                menu.Items.Add(QueueItem);
-                */
 
                 SongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
-                //SongList.ContextMenu = menu;
-                //SongList.ContextMenu += SongContextMenuOpening(this, new )
             }
         }
 
@@ -215,6 +194,7 @@ namespace WindesMusic
 
         private void PlayPlaylist(object sender, RoutedEventArgs e)
         {
+            MusicQueue.SongQueue.Clear();
             Playlist playlist = new Playlist(_PlaylistID);
             playlist.SongPlaylist = db.GetSongsInPlaylist(_PlaylistID);
             MusicQueue.SongQueue = playlist.CreateQueueFromPlaylist();
