@@ -13,5 +13,6 @@ namespace WindesMusic
         public string Artist { get; set; }
         public string Album { get; set; }
         public int Year { get; set; }
+        public string Genre { get; set; }
     }
 }

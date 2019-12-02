@@ -41,9 +41,6 @@ namespace WindesMusic
 
             Main.Content = new Playlists();
             inputSearch.KeyDown += InputSearch_KeyDown;
-
-            Properties.Settings.Default.UserID = 0;
-            Properties.Settings.Default.Save();
         }
 
         private void InputSearch_KeyDown(object sender, KeyEventArgs e)
@@ -115,6 +112,7 @@ namespace WindesMusic
         protected override void OnContentRendered(EventArgs e)
         {
             base.OnContentRendered(e);
+            PlaylistList.Children.Clear();
             user = db.GetUserData(WindesMusic.Properties.Settings.Default.UserID);
             Thickness thickness = new Thickness(15, 0, 0, 5);
             foreach (var item in user.Playlists)
@@ -140,7 +138,7 @@ namespace WindesMusic
             Button _ButtonPlaylist = sender as Button;
             int PlaylistId = Convert.ToInt32(_ButtonPlaylist.Name.Substring(1));
             Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == PlaylistId).FirstOrDefault();
-            PlaylistSongsPage SongsPage = new PlaylistSongsPage(relevantPlaylist.PlaylistID, relevantPlaylist.PlaylistName, relevantPlaylist.SongPlaylist, this);
+            PlaylistSongsPage SongsPage = new PlaylistSongsPage(relevantPlaylist, this);
             this.Main.Content = SongsPage;
         }
 

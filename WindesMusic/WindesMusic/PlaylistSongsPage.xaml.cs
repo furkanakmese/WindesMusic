@@ -25,19 +25,22 @@ namespace WindesMusic
         private string _PlaylistName;
         List<Song> SongsInPlaylist;
         MainWindow mainWindow;
-        public PlaylistSongsPage(int playlistId, string NameOfPlaylist, List<Song> PlaylistSongs, MainWindow main)
+        Recommender recommender;
+        public PlaylistSongsPage(Playlist playlist, MainWindow main)
         {
             InitializeComponent();
-            SongsInPlaylist = PlaylistSongs;
+            playlist.Recommender = new Recommender();
+            playlist.Recommender.getRecommendedSongsForPlaylist(playlist.SongPlaylist, db);
+            SongsInPlaylist = playlist.SongPlaylist;
             mainWindow = main;
-            _PlaylistName = NameOfPlaylist;
-            _PlaylistID = playlistId;
+            _PlaylistName = playlist.PlaylistName;
+            _PlaylistID = playlist.PlaylistID;
             Thickness SongBlockThickness = new Thickness(5, 2, 0, 0);
             SolidColorBrush whiteText = new SolidColorBrush(System.Windows.Media.Colors.White);
 
             var PlaylistBlock = new TextBlock
             {
-                Text = $"{NameOfPlaylist}",
+                Text = $"{playlist.PlaylistName}",
                 FontSize = 25,
                 Foreground = whiteText,
                 Margin = new Thickness(250, 10, 0, 5)
@@ -55,15 +58,15 @@ namespace WindesMusic
             PlaylistName.Children.Add(PlayPlaylistButton);
 
             //Adds the necessary amount of rows for the playlist
-            for (int i = 0; i < PlaylistSongs.Count; i++)
+            for (int i = 0; i < playlist.SongPlaylist.Count; i++)
             {
                 RowDefinition rowDef = new RowDefinition();
                 SongList.RowDefinitions.Add(rowDef);
             }
 
-            for (int i = 0; i < PlaylistSongs.Count; i++)
+            for (int i = 0; i < playlist.SongPlaylist.Count; i++)
             {
-                Song playlistSong = PlaylistSongs[i];
+                Song playlistSong = playlist.SongPlaylist[i];
 
                 // Add the play button to the Songlist grid
                 var PlayButton = new Button

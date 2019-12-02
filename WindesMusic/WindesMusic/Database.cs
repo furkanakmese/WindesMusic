@@ -244,6 +244,37 @@ namespace WindesMusic
                 searchResult.Artist = (string)_reader["Artist"];
                 searchResult.Album = (string)_reader["Album"];
                 searchResult.Year = (int)_reader["Year"];
+                searchResult.Genre = (string)_reader["Genre"];
+                listResult.Add(searchResult);
+            }
+
+            _connection.Close();
+            return listResult;
+        }
+
+        public List<Song> GetRecommendedSongsForPlaylist(string songIDsString)
+        { 
+
+            OpenConnection();
+            _command.Parameters.Clear();
+            List<Song> listResult = new List<Song>();
+            _command.CommandText = "SELECT TOP 5 * FROM Song WHERE Genre = 'Pop' AND SongID != @songIDsString ORDER BY NewID()";
+
+            var criteriaParam = _command.CreateParameter();
+            criteriaParam.ParameterName = "@songIDsString";
+            criteriaParam.Value = songIDsString;
+            _command.Parameters.Add(criteriaParam);
+            _reader = _command.ExecuteReader();
+
+            while (_reader.Read())
+            {
+                Song searchResult = new Song();
+                searchResult.SongID = (int)_reader["SongID"];
+                searchResult.SongName = (string)_reader["Name"];
+                searchResult.Artist = (string)_reader["Artist"];
+                searchResult.Album = (string)_reader["Album"];
+                searchResult.Year = (int)_reader["Year"];
+                searchResult.Genre = (string)_reader["Genre"];
                 listResult.Add(searchResult);
             }
 
