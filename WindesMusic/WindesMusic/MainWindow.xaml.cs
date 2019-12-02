@@ -122,5 +122,10 @@ namespace WindesMusic
             NewPlaylist.Show();
             NewPlaylist.Closed += (object sender2, EventArgs e2) => OnContentRendered(e);
         }
+
+        private void btnAccount_Click(object sender, RoutedEventArgs e)
+        {
+            Main.Content = new Account();
+        }
     }
 }
