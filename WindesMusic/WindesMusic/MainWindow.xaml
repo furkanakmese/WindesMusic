@@ -19,7 +19,7 @@
 
             <StackPanel DockPanel.Dock="Left" Width="150" Margin="0,-49.6,0,50" Background="DimGray">
                 <Image Source="Img/WindesheimLogoMetTekst.jpg" HorizontalAlignment="Left" Height="41" Margin="20,5,0,5"/>
-                <Button Style="{StaticResource MenuButton}" Content="Account" Margin="25,25,0,5"/>
+                <Button x:Name="btnAccount" Style="{StaticResource MenuButton}" Content="Account" Margin="25,25,0,5" Click="btnAccount_Click"/>
                 <Button Style="{StaticResource MenuButton}" Content="Recommended" Margin="25,0,0,5"/>
                 <Button Style="{StaticResource MenuButton}" Content="Playlists" Margin="25,20,0,5"/>
                 <Separator Width="100" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />

@@ -107,6 +107,7 @@ namespace WindesMusic
             {
                 userResult.Id = (int)_reader["Id"];
                 userResult.Email = (string)_reader["Email"];
+                userResult.Name = (string)_reader["Name"];
                 // save user id to application settings
                 Properties.Settings.Default.UserID = userResult.Id;
                 Properties.Settings.Default.Save();
@@ -168,7 +169,7 @@ namespace WindesMusic
             OpenConnection();
             _command.Parameters.Clear();
             User userResult = new User();
-            _command.CommandText = "SELECT * FROM Users INNER JOIN Playlist ON Id=UserID WHERE Id=@id";
+            _command.CommandText = "SELECT * FROM Users LEFT JOIN Playlist ON Id=UserID WHERE Id=@id";
 
             var idParam = _command.CreateParameter();
             idParam.ParameterName = "@id";
@@ -176,20 +177,31 @@ namespace WindesMusic
             _command.Parameters.Add(idParam);
             _reader = _command.ExecuteReader();
 
-            while (_reader.Read())
+            if (_reader.Read())
             {
                 Playlist playlistResult = new Playlist();
                 userResult.Id = (int)_reader["Id"];
                 userResult.Email = (string)_reader["Email"];
-                playlistResult.PlaylistID = (int)_reader["PlaylistID"];
-                playlistResult.PlaylistName = (string)_reader["PlaylistName"];
-                userResult.Playlists.Add(playlistResult);
+                userResult.Name = (string)_reader["Name"];
+                try
+                {
+                    playlistResult.PlaylistID = (int)_reader["PlaylistID"];
+                    playlistResult.PlaylistName = (string)_reader["PlaylistName"];
+                    userResult.Playlists.Add(playlistResult);
+                } catch(Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            } else
+            {
+                Console.WriteLine("test");
             }
             _connection.Close();
             foreach(Playlist playlist in userResult.Playlists)
             {
                 playlist.SongPlaylist = GetSongsInPlaylist(playlist.PlaylistID);
             }
+            Console.WriteLine("rsult is " + userResult.Email);
             return userResult;
 
         }
@@ -244,6 +256,37 @@ namespace WindesMusic
                 searchResult.Artist = (string)_reader["Artist"];
                 searchResult.Album = (string)_reader["Album"];
                 searchResult.Year = (int)_reader["Year"];
+                searchResult.Genre = (string)_reader["Genre"];
+                listResult.Add(searchResult);
+            }
+
+            _connection.Close();
+            return listResult;
+        }
+
+        public List<Song> GetRecommendedSongsForPlaylist(string songIDsString)
+        { 
+
+            OpenConnection();
+            _command.Parameters.Clear();
+            List<Song> listResult = new List<Song>();
+            _command.CommandText = "SELECT TOP 5 * FROM Song WHERE Genre = 'Pop' AND SongID != @songIDsString ORDER BY NewID()";
+
+            var criteriaParam = _command.CreateParameter();
+            criteriaParam.ParameterName = "@songIDsString";
+            criteriaParam.Value = songIDsString;
+            _command.Parameters.Add(criteriaParam);
+            _reader = _command.ExecuteReader();
+
+            while (_reader.Read())
+            {
+                Song searchResult = new Song();
+                searchResult.SongID = (int)_reader["SongID"];
+                searchResult.SongName = (string)_reader["Name"];
+                searchResult.Artist = (string)_reader["Artist"];
+                searchResult.Album = (string)_reader["Album"];
+                searchResult.Year = (int)_reader["Year"];
+                searchResult.Genre = (string)_reader["Genre"];
                 listResult.Add(searchResult);
             }
 
@@ -274,7 +317,7 @@ namespace WindesMusic
         {
             OpenConnection();
             _command.Parameters.Clear();
-            _command.CommandText = "UPDATE Playlist SET Name = @Name WHERE PlaylistID = @PlaylistID";
+            _command.CommandText = "UPDATE Playlist SET Name=@Name WHERE PlaylistID = @PlaylistID";
 
             var criteriaParamName = _command.CreateParameter();
             criteriaParamName.ParameterName = "@Name";
