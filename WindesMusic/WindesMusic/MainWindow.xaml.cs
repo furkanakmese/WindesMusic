@@ -50,8 +50,8 @@ namespace WindesMusic
                 this.Close();
             };
 
-            inputSearch.KeyDown += (object sender, KeyEventArgs e) => { 
-                if (e.Key == Key.Enter) Main.Content = new SearchResults(inputSearch.Text); 
+            inputSearch.KeyDown += (object sender, KeyEventArgs e) => {
+                if (e.Key == Key.Enter) Main.Content = new SearchResults(inputSearch.Text);
             };
             btnPlay.Click += (object sender, RoutedEventArgs e) => audioPlayer.OnButtonPlayClick(sender, e);
             btnMute.Click += (object sender, RoutedEventArgs e) => audioPlayer.Mute();
@@ -61,7 +61,7 @@ namespace WindesMusic
             btnAccount.Click += (object sender, RoutedEventArgs e) => Main.Content = account;
             btnPlaylists.Click += (object sender, RoutedEventArgs e) => Main.Content = new Playlists();
         }
-
+        
         private void PlaceInSongSliderDragStarted (object sender, DragStartedEventArgs e) => dispatcherTimer.Stop();
 
         private void PlaceInSongSliderDragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
@@ -87,6 +87,7 @@ namespace WindesMusic
         private void NextButtonClick(object sender, RoutedEventArgs e)
         {
             audioPlayer.OnButtonStopClick();
+
         }
 
         protected override void OnContentRendered(EventArgs e)

@@ -264,18 +264,17 @@ namespace WindesMusic
         }
 
         public List<Song> GetRecommendedSongsForPlaylist(string genre, int playlistID)
-        {
+        { 
 
             OpenConnection();
             _command.Parameters.Clear();
             List<Song> listResult = new List<Song>();
-            _command.CommandText = "SELECT TOP 5 * FROM Song WHERE Genre = 'Pop' AND SongID NOT IN (SELECT SongID FROM PlayList WHERE PlaylistID = @PlaylistID) ORDER BY NewID()";
+            _command.CommandText = "SELECT TOP 5 * FROM Song WHERE Genre = @genre AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) ORDER BY NewID()";
 
             var genreParm = _command.CreateParameter();
             genreParm.ParameterName = "@genre";
             genreParm.Value = genre;
             _command.Parameters.Add(genreParm);
-            _reader = _command.ExecuteReader();
 
             var criteriaParam = _command.CreateParameter();
             criteriaParam.ParameterName = "@playlistID";
