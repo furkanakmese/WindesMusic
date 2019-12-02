@@ -67,7 +67,6 @@ namespace WindesMusic
                 RowDefinition rowDef = new RowDefinition();
                 rowDef.Name = $"Row_{i}";
                 SongList.RowDefinitions.Add(rowDef);
-                //Song playlistSong = PlaylistSongs[i];
                 RowDefinitionCollection RowNames = SongList.RowDefinitions;
                 Array RowArray = RowNames.ToArray();
 

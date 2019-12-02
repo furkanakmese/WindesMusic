@@ -61,8 +61,8 @@ namespace WindesMusic
             btnAccount.Click += (object sender, RoutedEventArgs e) => Main.Content = account;
             btnPlaylists.Click += (object sender, RoutedEventArgs e) => Main.Content = new Playlists();
         }
-
-        private void PlaceInSongSliderDragStarted(object sender, DragStartedEventArgs e) => dispatcherTimer.Stop();
+        
+        private void PlaceInSongSliderDragStarted (object sender, DragStartedEventArgs e) => dispatcherTimer.Stop();
 
         private void PlaceInSongSliderDragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
