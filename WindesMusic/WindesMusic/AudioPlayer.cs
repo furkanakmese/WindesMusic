@@ -10,6 +10,7 @@ namespace WindesMusic
         private AudioFileReader audioFile;
         private bool isPlaying = false;
         private float volume = 1;
+        private string _CurrentSong;
 
         public AudioPlayer()
         {
@@ -17,12 +18,29 @@ namespace WindesMusic
             //outputDevice.PlaybackStopped += OnPlaybackStopped;
         }
 
+        public void PlayChosenSong(int songID)
+        {
+            StringBuilder fileName = new StringBuilder();
+            fileName.Append(songID.ToString());
+            fileName.Append(".mp3");
+            _CurrentSong = songID.ToString();
+            DisposeOfSong();
+            audioFile = null;
+
+
+
+            audioFile = new AudioFileReader(fileName.ToString());
+            outputDevice.Init(audioFile);
+            outputDevice.Play();
+            isPlaying = true;
+        }
+
         public void PlayChosenSong(string songID)
         {
             StringBuilder fileName = new StringBuilder();
             fileName.Append(songID);
             fileName.Append(".mp3");
-
+            _CurrentSong = songID;
             DisposeOfSong();
             audioFile = null;
 
@@ -41,16 +59,20 @@ namespace WindesMusic
         {
             if (MusicQueue.SongQueue.Count != 0)
             {
+                int FileNumber = MusicQueue.SongQueue.Dequeue();
                 StringBuilder fileName = new StringBuilder();
-                fileName.Append(MusicQueue.SongQueue.Dequeue());
+                fileName.Append(FileNumber);
                 fileName.Append(".mp3");
+                _CurrentSong = null;
                 DisposeOfSong();
                 audioFile = null;
                 try
                 {
                     audioFile = new AudioFileReader(fileName.ToString());
+                    outputDevice.Stop();
                     outputDevice.Init(audioFile);
                     outputDevice.Play();
+                    _CurrentSong = FileNumber.ToString();
                     isPlaying = true;
                 } catch(Exception e)
                 {
@@ -89,13 +111,31 @@ namespace WindesMusic
         //stop button, executes stop function(OnPlayBackStopped).
         public void OnButtonStopClick()
         {
+            outputDevice?.Pause();
             outputDevice?.Stop();
             DisposeOfSong();
             audioFile = null;
             isPlaying = false;
-            if (MusicQueue.SongQueue.Count != 0 && audioFile ==  null)
+            if (_CurrentSong != null)
+            {
+                MusicQueue.AddSongToPreviousQueue(_CurrentSong);
+            }
+            if (MusicQueue.SongQueue.Count != 0 && audioFile == null)
             {
                 this.PlayChosenSong();
+            }
+        }
+
+        public void OnButtonPreviousClick()
+        {
+            outputDevice?.Stop();
+            DisposeOfSong();
+            audioFile = null;
+            isPlaying = false;
+            
+            if (MusicQueue.PreviousSongs.Count != 0 && audioFile == null)
+            {
+                this.PlayChosenSong(MusicQueue.PreviousSongs.Pop());
             }
         }
 
@@ -163,12 +203,6 @@ namespace WindesMusic
 
         public void DisposeOfSong()
         {
-            /*try
-            {
-                audioFile.Dispose();
-            }
-            catch (NullReferenceException)
-            { }*/
             if(audioFile != null)
             {
                 audioFile.Dispose();
