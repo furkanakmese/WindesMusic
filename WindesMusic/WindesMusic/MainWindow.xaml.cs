@@ -148,7 +148,7 @@ namespace WindesMusic
             Button _ButtonPlaylist = sender as Button;
             int PlaylistId = Convert.ToInt32(_ButtonPlaylist.Name.Substring(1));
             Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == PlaylistId).FirstOrDefault();
-            PlaylistSongsPage SongsPage = new PlaylistSongsPage(relevantPlaylist.PlaylistID, relevantPlaylist.PlaylistName, relevantPlaylist.SongPlaylist, this, user);
+            PlaylistSongsPage SongsPage = new PlaylistSongsPage(relevantPlaylist, this, user);
             this.Main.Content = SongsPage;
         }
 
