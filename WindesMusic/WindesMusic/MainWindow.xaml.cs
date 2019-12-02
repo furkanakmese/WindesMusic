@@ -28,6 +28,7 @@ namespace WindesMusic
         private DispatcherTimer dispatcherTimer;
         private User user;
         private Database db = new Database();
+        private Account account = new Account();
 
         public MainWindow()
         {
@@ -39,8 +40,8 @@ namespace WindesMusic
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             dispatcherTimer.Start();
 
-            Account account = new Account();
-            Main.Content = account;
+            Playlists playlists = new Playlists();
+            Main.Content = playlists;
             account.logout += Account_logout;
             inputSearch.KeyDown += InputSearch_KeyDown;
         }
@@ -161,7 +162,12 @@ namespace WindesMusic
 
         private void btnAccount_Click(object sender, RoutedEventArgs e)
         {
-            Main.Content = new Account();
+            Main.Content = account;
+        }
+
+        private void btnPlaylists_Click(object sender, RoutedEventArgs e)
+        {
+            Main.Content = new Playlists();
         }
     }
 }

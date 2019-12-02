@@ -21,7 +21,7 @@
                 <Image Source="Img/WindesheimLogoMetTekst.jpg" HorizontalAlignment="Left" Height="41" Margin="20,5,0,5"/>
                 <Button x:Name="btnAccount" Style="{StaticResource MenuButton}" Content="Account" Margin="25,25,0,5" Click="btnAccount_Click"/>
                 <Button Style="{StaticResource MenuButton}" Content="Recommended" Margin="25,0,0,5"/>
-                <Button Style="{StaticResource MenuButton}" Content="Playlists" Margin="25,20,0,5"/>
+                <Button x:Name="btnPlaylists" Style="{StaticResource MenuButton}" Content="Playlists" Margin="25,20,0,5" Click="btnPlaylists_Click"/>
                 <Separator Width="100" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                 <Button Style="{StaticResource MenuButton}" Click="NewPlaylistButtonClick" Content="+ Create Playlist" Margin="25,5,0,5"/>
                 <ScrollViewer HorizontalAlignment="Left" Height="126" Margin="10,10,0,0" VerticalAlignment="Top" Width="140">
