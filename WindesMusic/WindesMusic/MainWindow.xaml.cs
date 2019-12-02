@@ -63,7 +63,22 @@ namespace WindesMusic
         }
 
         private void PlaceInSongSliderDragStarted (object sender, DragStartedEventArgs e) => dispatcherTimer.Stop();
-        
+
+        private void PlaceInSongSliderDragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            var slider = (Slider)sender;
+            var change = slider.Value / 100;
+            if (change >= PlaceInSongSlider.Maximum)
+            {
+                audioPlayer.SetCurrentPlaceInSong(PlaceInSongSlider.Maximum);
+            }
+            else
+            {
+                audioPlayer.SetCurrentPlaceInSong(change);
+            }
+            dispatcherTimer.Start();
+        }
+
         private void PreviousButtonClick(object sender, RoutedEventArgs e)
         {
             audioPlayer.OnButtonPreviousClick();
