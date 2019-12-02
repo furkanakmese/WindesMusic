@@ -26,15 +26,18 @@ namespace WindesMusic
         List<Song> SongsInPlaylist;
         MainWindow mainWindow;
         Recommender recommender;
-        public PlaylistSongsPage(Playlist playlist, MainWindow main)
+        User user;
+        public PlaylistSongsPage(Playlist playlist, MainWindow main, User BaseUser)
         {
             InitializeComponent();
             playlist.Recommender = new Recommender();
             playlist.Recommender.getRecommendedSongsForPlaylist(playlist.SongPlaylist, db);
             SongsInPlaylist = playlist.SongPlaylist;
             mainWindow = main;
+            user = BaseUser;
             _PlaylistName = playlist.PlaylistName;
             _PlaylistID = playlist.PlaylistID;
+            user = BaseUser;
             Thickness SongBlockThickness = new Thickness(5, 2, 0, 0);
             SolidColorBrush whiteText = new SolidColorBrush(System.Windows.Media.Colors.White);
 
@@ -60,13 +63,13 @@ namespace WindesMusic
             //Adds the necessary amount of rows for the playlist
             for (int i = 0; i < playlist.SongPlaylist.Count; i++)
             {
-                RowDefinition rowDef = new RowDefinition();
-                SongList.RowDefinitions.Add(rowDef);
-            }
-
-            for (int i = 0; i < playlist.SongPlaylist.Count; i++)
-            {
                 Song playlistSong = playlist.SongPlaylist[i];
+                RowDefinition rowDef = new RowDefinition();
+                rowDef.Name = $"Row_{i}";
+                SongList.RowDefinitions.Add(rowDef);
+                Song playlistSong = PlaylistSongs[i];
+                RowDefinitionCollection RowNames = SongList.RowDefinitions;
+                Array RowArray = RowNames.ToArray();
 
                 // Add the play button to the Songlist grid
                 var PlayButton = new Button
@@ -133,31 +136,66 @@ namespace WindesMusic
                 ContextMenu menu = new ContextMenu();
                 menu.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
                 menu.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
+                
+                /*
                 MenuItem PlaylistItem = new MenuItem();
-                PlaylistItem.Name = $"Playlist_{playlistSong.SongID}";
+                PlaylistItem.Name = $"Playlist";
                 PlaylistItem.Header = "Add to Playlist";
                 PlaylistItem.Click += AddToPlaylistClick;
 
                 MenuItem QueueItem = new MenuItem();
-                PlaylistItem.Name = $"Queue_{playlistSong.SongID}";
+                QueueItem.Name = $"Queue";
                 QueueItem.Header = "Add to Queue";
                 QueueItem.Click += AddToQueueClick;
 
                 menu.Items.Add(PlaylistItem);
                 menu.Items.Add(QueueItem);
-                SongList.ContextMenu = menu;
+                */
+
+                SongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
+                //SongList.ContextMenu = menu;
+                //SongList.ContextMenu += SongContextMenuOpening(this, new )
             }
+        }
+
+        private void SongContextMenuOpening(object sender, MouseButtonEventArgs e)
+        {
+            var pos = e.GetPosition(SongList);
+            double top = pos.Y;
+            int top1 = (int)Math.Round(top);
+            int amount = top1 / 25;
+            ContextMenu menu = new ContextMenu();
+            int CorrectSongID = SongsInPlaylist.ElementAt(amount).SongID;
+            
+            MenuItem PlaylistItem = new MenuItem();
+            PlaylistItem.Name = $"Playlist_{CorrectSongID}";
+            PlaylistItem.Header = "Add to Playlist";
+            PlaylistItem.Click += AddToPlaylistClick;
+
+            MenuItem QueueItem = new MenuItem();
+            QueueItem.Name = $"Queue_{CorrectSongID}";
+            QueueItem.Header = "Add to Queue";
+            QueueItem.Click += AddToQueueClick;
+
+            menu.Items.Add(PlaylistItem);
+            menu.Items.Add(QueueItem);
+            SongList.ContextMenu = menu;
         }
 
         private void AddToPlaylistClick(object sender, RoutedEventArgs e)
         {
-            MenuItem Song = sender as MenuItem;
-            int SongID = Convert.ToInt32(Song.Name.Substring(9));
+            MenuItem SongItem = sender as MenuItem;
+            int SongID = Convert.ToInt32(SongItem.Name.Substring(9));
+            Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == 2).FirstOrDefault();
+            relevantPlaylist.AddSongToPlaylist(SongID);
+
             
         }
         private void AddToQueueClick(object sender, RoutedEventArgs e)
         {
-
+            var SongItem = sender as MenuItem;
+            int SongID = Convert.ToInt32(SongItem.Name.Substring(6));
+            MusicQueue.AddSongToQueue(SongID);
         }
 
 

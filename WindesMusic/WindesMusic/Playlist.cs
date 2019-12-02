@@ -29,22 +29,21 @@ namespace WindesMusic
             SongPlaylist = data.GetSongsInPlaylist(PlaylistID);
         }
 
-        public void AddPlaylistSongToQueue(MusicQueue MQueue, int SongID)
+        public void AddPlaylistSongToQueue(int SongID)
         {
-            if(MQueue == null)
-            {
-                MusicQueue SongQueue = new MusicQueue();
-                SongQueue.AddSongToQueue(SongID);
-            }
-            else
-            {
-                MQueue.AddSongToQueue(SongID);
-            }
+            MusicQueue.AddSongToQueue(SongID);
         }
 
         public void AddSongToPlaylist(Song song)
         {
             data.AddSongToPlaylist(this.PlaylistID, song.SongID);
+            this.RefreshPlaylist();
+        }
+
+        public void AddSongToPlaylist(int SongId)
+        {
+            data.AddSongToPlaylist(this.PlaylistID, SongId);
+            this.RefreshPlaylist();
         }
 
         /*
@@ -54,9 +53,9 @@ namespace WindesMusic
             main.Main.Content = SongsPage;
         }
         */
-        public void CreatePlaylistFromQueue(MusicQueue MQueue, string Name, int UserID)
+        public void CreatePlaylistFromQueue(string Name, int UserID)
         {
-            if(MQueue != null)
+            if(MusicQueue.SongQueue != null)
             {
                 //Queue<int> CopySongQueue = new Queue<int>(MQueue.SongQueue);
                 data.CreateNewPlaylist(Name, UserID);

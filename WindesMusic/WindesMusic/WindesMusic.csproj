@@ -63,6 +63,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Account.xaml.cs">
+      <DependentUpon>Account.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NewPlaylistWindow.xaml.cs">
       <DependentUpon>NewPlaylistWindow.xaml</DependentUpon>
     </Compile>
@@ -85,6 +88,10 @@
     </Compile>
     <Compile Include="Song.cs" />
     <Compile Include="User.cs" />
+    <Page Include="Account.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="LoginWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

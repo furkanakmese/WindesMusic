@@ -39,8 +39,18 @@ namespace WindesMusic
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             dispatcherTimer.Start();
 
-            Main.Content = new Playlists();
+            Account account = new Account();
+            Main.Content = account;
+            account.logout += Account_logout;
             inputSearch.KeyDown += InputSearch_KeyDown;
+        }
+        
+        private void Account_logout()
+        {
+            LoginWindow login = new LoginWindow();
+            login.Show();
+            this.Close();
+
         }
 
         private void InputSearch_KeyDown(object sender, KeyEventArgs e)
@@ -113,7 +123,8 @@ namespace WindesMusic
         {
             base.OnContentRendered(e);
             PlaylistList.Children.Clear();
-            user = db.GetUserData(WindesMusic.Properties.Settings.Default.UserID);
+            user = db.GetUserData(Properties.Settings.Default.UserID);
+
             Thickness thickness = new Thickness(15, 0, 0, 5);
             foreach (var item in user.Playlists)
             {
@@ -123,7 +134,6 @@ namespace WindesMusic
                     Name = $"_{item.PlaylistID}",
                     Content = $"{item.PlaylistName}",
                     Margin = thickness
-
                 };
                 StaticResourceExtension menuButton = new StaticResourceExtension("MenuButton");
                 PlaylistButton.Style = (Style)FindResource("MenuButton");
@@ -138,7 +148,7 @@ namespace WindesMusic
             Button _ButtonPlaylist = sender as Button;
             int PlaylistId = Convert.ToInt32(_ButtonPlaylist.Name.Substring(1));
             Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == PlaylistId).FirstOrDefault();
-            PlaylistSongsPage SongsPage = new PlaylistSongsPage(relevantPlaylist, this);
+            PlaylistSongsPage SongsPage = new PlaylistSongsPage(relevantPlaylist, this, user);
             this.Main.Content = SongsPage;
         }
 
@@ -147,6 +157,11 @@ namespace WindesMusic
             NewPlaylistWindow NewPlaylist = new NewPlaylistWindow();
             NewPlaylist.Show();
             NewPlaylist.Closed += (object sender2, EventArgs e2) => OnContentRendered(e);
+        }
+
+        private void btnAccount_Click(object sender, RoutedEventArgs e)
+        {
+            Main.Content = new Account();
         }
     }
 }
