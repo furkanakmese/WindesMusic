@@ -30,8 +30,8 @@ namespace WindesMusic
         public PlaylistSongsPage(Playlist playlist, MainWindow main, User BaseUser)
         {
             InitializeComponent();
-            playlist.Recommender = new Recommender();
-            playlist.Recommender.getRecommendedSongsForPlaylist(playlist.SongPlaylist, db);
+            playlist.Recommender = new Recommender(db);
+            playlist.Recommender.getRecommendedSongsForPlaylist(playlist);
             SongsInPlaylist = playlist.SongPlaylist;
             mainWindow = main;
             user = BaseUser;
@@ -149,12 +149,12 @@ namespace WindesMusic
             int amount = top1 / 25;
             ContextMenu menu = new ContextMenu();
             int CorrectSongID = SongsInPlaylist.ElementAt(amount).SongID;
-            
+
             MenuItem PlaylistItem = new MenuItem();
             PlaylistItem.Name = $"Playlists";
             PlaylistItem.Header = "Add to Playlist";
 
-            foreach(Playlist pl in Playlists)
+            foreach (Playlist pl in Playlists)
             {
                 MenuItem OnePlaylistItem = new MenuItem();
                 OnePlaylistItem.Name = $"Playlist_{pl.PlaylistID}";
@@ -180,7 +180,7 @@ namespace WindesMusic
             Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == SongID).FirstOrDefault();
             relevantPlaylist.AddSongToPlaylist(SongID);
 
-            
+
         }
         private void AddToQueueClick(object sender, RoutedEventArgs e)
         {

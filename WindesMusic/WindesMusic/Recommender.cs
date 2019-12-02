@@ -8,49 +8,42 @@ namespace WindesMusic
 {
     public class Recommender
     {
+        private Database db;
 
-        public Recommender()
+        public Recommender(Database db)
         {
-
+            this.db = db;
         }
 
-        public void getRecommendedSongsForPlaylist(List<Song> playlistSongs, Database db)
+        //Returns 5 random songs that are not in the playlist and with the most common genre
+        public List<Song> getRecommendedSongsForPlaylist(Playlist playlist)
         {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < playlistSongs.Count; i++)
-            {
-                if(i < playlistSongs.Count - 1)
-                {
-                    builder.Append(playlistSongs.ElementAt(i).SongID).Append(" AND SongID != ");
-                }
-                else
-                {
-                    builder.Append(playlistSongs.ElementAt(i).SongID);
-                }
-                
-            }
-
-            Console.WriteLine(builder);
-
-            var q = from x in playlistSongs
+            //Groups songs per genre
+            var q = from x in playlist.SongPlaylist
                     group x by x.Genre into g
                     let count = g.Count()
                     orderby count descending
                     select new { Value = g.Key, Count = count };
 
+            string mostCommonGenre = "";
+            int highestPercentage = 0;
+
+            //Determines what the most common genre is
             foreach (var x in q)
             {
-                //Console.WriteLine($"Genre: {x.Value} Percentage: {(100 / playlistSongs.Count) * x.Count}");
-                int percentage = (100 / playlistSongs.Count) * x.Count;
-                
-                
+                int percentage = (100 / playlist.SongPlaylist.Count) * x.Count;
+
+                if (percentage > highestPercentage)
+                {
+                    mostCommonGenre = x.Value;
+                    highestPercentage = percentage;
+                }
             }
-            foreach (Song song in db.GetRecommendedSongsForPlaylist(builder.ToString()))
+            foreach(Song song in db.GetRecommendedSongsForPlaylist(mostCommonGenre, playlist.PlaylistID))
             {
                 Console.WriteLine(song.SongName);
             }
-
-
+            return db.GetRecommendedSongsForPlaylist(mostCommonGenre, playlist.PlaylistID);
         }
     }
 }
