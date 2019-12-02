@@ -15,7 +15,7 @@ namespace WindesMusic
         public AudioPlayer()
         {
             outputDevice = new WaveOutEvent();
-            outputDevice.PlaybackStopped += OnPlaybackStopped;
+            //outputDevice.PlaybackStopped += OnPlaybackStopped;
         }
 
         public void PlayChosenSong(int songID)
