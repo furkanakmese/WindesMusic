@@ -31,7 +31,7 @@ namespace WindesMusic
         {
             InitializeComponent();
             playlist.Recommender = new Recommender(db);
-            playlist.Recommender.getRecommendedSongsForPlaylist(playlist);
+            //playlist.Recommender.getRecommendedSongsForPlaylist(playlist);
             SongsInPlaylist = playlist.SongPlaylist;
             mainWindow = main;
             user = BaseUser;
@@ -158,6 +158,7 @@ namespace WindesMusic
             {
                 MenuItem OnePlaylistItem = new MenuItem();
                 OnePlaylistItem.Name = $"Playlist_{pl.PlaylistID}";
+                OnePlaylistItem.Tag = CorrectSongID;
                 OnePlaylistItem.Header = $"{pl.PlaylistName}";
                 OnePlaylistItem.Click += AddToPlaylistClick;
                 PlaylistItem.Items.Add(OnePlaylistItem);
@@ -176,8 +177,9 @@ namespace WindesMusic
         private void AddToPlaylistClick(object sender, RoutedEventArgs e)
         {
             MenuItem SongItem = sender as MenuItem;
-            int SongID = Convert.ToInt32(SongItem.Name.Substring(9));
-            Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == SongID).FirstOrDefault();
+            int playlistID = Convert.ToInt32(SongItem.Name.Substring(9));
+            int SongID = Convert.ToInt32(SongItem.Tag);
+            Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == playlistID).FirstOrDefault();
             relevantPlaylist.AddSongToPlaylist(SongID);
 
 
