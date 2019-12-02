@@ -82,18 +82,11 @@ namespace WindesMusic
         private void PreviousButtonClick(object sender, RoutedEventArgs e)
         {
             audioPlayer.OnButtonPreviousClick();
-        
-            var slider = (Slider)sender;
-            var change = slider.Value / 100;
-            if (change >= PlaceInSongSlider.Maximum)
-            {
-                audioPlayer.SetCurrentPlaceInSong(PlaceInSongSlider.Maximum);
-            }
-            else
-            {
-                audioPlayer.SetCurrentPlaceInSong(change);
-            }
-            dispatcherTimer.Start();
+        }
+
+        private void NextButtonClick(object sender, RoutedEventArgs e)
+        {
+            audioPlayer.OnButtonStopClick();
         }
 
         protected override void OnContentRendered(EventArgs e)
