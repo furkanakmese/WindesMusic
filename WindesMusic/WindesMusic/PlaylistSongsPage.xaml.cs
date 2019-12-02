@@ -56,16 +56,6 @@ namespace WindesMusic
             PlaylistName.Children.Add(PlaylistBlock);
             PlaylistName.Children.Add(PlayPlaylistButton);
 
-            //Adds the necessary amount of rows for the playlist
-            /*
-            for (int i = 0; i < PlaylistSongs.Count; i++)
-            {
-                RowDefinition rowDef = new RowDefinition();
-                rowDef.Name = $"Row_{i}";
-                SongList.RowDefinitions.Add(rowDef);
-            }
-            */
-
             for (int i = 0; i < PlaylistSongs.Count; i++)
             {
                 RowDefinition rowDef = new RowDefinition();
@@ -140,25 +130,8 @@ namespace WindesMusic
                 ContextMenu menu = new ContextMenu();
                 menu.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
                 menu.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
-                
-                /*
-                MenuItem PlaylistItem = new MenuItem();
-                PlaylistItem.Name = $"Playlist";
-                PlaylistItem.Header = "Add to Playlist";
-                PlaylistItem.Click += AddToPlaylistClick;
-
-                MenuItem QueueItem = new MenuItem();
-                QueueItem.Name = $"Queue";
-                QueueItem.Header = "Add to Queue";
-                QueueItem.Click += AddToQueueClick;
-
-                menu.Items.Add(PlaylistItem);
-                menu.Items.Add(QueueItem);
-                */
 
                 SongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
-                //SongList.ContextMenu = menu;
-                //SongList.ContextMenu += SongContextMenuOpening(this, new )
             }
         }
 
@@ -215,6 +188,7 @@ namespace WindesMusic
 
         private void PlayPlaylist(object sender, RoutedEventArgs e)
         {
+            MusicQueue.SongQueue.Clear();
             Playlist playlist = new Playlist(_PlaylistID);
             playlist.SongPlaylist = db.GetSongsInPlaylist(_PlaylistID);
             MusicQueue.SongQueue = playlist.CreateQueueFromPlaylist();

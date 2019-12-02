@@ -28,6 +28,17 @@ namespace WindesMusic
             }
         }
 
+        public static void AddSongToPreviousQueue(string SongString)
+        {
+            PreviousSongs.Push(Convert.ToInt32(SongString));
+            if (PreviousSongs.Count > 10)
+            {
+                List<int> PreviousSongsList = new List<int>(PreviousSongs);
+                PreviousSongsList.RemoveAt(9);
+                PreviousSongs = new Stack<int>(PreviousSongsList);
+            }
+        }
+
         public static void RemoveSongFromQueue(int Key)
         {
             List<int> SongList = new List<int>(SongQueue);
