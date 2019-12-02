@@ -9,9 +9,10 @@
       Title="Account">
 
     <Grid>
-        <TextBlock x:Name="lblName" Foreground="White" HorizontalAlignment="Left" Margin="10,89,0,0" TextWrapping="Wrap" Text="User: " VerticalAlignment="Top" FontSize="20" Width="89"/>
+        <TextBlock x:Name="lblName" Foreground="White" HorizontalAlignment="Left" Margin="10,89,0,0" TextWrapping="Wrap" Text="User: " VerticalAlignment="Top" FontSize="20" Width="126"/>
         <TextBlock x:Name="lblTitle" Foreground="White" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Manage account" VerticalAlignment="Top" FontSize="23" Width="180" Height="41"/>
         <Button x:Name="btnLogout" Content="Log out" HorizontalAlignment="Left" Margin="10,147,0,0" VerticalAlignment="Top" Width="126" Height="30" Click="btnLogout_Click"/>
         <Button x:Name="btnRequestArtistStatus" Content="Request artist status" HorizontalAlignment="Left" Margin="10,191,0,0" VerticalAlignment="Top" Width="126" Height="30" Click="btnRequestArtistStatus_Click"/>
+        <TextBlock x:Name="lblMessage" Foreground="White" FontSize="16" HorizontalAlignment="Left" Margin="10,239,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="29" Width="180"/>
     </Grid>
 </Page>

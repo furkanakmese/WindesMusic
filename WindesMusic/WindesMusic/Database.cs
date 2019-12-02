@@ -108,6 +108,7 @@ namespace WindesMusic
                 userResult.Id = (int)_reader["Id"];
                 userResult.Email = (string)_reader["Email"];
                 userResult.Name = (string)_reader["Name"];
+                userResult.IsArtist = (int)_reader["IsArtist"];
                 // save user id to application settings
                 Properties.Settings.Default.UserID = userResult.Id;
                 Properties.Settings.Default.Save();
@@ -183,6 +184,7 @@ namespace WindesMusic
                 userResult.Id = (int)_reader["Id"];
                 userResult.Email = (string)_reader["Email"];
                 userResult.Name = (string)_reader["Name"];
+                userResult.IsArtist = (int)_reader["IsArtist"];
                 try
                 {
                     playlistResult.PlaylistID = (int)_reader["PlaylistID"];
@@ -201,7 +203,6 @@ namespace WindesMusic
             {
                 playlist.SongPlaylist = GetSongsInPlaylist(playlist.PlaylistID);
             }
-            Console.WriteLine("rsult is " + userResult.Email);
             return userResult;
 
         }
@@ -416,7 +417,31 @@ namespace WindesMusic
 
             _connection.Close();
             return Result;
+        }
 
+        public bool RequestArtistStatus()
+        {
+            int id = Properties.Settings.Default.UserID;
+
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "UPDATE Users SET IsArtist=1 WHERE Id=@id";
+
+            var idParam = _command.CreateParameter();
+            idParam.ParameterName = "@id";
+            idParam.Value = id;
+            _command.Parameters.Add(idParam);
+
+            if (_command.ExecuteNonQuery() > 0)
+            {
+                _connection.Close();
+                return true;
+            }
+            else
+            {
+                _connection.Close();
+                return false;
+            }
         }
     }
 }
