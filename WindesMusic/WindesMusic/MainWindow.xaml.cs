@@ -28,6 +28,7 @@ namespace WindesMusic
         private DispatcherTimer dispatcherTimer;
         private User user;
         private Database db = new Database();
+        private Account account = new Account();
 
         public MainWindow()
         {
@@ -35,62 +36,39 @@ namespace WindesMusic
 
             //  DispatcherTimer setup
             dispatcherTimer = new DispatcherTimer();
-            dispatcherTimer.Tick += new EventHandler(UpdateSongSlider);
+            dispatcherTimer.Tick += new EventHandler((object sender, EventArgs e) => {
+                PlaceInSongSlider.Value = audioPlayer.CurrentPlaceInSongPercentage();
+            });
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             dispatcherTimer.Start();
 
-            Account account = new Account();
-            Main.Content = account;
-            account.logout += Account_logout;
-            inputSearch.KeyDown += InputSearch_KeyDown;
+            Playlists playlists = new Playlists();
+            Main.Content = playlists;
+            account.logout += () => {
+                LoginWindow login = new LoginWindow();
+                login.Show();
+                this.Close();
+            };
+
+            inputSearch.KeyDown += (object sender, KeyEventArgs e) => { 
+                if (e.Key == Key.Enter) Main.Content = new SearchResults(inputSearch.Text); 
+            };
+            btnPlay.Click += (object sender, RoutedEventArgs e) => audioPlayer.OnButtonPlayClick(sender, e);
+            btnMute.Click += (object sender, RoutedEventArgs e) => audioPlayer.Mute();
+            sldVolume.ValueChanged += (object sender, RoutedPropertyChangedEventArgs<double> e) => {
+                audioPlayer.SetVolume((float)e.NewValue / 100);
+            };
+            btnAccount.Click += (object sender, RoutedEventArgs e) => Main.Content = account;
+            btnPlaylists.Click += (object sender, RoutedEventArgs e) => Main.Content = new Playlists();
         }
+
+        private void PlaceInSongSliderDragStarted (object sender, DragStartedEventArgs e) => dispatcherTimer.Stop();
         
-        private void Account_logout()
-        {
-            LoginWindow login = new LoginWindow();
-            login.Show();
-            this.Close();
-
-        }
-
-        private void InputSearch_KeyDown(object sender, KeyEventArgs e)
-        {
-            if(e.Key == Key.Enter)
-            {
-                Main.Content = new SearchResults(inputSearch.Text);
-            }
-        }
-
-        //start, and pause and resume button.
-        private void PlayButtonClick(object sender, RoutedEventArgs e)
-        {
-            audioPlayer.OnButtonPlayClick(sender, e);
-        }
-
-        //stop button, executes stop function(OnPlayBackStopped).
-        private void StopButtonClick()
-        {
-            audioPlayer.OnButtonStopClick();
-        }
-
-        private void PreviousButtonClick(object sender, RoutedEventArgs e)
+         private void PreviousButtonClick(object sender, RoutedEventArgs e)
         {
             audioPlayer.OnButtonPreviousClick();
         }
 
-        private void NextButtonClick(object sender, RoutedEventArgs e)
-        {
-            StopButtonClick();
-        }
-
-
-        //volume slider
-        private void VolumeSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            audioPlayer.SetVolume((float)e.NewValue / 100);
-        }
-
-        private void PlaceInSongSliderDragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
             var slider = (Slider)sender;
             var change = slider.Value / 100;
@@ -105,20 +83,6 @@ namespace WindesMusic
             dispatcherTimer.Start();
         }
 
-        private void UpdateSongSlider(object sender, EventArgs e)
-        {
-            PlaceInSongSlider.Value = audioPlayer.CurrentPlaceInSongPercentage();
-        }
-
-        private void MuteButtonClick(object sender, RoutedEventArgs e)
-        {
-            audioPlayer.Mute();
-        }
-
-        private void PlaceInSongSliderDragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
-        {
-            dispatcherTimer.Stop();
-        }
         protected override void OnContentRendered(EventArgs e)
         {
             base.OnContentRendered(e);
@@ -157,11 +121,6 @@ namespace WindesMusic
             NewPlaylistWindow NewPlaylist = new NewPlaylistWindow();
             NewPlaylist.Show();
             NewPlaylist.Closed += (object sender2, EventArgs e2) => OnContentRendered(e);
-        }
-
-        private void btnAccount_Click(object sender, RoutedEventArgs e)
-        {
-            Main.Content = new Account();
         }
     }
 }

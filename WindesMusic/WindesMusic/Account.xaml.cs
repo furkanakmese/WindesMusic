@@ -20,6 +20,8 @@ namespace WindesMusic
     /// </summary>
     public partial class Account : Page
     {
+        Database db = new Database();
+        User user;
         public delegate void Logout();
         public event Logout logout;
 
@@ -27,9 +29,9 @@ namespace WindesMusic
         {
             InitializeComponent();
 
-            Database db = new Database();
-            User user = db.GetUserData(Properties.Settings.Default.UserID);
-            lblName.Text = "User: " + user.Name;
+            user = db.GetUserData(Properties.Settings.Default.UserID);
+            lblName.Text = (user.IsArtist == 1 ? "Artist: " : "User: ") + user.Name;
+            btnRequestArtistStatus.Visibility = user.IsArtist == 1 ? Visibility.Hidden : Visibility.Visible;
         }
 
         private void btnLogout_Click(object sender, RoutedEventArgs e)
@@ -40,6 +42,12 @@ namespace WindesMusic
             {
                 logout();
             }
+        }
+
+        private void btnRequestArtistStatus_Click(object sender, RoutedEventArgs e)
+        {
+            db.RequestArtistStatus();
+            lblMessage.Text = "You are now an artist";
         }
     }
 }

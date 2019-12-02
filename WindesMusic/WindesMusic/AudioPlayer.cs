@@ -44,12 +44,16 @@ namespace WindesMusic
             DisposeOfSong();
             audioFile = null;
 
-
-
-            audioFile = new AudioFileReader(fileName.ToString());
-            outputDevice.Init(audioFile);
-            outputDevice.Play();
-            isPlaying = true;
+            try
+            {
+                audioFile = new AudioFileReader(fileName.ToString());
+                outputDevice.Init(audioFile);
+                outputDevice.Play();
+                isPlaying = true;
+            } catch(Exception e)
+            {
+                Console.WriteLine("File not found");
+            }
         }
         public void PlayChosenSong()
         {
@@ -62,28 +66,40 @@ namespace WindesMusic
                 _CurrentSong = null;
                 DisposeOfSong();
                 audioFile = null;
-                isPlaying = false;
-                audioFile = new AudioFileReader(fileName.ToString());
-                outputDevice.Stop();
-                outputDevice.Init(audioFile);
-                outputDevice.Play();
-                _CurrentSong = FileNumber.ToString();
-                isPlaying = true;
+                try
+                {
+                    audioFile = new AudioFileReader(fileName.ToString());
+                    outputDevice.Stop();
+                    outputDevice.Init(audioFile);
+                    outputDevice.Play();
+                    _CurrentSong = FileNumber.ToString();
+                    isPlaying = true;
+                } catch(Exception e)
+                {
+                    Console.WriteLine("File not found");
+                }
             }
         }
 
         //start, and pause and resume button.
         public void OnButtonPlayClick(object sender, EventArgs args)
         {
+            Console.WriteLine("test");
             if (!isPlaying)
             {
-                if (audioFile == null)
+                // if (audioFile == null)
+                // {
+                    // audioFile = new AudioFileReader("Feint2.mp3");
+                    // outputDevice.Init(audioFile);
+                // }
+                try
                 {
-                    audioFile = new AudioFileReader("Feint2.mp3");
-                    outputDevice.Init(audioFile);
+                    outputDevice.Play();
+                    isPlaying = true;
+                } catch(Exception e)
+                {
+                    Console.WriteLine("No song to play");
                 }
-                outputDevice.Play();
-                isPlaying = true;
             }
             else
             {
@@ -187,12 +203,10 @@ namespace WindesMusic
 
         public void DisposeOfSong()
         {
-            try
+            if(audioFile != null)
             {
                 audioFile.Dispose();
             }
-            catch (Exception)
-            { }
         }
     }
 }
