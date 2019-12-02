@@ -75,7 +75,7 @@ namespace WindesMusic
 
         private void PreviousButtonClick(object sender, RoutedEventArgs e)
         {
-            StopButtonClick();
+            audioPlayer.OnButtonPreviousClick();
         }
 
         private void NextButtonClick(object sender, RoutedEventArgs e)
