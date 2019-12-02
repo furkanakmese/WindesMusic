@@ -137,6 +137,7 @@ namespace WindesMusic
 
         private void SongContextMenuOpening(object sender, MouseButtonEventArgs e)
         {
+            List<Playlist> Playlists = user.Playlists;
             var pos = e.GetPosition(SongList);
             double top = pos.Y;
             int top1 = (int)Math.Round(top);
@@ -145,9 +146,17 @@ namespace WindesMusic
             int CorrectSongID = SongsInPlaylist.ElementAt(amount).SongID;
             
             MenuItem PlaylistItem = new MenuItem();
-            PlaylistItem.Name = $"Playlist_{CorrectSongID}";
+            PlaylistItem.Name = $"Playlists";
             PlaylistItem.Header = "Add to Playlist";
-            PlaylistItem.Click += AddToPlaylistClick;
+
+            foreach(Playlist pl in Playlists)
+            {
+                MenuItem OnePlaylistItem = new MenuItem();
+                OnePlaylistItem.Name = $"Playlist_{pl.PlaylistID}";
+                OnePlaylistItem.Header = $"{pl.PlaylistName}";
+                OnePlaylistItem.Click += AddToPlaylistClick;
+                PlaylistItem.Items.Add(OnePlaylistItem);
+            }
 
             MenuItem QueueItem = new MenuItem();
             QueueItem.Name = $"Queue_{CorrectSongID}";
@@ -163,7 +172,7 @@ namespace WindesMusic
         {
             MenuItem SongItem = sender as MenuItem;
             int SongID = Convert.ToInt32(SongItem.Name.Substring(9));
-            Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == 2).FirstOrDefault();
+            Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == SongID).FirstOrDefault();
             relevantPlaylist.AddSongToPlaylist(SongID);
 
             
