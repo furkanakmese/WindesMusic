@@ -41,5 +41,10 @@ namespace WindesMusic
                 logout();
             }
         }
+
+        private void btnRequestArtistStatus_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
