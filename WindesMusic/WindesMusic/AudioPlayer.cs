@@ -15,7 +15,7 @@ namespace WindesMusic
         public AudioPlayer()
         {
             outputDevice = new WaveOutEvent();
-            //outputDevice.PlaybackStopped += OnPlaybackStopped;
+            outputDevice.PlaybackStopped += OnPlaybackStopped;
         }
 
         public void PlayChosenSong(int songID)
@@ -142,8 +142,7 @@ namespace WindesMusic
         //stop function, disposes of AudiofileReader.
         public void OnPlaybackStopped(object sender, StoppedEventArgs args)
         {
-            DisposeOfSong();
-            audioFile = null;
+            OnButtonStopClick();
         }
 
         //recieves change in slider value and calculates new position in song.
@@ -203,9 +202,13 @@ namespace WindesMusic
 
         public void DisposeOfSong()
         {
-            if(audioFile != null)
+            try
             {
                 audioFile.Dispose();
+            }
+            catch (Exception)
+            {
+
             }
         }
     }
