@@ -50,8 +50,8 @@ namespace WindesMusic
                 this.Close();
             };
 
-            inputSearch.KeyDown += (object sender, KeyEventArgs e) => { 
-                if (e.Key == Key.Enter) Main.Content = new SearchResults(inputSearch.Text); 
+            inputSearch.KeyDown += (object sender, KeyEventArgs e) => {
+                if (e.Key == Key.Enter) Main.Content = new SearchResults(inputSearch.Text);
             };
             btnPlay.Click += (object sender, RoutedEventArgs e) => audioPlayer.OnButtonPlayClick(sender, e);
             btnMute.Click += (object sender, RoutedEventArgs e) => audioPlayer.Mute();
@@ -62,12 +62,27 @@ namespace WindesMusic
             btnPlaylists.Click += (object sender, RoutedEventArgs e) => Main.Content = new Playlists();
         }
 
-        private void PlaceInSongSliderDragStarted (object sender, DragStartedEventArgs e) => dispatcherTimer.Stop();
-        
+        private void PlaceInSongSliderDragStarted(object sender, DragStartedEventArgs e) => dispatcherTimer.Stop();
+
+        private void PlaceInSongSliderDragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            var slider = (Slider)sender;
+            var change = slider.Value / 100;
+            if (change >= PlaceInSongSlider.Maximum)
+            {
+                audioPlayer.SetCurrentPlaceInSong(PlaceInSongSlider.Maximum);
+            }
+            else
+            {
+                audioPlayer.SetCurrentPlaceInSong(change);
+            }
+            dispatcherTimer.Start();
+        }
+
         private void PreviousButtonClick(object sender, RoutedEventArgs e)
         {
             audioPlayer.OnButtonPreviousClick();
-        
+
             var slider = (Slider)sender;
             var change = slider.Value / 100;
             if (change >= PlaceInSongSlider.Maximum)
