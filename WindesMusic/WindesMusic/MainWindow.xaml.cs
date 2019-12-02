@@ -64,12 +64,10 @@ namespace WindesMusic
 
         private void PlaceInSongSliderDragStarted (object sender, DragStartedEventArgs e) => dispatcherTimer.Stop();
         
-         private void PreviousButtonClick(object sender, RoutedEventArgs e)
+        private void PreviousButtonClick(object sender, RoutedEventArgs e)
         {
             audioPlayer.OnButtonPreviousClick();
-        }
-
-        {
+        
             var slider = (Slider)sender;
             var change = slider.Value / 100;
             if (change >= PlaceInSongSlider.Maximum)
