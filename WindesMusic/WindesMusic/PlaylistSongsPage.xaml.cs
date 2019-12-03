@@ -31,7 +31,7 @@ namespace WindesMusic
         {
             InitializeComponent();
             playlist.Recommender = new Recommender(db);
-            //playlist.Recommender.getRecommendedSongsForPlaylist(playlist);
+            // playlist.Recommender.getRecommendedSongsForPlaylist(playlist);
             SongsInPlaylist = playlist.SongPlaylist;
             mainWindow = main;
             user = BaseUser;

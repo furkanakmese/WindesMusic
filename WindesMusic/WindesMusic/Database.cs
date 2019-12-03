@@ -178,7 +178,7 @@ namespace WindesMusic
             _command.Parameters.Add(idParam);
             _reader = _command.ExecuteReader();
 
-            while (_reader.Read())
+            if (_reader.Read())
             {
                 Playlist playlistResult = new Playlist();
                 userResult.Id = (int)_reader["Id"];
@@ -190,11 +190,13 @@ namespace WindesMusic
                     playlistResult.PlaylistID = (int)_reader["PlaylistID"];
                     playlistResult.PlaylistName = (string)_reader["PlaylistName"];
                     userResult.Playlists.Add(playlistResult);
-                }
-                catch (Exception e)
+                } catch(Exception e)
                 {
                     Console.WriteLine(e);
                 }
+            } else
+            {
+                Console.WriteLine("test");
             }
             _connection.Close();
             foreach(Playlist playlist in userResult.Playlists)
@@ -263,22 +265,17 @@ namespace WindesMusic
             return listResult;
         }
 
-        public List<Song> GetRecommendedSongsForPlaylist(string genre, int playlistID)
+        public List<Song> GetRecommendedSongsForPlaylist(string songIDsString)
         { 
 
             OpenConnection();
             _command.Parameters.Clear();
             List<Song> listResult = new List<Song>();
-            _command.CommandText = "SELECT TOP 5 * FROM Song WHERE Genre = @genre AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) ORDER BY NewID()";
-
-            var genreParm = _command.CreateParameter();
-            genreParm.ParameterName = "@genre";
-            genreParm.Value = genre;
-            _command.Parameters.Add(genreParm);
+            _command.CommandText = "SELECT TOP 5 * FROM Song WHERE Genre = 'Pop' AND SongID != @songIDsString ORDER BY NewID()";
 
             var criteriaParam = _command.CreateParameter();
-            criteriaParam.ParameterName = "@playlistID";
-            criteriaParam.Value = playlistID;
+            criteriaParam.ParameterName = "@songIDsString";
+            criteriaParam.Value = songIDsString;
             _command.Parameters.Add(criteriaParam);
             _reader = _command.ExecuteReader();
 
