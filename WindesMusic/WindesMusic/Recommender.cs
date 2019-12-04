@@ -39,7 +39,7 @@ namespace WindesMusic
                     highestPercentage = percentage;
                 }
             }
-            foreach(Song song in db.GetRecommendedSongsForPlaylist(mostCommonGenre, playlist.PlaylistID))
+            foreach (Song song in db.GetRecommendedSongsForPlaylist(mostCommonGenre, playlist.PlaylistID))
             {
                 Console.WriteLine(song.SongName);
             }
