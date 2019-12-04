@@ -26,8 +26,8 @@ namespace WindesMusic
         private int _PlaylistID;
         private string _PlaylistName;
         List<Song> SongsInPlaylist;
+        List<Song> RecommendedSongs;
         MainWindow mainWindow;
-        Recommender recommender;
         User user;
 
         public delegate void OnRerender(Playlist playlist);
@@ -40,10 +40,10 @@ namespace WindesMusic
 
         public void reinitialize(Playlist playlist, MainWindow main, User BaseUser)
         {
-            SongList.Children.Clear();
-
-            playlistToUse.Recommender = new Recommender(db);
-            SongsInPlaylist = playlistToUse.SongPlaylist;
+            InitializeComponent();
+            Recommender recommender = new Recommender(db);
+            RecommendedSongs = recommender.getRecommendedSongsForPlaylist(playlist);
+            SongsInPlaylist = playlist.SongPlaylist;
             mainWindow = main;
             user = BaseUser;
             _PlaylistName = playlistToUse.PlaylistName;
@@ -78,6 +78,7 @@ namespace WindesMusic
                 RowDefinition rowDef = new RowDefinition();
                 rowDef.Name = $"Row_{i}";
                 SongList.RowDefinitions.Add(rowDef);
+                //Song playlistSong = PlaylistSongs[i];
                 RowDefinitionCollection RowNames = SongList.RowDefinitions;
                 Array RowArray = RowNames.ToArray();
 
@@ -204,7 +205,7 @@ namespace WindesMusic
             {
                 MenuItem OnePlaylistItem = new MenuItem();
                 OnePlaylistItem.Name = $"Playlist_{pl.PlaylistID}";
-                OnePlaylistItem.Tag = CorrectSongID;
+                OnePlaylistItem.Tag = $"{CorrectSongID}";
                 OnePlaylistItem.Header = $"{pl.PlaylistName}";
                 OnePlaylistItem.Click += AddToPlaylistClick;
                 PlaylistItem.Items.Add(OnePlaylistItem);
@@ -223,9 +224,9 @@ namespace WindesMusic
         private void AddToPlaylistClick(object sender, RoutedEventArgs e)
         {
             MenuItem SongItem = sender as MenuItem;
-            int playlistID = Convert.ToInt32(SongItem.Name.Substring(9));
+            int PlaylistID = Convert.ToInt32(SongItem.Name.Substring(9));
             int SongID = Convert.ToInt32(SongItem.Tag);
-            Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == playlistID).FirstOrDefault();
+            Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == PlaylistID).FirstOrDefault();
             relevantPlaylist.AddSongToPlaylist(SongID);
 
 

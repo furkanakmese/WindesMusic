@@ -258,6 +258,7 @@ namespace WindesMusic
                 searchResult.Album = (string)_reader["Album"];
                 searchResult.Year = (int)_reader["Year"];
                 searchResult.Genre = (string)_reader["Genre"];
+                searchResult.Subgenre = (string)_reader["Subgenre"];
                 listResult.Add(searchResult);
             }
 
@@ -265,13 +266,32 @@ namespace WindesMusic
             return listResult;
         }
 
-        public List<Song> GetRecommendedSongsForPlaylist(string songIDsString)
-        { 
+        //Return a list of songs for the playlist recommender
+        public List<Song> GetRecommendedSongsForPlaylist(string mostCommonGenre, string secondMostCommonGenre, int playlistID)
+        {
 
             OpenConnection();
             _command.Parameters.Clear();
             List<Song> listResult = new List<Song>();
-            _command.CommandText = "SELECT TOP 5 * FROM Song WHERE Genre = 'Pop' AND SongID != @songIDsString ORDER BY NewID()";
+            if (secondMostCommonGenre == "")
+            {
+                _command.CommandText = "SELECT TOP 5 * FROM Song WHERE Subgenre = @mostCommonGenre AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) ORDER BY NewID()";
+            }
+            else
+            {
+                _command.CommandText = "SELECT TOP 5 * FROM Song WHERE Subgenre IN(@mostCommonGenre, @secondMostCommonGenre) AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) ORDER BY NewID()";
+            }
+
+
+            var mostCommonGenreParam = _command.CreateParameter();
+            mostCommonGenreParam.ParameterName = "@mostCommonGenre";
+            mostCommonGenreParam.Value = mostCommonGenre;
+            _command.Parameters.Add(mostCommonGenreParam);
+
+            var secondMostCommonGenreParam = _command.CreateParameter();
+            secondMostCommonGenreParam.ParameterName = "@secondMostCommonGenre";
+            secondMostCommonGenreParam.Value = secondMostCommonGenre;
+            _command.Parameters.Add(secondMostCommonGenreParam);
 
             var criteriaParam = _command.CreateParameter();
             criteriaParam.ParameterName = "@songIDsString";
