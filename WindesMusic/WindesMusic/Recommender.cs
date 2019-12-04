@@ -14,7 +14,6 @@ namespace WindesMusic
         {
             this.db = db;
         }
-
         //Returns 5 random songs that are not in the playlist and with the most common genre
         public List<Song> getRecommendedSongsForPlaylist(Playlist playlist)
         {
@@ -46,8 +45,8 @@ namespace WindesMusic
             {
                 Console.WriteLine(song.SongName);
             }
+
             return db.GetRecommendedSongsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID);
         }
-
     }
 }

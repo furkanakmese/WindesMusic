@@ -21,13 +21,24 @@ namespace WindesMusic
     public partial class PlaylistSongsPage : Page
     {
         Database db = new Database();
+        public Playlist playlistToUse;
+        private string _orderBy;
         private int _PlaylistID;
         private string _PlaylistName;
         List<Song> SongsInPlaylist;
         List<Song> RecommendedSongs;
         MainWindow mainWindow;
         User user;
-        public PlaylistSongsPage(Playlist playlist, MainWindow main, User BaseUser)
+
+        public delegate void OnRerender(Playlist playlist);
+        public event OnRerender rerender;
+
+        public PlaylistSongsPage()
+        {
+            InitializeComponent();
+        }
+
+        public void reinitialize(Playlist playlist, MainWindow main, User BaseUser)
         {
             InitializeComponent();
             Recommender recommender = new Recommender(db);
@@ -35,15 +46,15 @@ namespace WindesMusic
             SongsInPlaylist = playlist.SongPlaylist;
             mainWindow = main;
             user = BaseUser;
-            _PlaylistName = playlist.PlaylistName;
-            _PlaylistID = playlist.PlaylistID;
+            _PlaylistName = playlistToUse.PlaylistName;
+            _PlaylistID = playlistToUse.PlaylistID;
             user = BaseUser;
             Thickness SongBlockThickness = new Thickness(5, 2, 0, 0);
             SolidColorBrush whiteText = new SolidColorBrush(System.Windows.Media.Colors.White);
 
             var PlaylistBlock = new TextBlock
             {
-                Text = $"{playlist.PlaylistName}",
+                Text = $"{playlistToUse.PlaylistName}",
                 FontSize = 25,
                 Foreground = whiteText,
                 Margin = new Thickness(250, 10, 0, 5)
@@ -61,9 +72,9 @@ namespace WindesMusic
             PlaylistName.Children.Add(PlayPlaylistButton);
 
             //Adds the necessary amount of rows for the playlist
-            for (int i = 0; i < playlist.SongPlaylist.Count; i++)
+            for (int i = 0; i < playlistToUse.SongPlaylist.Count; i++)
             {
-                Song playlistSong = playlist.SongPlaylist[i];
+                Song playlistSong = playlistToUse.SongPlaylist[i];
                 RowDefinition rowDef = new RowDefinition();
                 rowDef.Name = $"Row_{i}";
                 SongList.RowDefinitions.Add(rowDef);
@@ -92,6 +103,7 @@ namespace WindesMusic
                 };
                 Grid.SetRow(SongBlockName, i);
                 Grid.SetColumn(SongBlockName, 1);
+                SongBlockName.MouseLeftButtonUp += (sender, args) => { _orderBy = "name"; OnLabelClick(sender, args); };
 
                 // Add the artist text block to the Songlist grid
                 var SongBlockArtist = new TextBlock
@@ -103,6 +115,7 @@ namespace WindesMusic
                 };
                 Grid.SetRow(SongBlockArtist, i);
                 Grid.SetColumn(SongBlockArtist, 2);
+                SongBlockArtist.MouseLeftButtonUp += (sender, args) => { _orderBy = "artist"; OnLabelClick(sender, args); };
 
                 // Add the album text block to the Songlist grid
                 var SongBlockAlbum = new TextBlock
@@ -114,6 +127,7 @@ namespace WindesMusic
                 };
                 Grid.SetRow(SongBlockAlbum, i);
                 Grid.SetColumn(SongBlockAlbum, 3);
+                SongBlockAlbum.MouseLeftButtonUp += (sender, args) => { _orderBy = "album"; OnLabelClick(sender, args); };
 
                 // Add the year text block to the Songlist grid
                 var SongBlockYear = new TextBlock
@@ -125,6 +139,7 @@ namespace WindesMusic
                 };
                 Grid.SetRow(SongBlockYear, i);
                 Grid.SetColumn(SongBlockYear, 4);
+                SongBlockYear.MouseLeftButtonUp += (sender, args) => { _orderBy = "year"; OnLabelClick(sender, args); };
 
                 // Add the elements to the Songlist grid Children collection
                 SongList.Children.Add(PlayButton);
@@ -139,78 +154,36 @@ namespace WindesMusic
 
                 SongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
             }
+        }
 
-            for (int i = 0; i < RecommendedSongs.Count; i++)
+        private void OnLabelClick(object sender, EventArgs args)
+        {
+            Playlist newPlaylist = new Playlist();
+            newPlaylist.PlaylistID = playlistToUse.PlaylistID;
+            newPlaylist.PlaylistName = playlistToUse.PlaylistName;
+            newPlaylist.Recommender = playlistToUse.Recommender;
+
+            switch(_orderBy)
             {
-                Song playlistSong = RecommendedSongs[i];
-                RowDefinition rowDef = new RowDefinition();
-                rowDef.Name = $"Row_{i}";
-                RecommendedSongList.RowDefinitions.Add(rowDef);
-                //Song playlistSong = PlaylistSongs[i];
-                RowDefinitionCollection RowNames = RecommendedSongList.RowDefinitions;
-                Array RowArray = RowNames.ToArray();
-
-                // Add the play button to the Songlist grid
-                var PlayButton = new Button
-                {
-                    Name = $"__{playlistSong.SongID}",
-                    Content = "Play",
-                    Margin = new Thickness(5, 0, 0, 5)
-                };
-                Grid.SetRow(PlayButton, i);
-                Grid.SetColumn(PlayButton, 0);
-                PlayButton.Click += PlaySongFromPlaylist;
-
-                // Add the Songname text block to the Songlist grid
-                var SongBlockName = new TextBlock
-                {
-                    Name = $"_{playlistSong.SongID}",
-                    Text = $"{playlistSong.SongName}",
-                    Foreground = whiteText,
-                    Margin = SongBlockThickness
-                };
-                Grid.SetRow(SongBlockName, i);
-                Grid.SetColumn(SongBlockName, 1);
-
-                // Add the artist text block to the Songlist grid
-                var SongBlockArtist = new TextBlock
-                {
-                    Name = $"_{playlistSong.SongID}",
-                    Text = $"{playlistSong.Artist}",
-                    Foreground = whiteText,
-                    Margin = SongBlockThickness
-                };
-                Grid.SetRow(SongBlockArtist, i);
-                Grid.SetColumn(SongBlockArtist, 2);
-
-                // Add the album text block to the Songlist grid
-                var SongBlockAlbum = new TextBlock
-                {
-                    Name = $"_{playlistSong.SongID}",
-                    Text = $"{playlistSong.Album}",
-                    Foreground = whiteText,
-                    Margin = SongBlockThickness
-                };
-                Grid.SetRow(SongBlockAlbum, i);
-                Grid.SetColumn(SongBlockAlbum, 3);
-
-                // Add the year text block to the Songlist grid
-                var SongBlockYear = new TextBlock
-                {
-                    Name = $"_{playlistSong.SongID}",
-                    Text = $"{playlistSong.Year}",
-                    Foreground = whiteText,
-                    Margin = SongBlockThickness
-                };
-                Grid.SetRow(SongBlockYear, i);
-                Grid.SetColumn(SongBlockYear, 4);
-
-                // Add the elements to the Songlist grid Children collection
-                RecommendedSongList.Children.Add(PlayButton);
-                RecommendedSongList.Children.Add(SongBlockName);
-                RecommendedSongList.Children.Add(SongBlockArtist);
-                RecommendedSongList.Children.Add(SongBlockAlbum);
-                RecommendedSongList.Children.Add(SongBlockYear);
+                case "name":
+                    newPlaylist.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.SongName).ToList();
+                    break;
+                case "album":
+                    newPlaylist.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.Album).ToList();
+                    break;
+                case "year":
+                    newPlaylist.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.Year).ToList();
+                    break;
+                case "artist":
+                    newPlaylist.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.Artist).ToList();
+                    break;
+                default:
+                    newPlaylist.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.SongID).ToList();
+                    break;
+            }
+            if (rerender != null)
+            {
+                rerender(newPlaylist);
             }
         }
 

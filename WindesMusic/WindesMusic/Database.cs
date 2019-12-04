@@ -178,7 +178,7 @@ namespace WindesMusic
             _command.Parameters.Add(idParam);
             _reader = _command.ExecuteReader();
 
-            while (_reader.Read())
+            if (_reader.Read())
             {
                 Playlist playlistResult = new Playlist();
                 userResult.Id = (int)_reader["Id"];
@@ -190,11 +190,13 @@ namespace WindesMusic
                     playlistResult.PlaylistID = (int)_reader["PlaylistID"];
                     playlistResult.PlaylistName = (string)_reader["PlaylistName"];
                     userResult.Playlists.Add(playlistResult);
-                }
-                catch (Exception e)
+                } catch(Exception e)
                 {
                     Console.WriteLine(e);
                 }
+            } else
+            {
+                Console.WriteLine("test");
             }
             _connection.Close();
             foreach(Playlist playlist in userResult.Playlists)
@@ -292,8 +294,8 @@ namespace WindesMusic
             _command.Parameters.Add(secondMostCommonGenreParam);
 
             var criteriaParam = _command.CreateParameter();
-            criteriaParam.ParameterName = "@playlistID";
-            criteriaParam.Value = playlistID;
+            criteriaParam.ParameterName = "@songIDsString";
+            criteriaParam.Value = songIDsString;
             _command.Parameters.Add(criteriaParam);
             _reader = _command.ExecuteReader();
 
