@@ -24,7 +24,7 @@ namespace WindesMusic
     /// </summary>
     public partial class MainWindow : Window
     {
-        public AudioPlayer audioPlayer = new AudioPlayer();
+        public AudioPlayer audioPlayer;
         private DispatcherTimer dispatcherTimer;
         private User user;
         private Database db = new Database();
@@ -34,7 +34,7 @@ namespace WindesMusic
         public MainWindow()
         {
             InitializeComponent();
-
+            audioPlayer = new AudioPlayer(this);
             //  DispatcherTimer setup
             dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler((object sender, EventArgs e) => {

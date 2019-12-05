@@ -109,7 +109,8 @@ namespace WindesMusic
                             Name = $"__{playlistSong.SongID}",
                             Content = "Play",
                             Margin = new Thickness(5, 0, 0, 5),
-                            FontSize = 15
+                            FontSize = 15,
+                            Tag = playlistSong
                         };
                         Grid.SetRow(PlayButton, i);
                         Grid.SetColumn(PlayButton, 0);
@@ -195,9 +196,8 @@ namespace WindesMusic
         private void PlaySongFromSearch(object sender, RoutedEventArgs e)
         {
             Button _PlayButton = sender as Button;
-            string SongID = _PlayButton.Name;
-            int SongIDint = Convert.ToInt32(SongID.Substring(2));
-            mainWindow.audioPlayer.PlayChosenSong(SongIDint);
+            Song song = (Song)_PlayButton.Tag;
+            mainWindow.audioPlayer.PlayChosenSong(song);
         }
         private void AddToPlaylistClick(object sender, RoutedEventArgs e)
         {
@@ -212,8 +212,8 @@ namespace WindesMusic
         private void AddToQueueClick(object sender, RoutedEventArgs e)
         {
             var SongItem = sender as MenuItem;
-            int SongID = Convert.ToInt32(SongItem.Name.Substring(6));
-            MusicQueue.AddSongToQueue(SongID);
+            Song song = (Song)SongItem.Tag;
+            MusicQueue.AddSongToQueue(song);
         }
 
         private void SongContextMenuOpening(object sender, MouseButtonEventArgs e)
@@ -224,6 +224,7 @@ namespace WindesMusic
             int top1 = (int)Math.Round(top);
             int amount = top1 / 28;
             ContextMenu menu = new ContextMenu();
+            Song song = resultList.ElementAt(amount);
             int CorrectSongID = resultList.ElementAt(amount).SongID;
 
             MenuItem PlaylistItem = new MenuItem();
@@ -234,7 +235,7 @@ namespace WindesMusic
             {
                 MenuItem OnePlaylistItem = new MenuItem();
                 OnePlaylistItem.Name = $"Playlist_{pl.PlaylistID}";
-                OnePlaylistItem.Tag = $"{CorrectSongID}";
+                OnePlaylistItem.Tag = song;
                 OnePlaylistItem.Header = $"{pl.PlaylistName}";
                 OnePlaylistItem.Click += AddToPlaylistClick;
                 PlaylistItem.Items.Add(OnePlaylistItem);
@@ -242,6 +243,7 @@ namespace WindesMusic
 
             MenuItem QueueItem = new MenuItem();
             QueueItem.Name = $"Queue_{CorrectSongID}";
+            QueueItem.Tag= song;
             QueueItem.Header = "Add to Queue";
             QueueItem.Click += AddToQueueClick;
 
