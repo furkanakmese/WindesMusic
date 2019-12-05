@@ -42,9 +42,10 @@ namespace WindesMusic
         {
             InitializeComponent();
             SongList.Children.Clear();
+            PlaylistName.Children.Clear();
             //Recommender recommender = new Recommender(db);
             //RecommendedSongs = recommender.getRecommendedSongsForPlaylist(playlist);
-            SongsInPlaylist = playlist.SongPlaylist;
+            playlistToUse = playlist;
             mainWindow = main;
             user = BaseUser;
             _PlaylistName = playlistToUse.PlaylistName;
@@ -435,9 +436,7 @@ namespace WindesMusic
         private void PlayPlaylist(object sender, RoutedEventArgs e)
         {
             MusicQueue.SongQueue.Clear();
-            Playlist playlist = new Playlist(_PlaylistID);
-            playlist.SongPlaylist = db.GetSongsInPlaylist(_PlaylistID);
-            MusicQueue.SongQueue = playlist.CreateQueueFromPlaylist();
+            MusicQueue.SongQueue = playlistToUse.CreateQueueFromPlaylist();
             mainWindow.audioPlayer.PlayChosenSong();
         }
     }
