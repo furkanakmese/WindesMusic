@@ -5,17 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WindesMusic"
         mc:Ignorable="d"
-        Title="LoginWindow" Height="450" Width="800"
+        Title="LoginWindow" Height="800" Width="1400"
         FontFamily="Arial"
         Background="{DynamicResource MainColor}"
         WindowStartupLocation="CenterScreen">
 
     <Grid x:Name="Login">
-        <Label Content="Windes Music"  HorizontalContentAlignment="Center" HorizontalAlignment="Center" Height="47" Margin="300,49,289.333,0" VerticalAlignment="Top" Width="204"  FontSize="30" FontFamily="Arial"/>
-        <TextBox Name="InputEmail" Style="{StaticResource placeHolder}"  Tag="Email" HorizontalAlignment="Center" BorderThickness="0,0,0,1" Height="23" Margin="150" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120"/>
-        <PasswordBox Name="InputPassword" HorizontalAlignment="Left" Margin="337,178,0,0" VerticalAlignment="Top" Width="120" Height="20"/>
-        <Button Name="LoginBtn" Click="LoginBtn_Click" Content="Log in" HorizontalAlignment="Center" Margin="0,225,0,0" VerticalAlignment="Top" Width="120"/>
-        <TextBlock Name="lblMessage" HorizontalAlignment="Left" Margin="337,203,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
-        <Button Content="No account? register" HorizontalAlignment="Left" Margin="337,249,0,0" VerticalAlignment="Top" Width="120" Click="Button_Click"/>
+        <Label Content="Windes Music"  HorizontalContentAlignment="Center" HorizontalAlignment="Center" Height="47" Margin="300,49,289.333,0" VerticalAlignment="Top" Width="300"  FontSize="40" FontFamily="Arial" Foreground="White"/>
+        <TextBox Name="InputEmail" Tag="Email" HorizontalAlignment="Center" BorderThickness="0,0,0,1" Height="25" Margin="150" TextWrapping="Wrap"  VerticalAlignment="Top" Width="200" FontSize="15"/>
+        <PasswordBox Name="InputPassword" HorizontalAlignment="Center" Margin="0,-350,0,0" VerticalAlignment="Center" Width="200" Height="25"/>
+        <Button Name="LoginBtn" Click="LoginBtn_Click" Content="Log in" HorizontalAlignment="Center" Margin="0,280,0,0" VerticalAlignment="Top" Width="150" Height="30" FontSize="20"/>
+        <TextBlock Name="lblMessage" HorizontalAlignment="Center" Margin="0,250,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" FontSize="15"/>
+        <Button Content="No account? register" HorizontalAlignment="Center" Margin="0,340,0,0" VerticalAlignment="Top" Width="200" Click="Button_Click" FontSize="20"/>
     </Grid>
 </Window>

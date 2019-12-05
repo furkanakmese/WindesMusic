@@ -52,7 +52,7 @@ namespace WindesMusic
             };
 
             inputSearch.KeyDown += (object sender, KeyEventArgs e) => {
-                if (e.Key == Key.Enter) Main.Content = new SearchResults(inputSearch.Text);
+                if (e.Key == Key.Enter) Main.Content = new SearchResults(inputSearch.Text, user, this);
             };
             btnPlay.Click += (object sender, RoutedEventArgs e) => audioPlayer.OnButtonPlayClick(sender, e);
             btnMute.Click += (object sender, RoutedEventArgs e) => audioPlayer.Mute();
@@ -87,7 +87,7 @@ namespace WindesMusic
 
         private void NextButtonClick(object sender, RoutedEventArgs e)
         {
-            audioPlayer.OnButtonStopClick();
+            audioPlayer.OnButtonNextClick();
 
         }
 
@@ -108,6 +108,7 @@ namespace WindesMusic
                     //Style = StaticResource MenuButton,
                     Name = $"_{item.PlaylistID}",
                     Content = $"{item.PlaylistName}",
+                    FontSize = 23,
                     Margin = thickness
                 };
                 StaticResourceExtension menuButton = new StaticResourceExtension("MenuButton");
@@ -119,7 +120,6 @@ namespace WindesMusic
 
         private void ButtonClickPlaylist(object sender, RoutedEventArgs e)
         {
-            SongList.Children.Clear();
             Button _ButtonPlaylist = sender as Button;
             int PlaylistId = Convert.ToInt32(_ButtonPlaylist.Name.Substring(1));
             Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == PlaylistId).FirstOrDefault();
