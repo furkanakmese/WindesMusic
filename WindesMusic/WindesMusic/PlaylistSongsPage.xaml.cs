@@ -41,6 +41,7 @@ namespace WindesMusic
         public void reinitialize(Playlist playlist, MainWindow main, User BaseUser)
         {
             InitializeComponent();
+            SongList.Children.Clear();
             //Recommender recommender = new Recommender(db);
             //RecommendedSongs = recommender.getRecommendedSongsForPlaylist(playlist);
             SongsInPlaylist = playlist.SongPlaylist;
@@ -86,6 +87,7 @@ namespace WindesMusic
             };
             Grid.SetRow(OrderName, 0);
             Grid.SetColumn(OrderName, 1);
+            OrderName.MouseLeftButtonUp += (sender, args) => { _orderBy = "name"; OnLabelClick(sender, args); };
 
             // Add the artist text block to the Songlist grid
             var OrderArtist = new TextBlock
@@ -98,6 +100,7 @@ namespace WindesMusic
             };
             Grid.SetRow(OrderArtist, 0);
             Grid.SetColumn(OrderArtist, 2);
+            OrderArtist.MouseLeftButtonUp += (sender, args) => { _orderBy = "artist"; OnLabelClick(sender, args); };
 
             // Add the album text block to the Songlist grid
             var OrderAlbum = new TextBlock
@@ -110,6 +113,7 @@ namespace WindesMusic
             };
             Grid.SetRow(OrderAlbum, 0);
             Grid.SetColumn(OrderAlbum, 3);
+            OrderAlbum.MouseLeftButtonUp += (sender, args) => { _orderBy = "album"; OnLabelClick(sender, args); };
 
             // Add the year text block to the Songlist grid
             var OrderYear = new TextBlock
@@ -122,7 +126,7 @@ namespace WindesMusic
             };
             Grid.SetRow(OrderYear, 0);
             Grid.SetColumn(OrderYear, 4);
-
+            OrderYear.MouseLeftButtonUp += (sender, args) => { _orderBy = "year"; OnLabelClick(sender, args); };
 
             // Add the elements to the Songlist grid Children collection
             OrderList.Children.Add(OrderName);
@@ -163,7 +167,6 @@ namespace WindesMusic
                 };
                 Grid.SetRow(SongBlockName, i);
                 Grid.SetColumn(SongBlockName, 1);
-                SongBlockName.MouseLeftButtonUp += (sender, args) => { _orderBy = "name"; OnLabelClick(sender, args); };
 
                 // Add the artist text block to the Songlist grid
                 var SongBlockArtist = new TextBlock
@@ -176,7 +179,6 @@ namespace WindesMusic
                 };
                 Grid.SetRow(SongBlockArtist, i);
                 Grid.SetColumn(SongBlockArtist, 2);
-                SongBlockArtist.MouseLeftButtonUp += (sender, args) => { _orderBy = "artist"; OnLabelClick(sender, args); };
 
                 // Add the album text block to the Songlist grid
                 var SongBlockAlbum = new TextBlock
@@ -189,7 +191,6 @@ namespace WindesMusic
                 };
                 Grid.SetRow(SongBlockAlbum, i);
                 Grid.SetColumn(SongBlockAlbum, 3);
-                SongBlockAlbum.MouseLeftButtonUp += (sender, args) => { _orderBy = "album"; OnLabelClick(sender, args); };
 
                 // Add the year text block to the Songlist grid
                 var SongBlockYear = new TextBlock
@@ -202,7 +203,6 @@ namespace WindesMusic
                 };
                 Grid.SetRow(SongBlockYear, i);
                 Grid.SetColumn(SongBlockYear, 4);
-                SongBlockYear.MouseLeftButtonUp += (sender, args) => { _orderBy = "year"; OnLabelClick(sender, args); };
 
                 // Add the elements to the Songlist grid Children collection
                 SongList.Children.Add(PlayButton);
