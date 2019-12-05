@@ -85,7 +85,7 @@ namespace WindesMusic
             OpenConnection();
             _command.Parameters.Clear();
             User userResult = new User();
-            _command.CommandText = "SELECT * FROM Users WHERE Email=@email AND Password=@password";
+            _command.CommandText = "SELECT * FROM [User] WHERE Email=@email AND Password=@password";
 
             var emailParam = _command.CreateParameter();
             emailParam.ParameterName = "@email";
@@ -122,7 +122,7 @@ namespace WindesMusic
             OpenConnection();
             _command.Parameters.Clear();
 
-            _command.CommandText = "SELECT * FROM Users WHERE Email=@email";
+            _command.CommandText = "SELECT * FROM [User] WHERE Email=@email";
             var emailParam = _command.CreateParameter();
             emailParam.ParameterName = "@email";
             emailParam.Value = email;
@@ -135,7 +135,7 @@ namespace WindesMusic
             }
             _reader.Close();
 
-            _command.CommandText = "INSERT INTO Users(Name, Email, Password) VALUES (@name, @email, @password)";
+            _command.CommandText = "INSERT INTO [User] VALUES (@name, @email, @password, \"hier komt salt\",\"False\", 0, 0)";
 
             var nameParam = _command.CreateParameter();
             nameParam.ParameterName = "@name";
@@ -170,7 +170,7 @@ namespace WindesMusic
             OpenConnection();
             _command.Parameters.Clear();
             User userResult = new User();
-            _command.CommandText = "SELECT * FROM Users LEFT JOIN Playlist ON Id=UserID WHERE Id=@id";
+            _command.CommandText = "SELECT * FROM \"User\" LEFT JOIN Playlist ON [User].UserID = Playlist.UserID WHERE [User].UserID=@id";
 
             var idParam = _command.CreateParameter();
             idParam.ParameterName = "@id";
