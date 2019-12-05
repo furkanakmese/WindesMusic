@@ -63,8 +63,8 @@
                     <Button Grid.Column="3" x:Name="btnNext" Content="Next" Click="NextButtonClick" FontSize="15"/>
                     <Button Grid.Column="4" x:Name="btnRepeat" Content="Repeat" HorizontalAlignment="Right" FontSize="15"/>
                 </Grid>
-                <Label HorizontalAlignment="Left" Content="Song" Margin="10,-85,140,0" FontSize="20"/>
-                <Label HorizontalAlignment="Left" Content="Artist" Margin="10,-50,0,0" FontSize="20"/>
+                <Label x:Name="Song" HorizontalAlignment="Left" Content="" Margin="10,-85,140,0" FontSize="20"/>
+                <Label  x:Name="Artist" HorizontalAlignment="Left" Content="" Margin="10,-50,0,0" FontSize="20"/>
             </StackPanel>
             
         </DockPanel>
