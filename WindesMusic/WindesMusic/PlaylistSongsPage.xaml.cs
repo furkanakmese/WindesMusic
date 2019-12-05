@@ -41,8 +41,8 @@ namespace WindesMusic
         public void reinitialize(Playlist playlist, MainWindow main, User BaseUser)
         {
             InitializeComponent();
-            Recommender recommender = new Recommender(db);
-            RecommendedSongs = recommender.getRecommendedSongsForPlaylist(playlist);
+            //Recommender recommender = new Recommender(db);
+            //RecommendedSongs = recommender.getRecommendedSongsForPlaylist(playlist);
             SongsInPlaylist = playlist.SongPlaylist;
             mainWindow = main;
             user = BaseUser;
@@ -129,7 +129,7 @@ namespace WindesMusic
             OrderList.Children.Add(OrderArtist);
             OrderList.Children.Add(OrderAlbum);
             OrderList.Children.Add(OrderYear);
-            
+
             //Adds the necessary amount of rows for the playlist
             for (int i = 0; i < playlistToUse.SongPlaylist.Count; i++)
             {
@@ -217,8 +217,8 @@ namespace WindesMusic
 
                 SongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
             }
-        }
 
+            /*
             for (int i = 0; i < RecommendedSongs.Count; i++)
             {
                 Song playlistSong = RecommendedSongs[i];
@@ -297,13 +297,15 @@ namespace WindesMusic
                 RecommendedSongList.Children.Add(SongBlockYear);
 
                 RecommendedSongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuFromRecommended);
-
+            }
+            */
+        }
         private void OnLabelClick(object sender, EventArgs args)
         {
             Playlist newPlaylist = new Playlist();
             newPlaylist.PlaylistID = playlistToUse.PlaylistID;
             newPlaylist.PlaylistName = playlistToUse.PlaylistName;
-            newPlaylist.Recommender = playlistToUse.Recommender;
+            //newPlaylist.Recommender = playlistToUse.Recommender;
 
             switch(_orderBy)
             {
