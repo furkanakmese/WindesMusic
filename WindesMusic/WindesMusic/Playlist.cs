@@ -13,6 +13,7 @@ namespace WindesMusic
 
         public int PlaylistID { get; set; }
         public string PlaylistName { get; set; }
+
         public Recommender Recommender { get; set; }
 
         public Playlist()
@@ -29,9 +30,9 @@ namespace WindesMusic
             SongPlaylist = data.GetSongsInPlaylist(PlaylistID);
         }
 
-        public void AddPlaylistSongToQueue(int SongID)
+        public void AddPlaylistSongToQueue(Song song)
         {
-            MusicQueue.AddSongToQueue(SongID);
+            MusicQueue.AddSongToQueue(song);
         }
 
         public void AddSongToPlaylist(Song song)
@@ -67,15 +68,15 @@ namespace WindesMusic
         }
 
         //Creates a queue with the songs in the order of the playlist
-        public Queue<int> CreateQueueFromPlaylist()
+        public Queue<Song> CreateQueueFromPlaylist()
         {
-            List<int> SongList = new List<int>();
-            Queue<int> SongQueue;
+            List<Song> SongList = new List<Song>();
+            Queue<Song> SongQueue;
             foreach(Song PlaylistSong in SongPlaylist)
             {
-                SongList.Add(PlaylistSong.SongID);
+                SongList.Add(PlaylistSong);
             }
-            SongQueue = new Queue<int>(SongList);
+            SongQueue = new Queue<Song>(SongList);
             return SongQueue;
         }
     }
