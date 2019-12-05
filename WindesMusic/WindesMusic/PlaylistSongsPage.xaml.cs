@@ -40,34 +40,90 @@ namespace WindesMusic
             user = BaseUser;
             Thickness SongBlockThickness = new Thickness(5, 2, 0, 0);
             SolidColorBrush whiteText = new SolidColorBrush(System.Windows.Media.Colors.White);
-
+            StackPanel sp = new StackPanel();
+            sp.Orientation = Orientation.Horizontal;
             var PlaylistBlock = new TextBlock
             {
                 Text = $"{playlist.PlaylistName}",
-                FontSize = 25,
+                FontSize = 30,
                 Foreground = whiteText,
-                Margin = new Thickness(250, 10, 0, 5)
+                Margin = new Thickness(0, 10, 0, 5)
             };
             var PlayPlaylistButton = new Button
             {
                 Name = $"_{_PlaylistID}",
                 Content = "Play",
                 FontSize = 30,
-                Margin = new Thickness(250, 10, 260, 5)
+                Margin = new Thickness(30, 10, 0, 5)
             };
             PlayPlaylistButton.Click += PlayPlaylist;
 
-            PlaylistName.Children.Add(PlaylistBlock);
-            PlaylistName.Children.Add(PlayPlaylistButton);
+            sp.Children.Add(PlaylistBlock);
+            sp.Children.Add(PlayPlaylistButton);
+            PlaylistName.Children.Add(sp);
 
-            //Adds the necessary amount of rows for the playlist
+            OrderList.RowDefinitions.Add(new RowDefinition());
+
+            // Add the Songname text block to the Songlist grid
+            var OrderName = new TextBlock
+            {
+                Name = "Name",
+                Text = "Name",
+                Foreground = whiteText,
+                Margin = SongBlockThickness,
+                FontSize = 15
+            };
+            Grid.SetRow(OrderName, 0);
+            Grid.SetColumn(OrderName, 1);
+
+            // Add the artist text block to the Songlist grid
+            var OrderArtist = new TextBlock
+            {
+                Name = $"Artist",
+                Text = $"Artist",
+                Foreground = whiteText,
+                Margin = SongBlockThickness,
+                FontSize = 15
+            };
+            Grid.SetRow(OrderArtist, 0);
+            Grid.SetColumn(OrderArtist, 2);
+
+            // Add the album text block to the Songlist grid
+            var OrderAlbum = new TextBlock
+            {
+                Name = $"Album",
+                Text = $"Album",
+                Foreground = whiteText,
+                Margin = SongBlockThickness,
+                FontSize = 15
+            };
+            Grid.SetRow(OrderAlbum, 0);
+            Grid.SetColumn(OrderAlbum, 3);
+
+            // Add the year text block to the Songlist grid
+            var OrderYear = new TextBlock
+            {
+                Name = $"Year",
+                Text = $"Year",
+                Foreground = whiteText,
+                Margin = SongBlockThickness,
+                FontSize = 15
+            };
+            Grid.SetRow(OrderYear, 0);
+            Grid.SetColumn(OrderYear, 4);
+
+            // Add the elements to the Songlist grid Children collection
+            OrderList.Children.Add(OrderName);
+            OrderList.Children.Add(OrderArtist);
+            OrderList.Children.Add(OrderAlbum);
+            OrderList.Children.Add(OrderYear);
+        
             for (int i = 0; i < playlist.SongPlaylist.Count; i++)
             {
                 Song playlistSong = playlist.SongPlaylist[i];
                 RowDefinition rowDef = new RowDefinition();
                 rowDef.Name = $"Row_{i}";
                 SongList.RowDefinitions.Add(rowDef);
-                //Song playlistSong = PlaylistSongs[i];
                 RowDefinitionCollection RowNames = SongList.RowDefinitions;
                 Array RowArray = RowNames.ToArray();
 
@@ -76,7 +132,8 @@ namespace WindesMusic
                 {
                     Name = $"__{playlistSong.SongID}",
                     Content = "Play",
-                    Margin = new Thickness(5, 0, 0, 5)
+                    Margin = new Thickness(5, 0, 0, 5),
+                    FontSize = 15
                 };
                 Grid.SetRow(PlayButton, i);
                 Grid.SetColumn(PlayButton, 0);
@@ -88,7 +145,8 @@ namespace WindesMusic
                     Name = $"_{playlistSong.SongID}",
                     Text = $"{playlistSong.SongName}",
                     Foreground = whiteText,
-                    Margin = SongBlockThickness
+                    Margin = SongBlockThickness,
+                    FontSize = 15
                 };
                 Grid.SetRow(SongBlockName, i);
                 Grid.SetColumn(SongBlockName, 1);
@@ -99,7 +157,8 @@ namespace WindesMusic
                     Name = $"_{playlistSong.SongID}",
                     Text = $"{playlistSong.Artist}",
                     Foreground = whiteText,
-                    Margin = SongBlockThickness
+                    Margin = SongBlockThickness,
+                    FontSize = 15
                 };
                 Grid.SetRow(SongBlockArtist, i);
                 Grid.SetColumn(SongBlockArtist, 2);
@@ -110,7 +169,8 @@ namespace WindesMusic
                     Name = $"_{playlistSong.SongID}",
                     Text = $"{playlistSong.Album}",
                     Foreground = whiteText,
-                    Margin = SongBlockThickness
+                    Margin = SongBlockThickness,
+                    FontSize = 15
                 };
                 Grid.SetRow(SongBlockAlbum, i);
                 Grid.SetColumn(SongBlockAlbum, 3);
@@ -121,7 +181,8 @@ namespace WindesMusic
                     Name = $"_{playlistSong.SongID}",
                     Text = $"{playlistSong.Year}",
                     Foreground = whiteText,
-                    Margin = SongBlockThickness
+                    Margin = SongBlockThickness,
+                    FontSize = 15
                 };
                 Grid.SetRow(SongBlockYear, i);
                 Grid.SetColumn(SongBlockYear, 4);
@@ -155,7 +216,8 @@ namespace WindesMusic
                 {
                     Name = $"__{playlistSong.SongID}",
                     Content = "Play",
-                    Margin = new Thickness(5, 0, 0, 5)
+                    Margin = new Thickness(5, 0, 0, 5),
+                    FontSize = 15
                 };
                 Grid.SetRow(PlayButton, i);
                 Grid.SetColumn(PlayButton, 0);
@@ -167,7 +229,8 @@ namespace WindesMusic
                     Name = $"_{playlistSong.SongID}",
                     Text = $"{playlistSong.SongName}",
                     Foreground = whiteText,
-                    Margin = SongBlockThickness
+                    Margin = SongBlockThickness,
+                    FontSize = 15
                 };
                 Grid.SetRow(SongBlockName, i);
                 Grid.SetColumn(SongBlockName, 1);
@@ -178,7 +241,8 @@ namespace WindesMusic
                     Name = $"_{playlistSong.SongID}",
                     Text = $"{playlistSong.Artist}",
                     Foreground = whiteText,
-                    Margin = SongBlockThickness
+                    Margin = SongBlockThickness,
+                    FontSize = 15
                 };
                 Grid.SetRow(SongBlockArtist, i);
                 Grid.SetColumn(SongBlockArtist, 2);
@@ -189,7 +253,8 @@ namespace WindesMusic
                     Name = $"_{playlistSong.SongID}",
                     Text = $"{playlistSong.Album}",
                     Foreground = whiteText,
-                    Margin = SongBlockThickness
+                    Margin = SongBlockThickness,
+                    FontSize = 15
                 };
                 Grid.SetRow(SongBlockAlbum, i);
                 Grid.SetColumn(SongBlockAlbum, 3);
@@ -200,7 +265,8 @@ namespace WindesMusic
                     Name = $"_{playlistSong.SongID}",
                     Text = $"{playlistSong.Year}",
                     Foreground = whiteText,
-                    Margin = SongBlockThickness
+                    Margin = SongBlockThickness,
+                    FontSize = 15
                 };
                 Grid.SetRow(SongBlockYear, i);
                 Grid.SetColumn(SongBlockYear, 4);
@@ -211,6 +277,8 @@ namespace WindesMusic
                 RecommendedSongList.Children.Add(SongBlockArtist);
                 RecommendedSongList.Children.Add(SongBlockAlbum);
                 RecommendedSongList.Children.Add(SongBlockYear);
+
+                RecommendedSongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuFromRecommended);
             }
         }
 
@@ -220,9 +288,43 @@ namespace WindesMusic
             var pos = e.GetPosition(SongList);
             double top = pos.Y;
             int top1 = (int)Math.Round(top);
-            int amount = top1 / 25;
+            int amount = top1 / 28;
             ContextMenu menu = new ContextMenu();
             int CorrectSongID = SongsInPlaylist.ElementAt(amount).SongID;
+
+            MenuItem PlaylistItem = new MenuItem();
+            PlaylistItem.Name = $"Playlists";
+            PlaylistItem.Header = "Add to Playlist";
+
+            foreach (Playlist pl in Playlists)
+            {
+                MenuItem OnePlaylistItem = new MenuItem();
+                OnePlaylistItem.Name = $"Playlist_{pl.PlaylistID}";
+                OnePlaylistItem.Tag = $"{CorrectSongID}";
+                OnePlaylistItem.Header = $"{pl.PlaylistName}";
+                OnePlaylistItem.Click += AddToPlaylistClick;
+                PlaylistItem.Items.Add(OnePlaylistItem);
+            }
+
+            MenuItem QueueItem = new MenuItem();
+            QueueItem.Name = $"Queue_{CorrectSongID}";
+            QueueItem.Header = "Add to Queue";
+            QueueItem.Click += AddToQueueClick;
+
+            menu.Items.Add(PlaylistItem);
+            menu.Items.Add(QueueItem);
+            SongList.ContextMenu = menu;
+        }
+
+        private void SongContextMenuFromRecommended(object sender, MouseButtonEventArgs e)
+        {
+            List<Playlist> Playlists = user.Playlists;
+            var pos = e.GetPosition(RecommendedSongList);
+            double top = pos.Y;
+            int top1 = (int)Math.Round(top);
+            int amount = top1 / 28;
+            ContextMenu menu = new ContextMenu();
+            int CorrectSongID = RecommendedSongs.ElementAt(amount).SongID;
 
             MenuItem PlaylistItem = new MenuItem();
             PlaylistItem.Name = $"Playlists";

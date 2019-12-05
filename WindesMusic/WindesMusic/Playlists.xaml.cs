@@ -30,8 +30,8 @@ namespace WindesMusic
             foreach (var item in user.Playlists)
             {
                 Rectangle image = new Rectangle();
-                image.Width = 80;
-                image.Height = 80;
+                image.Width = 150;
+                image.Height = 150;
                 image.HorizontalAlignment = HorizontalAlignment.Left;
                 image.Fill = new SolidColorBrush(System.Windows.Media.Colors.AliceBlue);
 

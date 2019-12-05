@@ -120,6 +120,20 @@ namespace WindesMusic
             {
                 MusicQueue.AddSongToPreviousQueue(_CurrentSong);
             }
+            
+        }
+
+        public void OnButtonNextClick()
+        {
+            outputDevice?.Pause();
+            outputDevice?.Stop();
+            DisposeOfSong();
+            audioFile = null;
+            isPlaying = false;
+            if (_CurrentSong != null)
+            {
+                MusicQueue.AddSongToPreviousQueue(_CurrentSong);
+            }
             if (MusicQueue.SongQueue.Count != 0 && audioFile == null)
             {
                 this.PlayChosenSong();
