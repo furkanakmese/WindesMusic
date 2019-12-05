@@ -10,6 +10,7 @@
         Background="{DynamicResource MainColor}"
         ResizeMode="NoResize"
         >
+   
     <Grid x:Name="MainGrid">
         <Frame x:Name="MainFrame" Margin="150,50,-0.4,76" NavigationUIVisibility="Hidden"/>
         <DockPanel LastChildFill="False">

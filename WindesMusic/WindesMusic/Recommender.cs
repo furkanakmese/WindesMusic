@@ -14,36 +14,39 @@ namespace WindesMusic
         {
             this.db = db;
         }
-
         //Returns 5 random songs that are not in the playlist and with the most common genre
         public List<Song> getRecommendedSongsForPlaylist(Playlist playlist)
         {
-            //Groups songs per genre
+            //Groups songs per genre orders by count
             var q = from x in playlist.SongPlaylist
-                    group x by x.Genre into g
+                    group x by x.Subgenre into g
                     let count = g.Count()
                     orderby count descending
                     select new { Value = g.Key, Count = count };
 
             string mostCommonGenre = "";
-            int highestPercentage = 0;
-
+            string secondMostCommonGenre = "";
+            int loopCount = 0;
             //Determines what the most common genre is
             foreach (var x in q)
             {
-                int percentage = (100 / playlist.SongPlaylist.Count) * x.Count;
-
-                if (percentage > highestPercentage)
+                if (loopCount == 0)
                 {
                     mostCommonGenre = x.Value;
-                    highestPercentage = percentage;
                 }
+                else if (loopCount == 1)
+                {
+                    secondMostCommonGenre = x.Value;
+                }
+                loopCount++;
             }
-            foreach (Song song in db.GetRecommendedSongsForPlaylist(mostCommonGenre, playlist.PlaylistID))
+
+            foreach (Song song in db.GetRecommendedSongsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID))
             {
                 Console.WriteLine(song.SongName);
             }
-            return db.GetRecommendedSongsForPlaylist(mostCommonGenre, playlist.PlaylistID);
+
+            return db.GetRecommendedSongsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID);
         }
     }
 }

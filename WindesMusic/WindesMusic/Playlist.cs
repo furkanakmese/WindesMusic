@@ -13,7 +13,6 @@ namespace WindesMusic
 
         public int PlaylistID { get; set; }
         public string PlaylistName { get; set; }
-        public Recommender Recommender { get; set; }
 
         public Playlist()
         {

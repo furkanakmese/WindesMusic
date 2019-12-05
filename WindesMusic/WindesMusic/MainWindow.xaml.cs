@@ -29,6 +29,7 @@ namespace WindesMusic
         private User user;
         private Database db = new Database();
         private Account account = new Account();
+        private PlaylistSongsPage playlistSongs = new PlaylistSongsPage();
 
         public MainWindow()
         {
@@ -93,8 +94,11 @@ namespace WindesMusic
         protected override void OnContentRendered(EventArgs e)
         {
             base.OnContentRendered(e);
+
             PlaylistList.Children.Clear();
             user = db.GetUserData(Properties.Settings.Default.UserID);
+
+            playlistSongs.rerender += (playlist) => { playlistSongs.playlistToUse = playlist; playlistSongs.reinitialize(playlist, this, user); };
 
             Thickness thickness = new Thickness(15, 0, 0, 5);
             foreach (var item in user.Playlists)
@@ -119,8 +123,9 @@ namespace WindesMusic
             Button _ButtonPlaylist = sender as Button;
             int PlaylistId = Convert.ToInt32(_ButtonPlaylist.Name.Substring(1));
             Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == PlaylistId).FirstOrDefault();
-            PlaylistSongsPage SongsPage = new PlaylistSongsPage(relevantPlaylist, this, user);
-            this.Main.Content = SongsPage;
+            playlistSongs.playlistToUse = relevantPlaylist;
+            playlistSongs.reinitialize(relevantPlaylist, this, user);
+            Main.Content = playlistSongs;
         }
 
         private void NewPlaylistButtonClick(object sender, RoutedEventArgs e)
@@ -128,11 +133,6 @@ namespace WindesMusic
             NewPlaylistWindow NewPlaylist = new NewPlaylistWindow();
             NewPlaylist.Show();
             NewPlaylist.Closed += (object sender2, EventArgs e2) => OnContentRendered(e);
-        }
-
-        private void btnAccount_Click(object sender, RoutedEventArgs e)
-        {
-            Main.Content = new Account();
         }
     }
 }
