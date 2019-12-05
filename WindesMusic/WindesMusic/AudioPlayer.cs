@@ -27,12 +27,11 @@ namespace WindesMusic
             DisposeOfSong();
             audioFile = null;
 
-
-
             audioFile = new AudioFileReader(fileName.ToString());
             outputDevice.Init(audioFile);
             outputDevice.Play();
             isPlaying = true;
+
         }
 
         public void PlayChosenSong(string songID)
