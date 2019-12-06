@@ -484,7 +484,7 @@ namespace WindesMusic
             }
         }
 
-        public bool SubmitSongForAdvertising(int id)
+        public string SubmitSongForAdvertising(int songId, int userId)
         {
             OpenConnection();
             _command.Parameters.Clear();
@@ -493,29 +493,45 @@ namespace WindesMusic
 
             var songIdParam = _command.CreateParameter();
             songIdParam.ParameterName = "@SongID";
-            songIdParam.Value = id;
+            songIdParam.Value = songId;
             _command.Parameters.Add(songIdParam);
 
             _reader = _command.ExecuteReader();
             if (_reader.Read())
             {
                 _connection.Close();
-                return false;
+                return "Song already submitted for advertisement";
             }
             _reader.Close();
 
-            _command.CommandText = "INSERT INTO AdvertisedSong (SongID) VALUES(@SongId)";
+            _command.CommandText = "UPDATE Users SET Credits = Credits - 5 WHERE Id=@UserID";
+            var userIdParam = _command.CreateParameter();
+            userIdParam.ParameterName = "@UserID";
+            userIdParam.Value = userId;
+            _command.Parameters.Add(userIdParam);
 
-            if (_command.ExecuteNonQuery() > 0)
+            try
+            {
+                _command.ExecuteNonQuery();
+                _command.CommandText = "INSERT INTO AdvertisedSong (SongID) VALUES(@SongID)";
+
+                if (_command.ExecuteNonQuery() > 0)
+                {
+                    _connection.Close();
+                    return "Song succesfully submitted for advertisement";
+                }
+                else
+                {
+                    _connection.Close();
+                    return "Error occured";
+                }
+            }
+            catch(Exception e)
             {
                 _connection.Close();
-                return true;
+                return "Not enough credits to submit advertisement";
             }
-            else
-            {
-                _connection.Close();
-                return false;
-            }
+                
         }
     }
 }
