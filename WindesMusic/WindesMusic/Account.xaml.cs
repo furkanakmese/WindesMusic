@@ -61,15 +61,8 @@ namespace WindesMusic
         {
             if(boxSongs.SelectedItem != null)
             {
-                bool submitSucces = db.SubmitSongForAdvertising(user.Songs.Where(i => i.SongName.Equals(boxSongs.SelectedItem.ToString())).Select(i => i.SongID).First());
-                if (submitSucces)
-                {
-                    lblMessage.Text = "Song succesfully requested for advertisement";
-                }
-                else
-                {
-                    lblMessage.Text = "Song already requested for advertisement";
-                }
+                string submitAdvertisement = db.SubmitSongForAdvertising(user.Songs.Where(i => i.SongName.Equals(boxSongs.SelectedItem.ToString())).Select(i => i.SongID).First(), user.Id);
+                lblMessage.Text = submitAdvertisement;
             } else
             {
                 lblMessage.Text = "Please select a song";
