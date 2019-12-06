@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -34,8 +35,15 @@ namespace WindesMusic
 
             if (password == passwordRepeat)
             {
+                var random = new RNGCryptoServiceProvider();
+                int max_length = 32;
+                byte[] salt = new byte[max_length];
+                random.GetNonZeroBytes(salt);
+                string saltText = Convert.ToBase64String(salt);
+
+
                 Database db = new Database();
-                if (db.Register(name, email, password).Email != null)
+                if (db.Register(name, email, password, saltText).Email != null)
                 {
                     MainWindow main = new MainWindow();
                     main.Show();
