@@ -13,5 +13,6 @@ namespace WindesMusic
         public string Email { get; set; }
         public int IsArtist { get; set; }
         public List<Playlist> Playlists { get; set; } = new List<Playlist>();
+        public List<Song> Songs { get; set; } = new List<Song>();
     }
 }

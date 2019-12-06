@@ -15,5 +15,6 @@ namespace WindesMusic
         public int Year { get; set; }
         public string Genre { get; set; }
         public string Subgenre { get; set; }
+        public int UserID { get; set; }
     }
 }

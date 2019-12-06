@@ -32,6 +32,13 @@ namespace WindesMusic
             user = db.GetUserData(Properties.Settings.Default.UserID);
             lblName.Text = (user.IsArtist == 1 ? "Artist: " : "User: ") + user.Name;
             btnRequestArtistStatus.Visibility = user.IsArtist == 1 ? Visibility.Hidden : Visibility.Visible;
+
+            lblRequestAd.Text = user.IsArtist == 1 ? "Request song for advertising" : "";
+            btnSubmit.Visibility = user.IsArtist == 1 ? Visibility.Visible : Visibility.Hidden;
+            foreach (var item in user.Songs)
+            {
+                boxSongs.Items.Add(item.SongName);
+            }
         }
 
         private void btnLogout_Click(object sender, RoutedEventArgs e)
@@ -48,6 +55,25 @@ namespace WindesMusic
         {
             db.RequestArtistStatus();
             lblMessage.Text = "You are now an artist";
+        }
+
+        private void btnSubmit_Click(object sender, RoutedEventArgs e)
+        {
+            if(boxSongs.SelectedItem != null)
+            {
+                bool submitSucces = db.SubmitSongForAdvertising(user.Songs.Where(i => i.SongName.Equals(boxSongs.SelectedItem.ToString())).Select(i => i.SongID).First());
+                if (submitSucces)
+                {
+                    lblMessage.Text = "Song succesfully requested for advertisement";
+                }
+                else
+                {
+                    lblMessage.Text = "Song already requested for advertisement";
+                }
+            } else
+            {
+                lblMessage.Text = "Please select a song";
+            }
         }
     }
 }
