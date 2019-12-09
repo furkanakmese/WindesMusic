@@ -24,16 +24,20 @@ namespace WindesMusic
     /// </summary>
     public partial class MainWindow : Window
     {
-        public AudioPlayer audioPlayer = new AudioPlayer();
+        public AudioPlayer audioPlayer;
         private DispatcherTimer dispatcherTimer;
         private User user;
         private Database db = new Database();
         private Account account = new Account();
+        private PlaylistSongsPage playlistSongs = new PlaylistSongsPage();
+        private QueuePage queuePage;
+
 
         public MainWindow()
         {
             InitializeComponent();
-
+            audioPlayer = new AudioPlayer(this);
+            queuePage = new QueuePage(this);
             //  DispatcherTimer setup
             dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler((object sender, EventArgs e) => {
@@ -51,7 +55,7 @@ namespace WindesMusic
             };
 
             inputSearch.KeyDown += (object sender, KeyEventArgs e) => {
-                if (e.Key == Key.Enter) Main.Content = new SearchResults(inputSearch.Text);
+                if (e.Key == Key.Enter) Main.Content = new SearchResults(inputSearch.Text, user, this);
             };
             btnPlay.Click += (object sender, RoutedEventArgs e) => audioPlayer.OnButtonPlayClick(sender, e);
             btnMute.Click += (object sender, RoutedEventArgs e) => audioPlayer.Mute();
@@ -86,16 +90,20 @@ namespace WindesMusic
 
         private void NextButtonClick(object sender, RoutedEventArgs e)
         {
-            audioPlayer.OnButtonStopClick();
+            audioPlayer.OnButtonNextClick();
+            queuePage.RerenderQueuePage();
 
         }
 
         protected override void OnContentRendered(EventArgs e)
         {
             base.OnContentRendered(e);
+
             PlaylistList.Children.Clear();
             user = db.GetUserData(Properties.Settings.Default.UserID);
 
+            playlistSongs.rerender += (playlist) => { playlistSongs.playlistToUse = playlist; playlistSongs.reinitialize(playlist, this, user); };
+            queuePage.rerender += (queuePg) => { queuePage = queuePg; queuePage.InitialiseQueuePage(); };
             Thickness thickness = new Thickness(15, 0, 0, 5);
             foreach (var item in user.Playlists)
             {
@@ -104,6 +112,7 @@ namespace WindesMusic
                     //Style = StaticResource MenuButton,
                     Name = $"_{item.PlaylistID}",
                     Content = $"{item.PlaylistName}",
+                    FontSize = 23,
                     Margin = thickness
                 };
                 StaticResourceExtension menuButton = new StaticResourceExtension("MenuButton");
@@ -115,12 +124,48 @@ namespace WindesMusic
 
         private void ButtonClickPlaylist(object sender, RoutedEventArgs e)
         {
-            SongList.Children.Clear();
             Button _ButtonPlaylist = sender as Button;
             int PlaylistId = Convert.ToInt32(_ButtonPlaylist.Name.Substring(1));
             Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == PlaylistId).FirstOrDefault();
-            PlaylistSongsPage SongsPage = new PlaylistSongsPage(relevantPlaylist, this, user);
-            this.Main.Content = SongsPage;
+            // playlistSongs = new PlaylistSongsPage();
+            playlistSongs.reinitialize(relevantPlaylist, this, user);
+            Main.Content = playlistSongs;
+        }
+
+        private void ButtonClickQueue(object sender, RoutedEventArgs e)
+        {
+            if (Main.Content != queuePage)
+            {
+                queuePage.InitialiseQueuePage();
+                Main.Content = queuePage;
+            }
+            else
+            {
+                if (playlistSongs != null)
+                {
+                    Main.Content = playlistSongs;
+                }
+                else
+                {
+                    Playlists playlists = new Playlists();
+                    Main.Content = playlists;
+                }
+            }
+        }
+
+        private void ShuffleButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (MusicQueue.IsShuffle == false)
+            {
+                btnShuffle.Background = new SolidColorBrush(System.Windows.Media.Colors.DarkOrange);
+                MusicQueue.ShuffleSongs();
+                MusicQueue.IsShuffle = true;
+            }
+            else
+            {
+                btnShuffle.Background = new SolidColorBrush(System.Windows.Media.Colors.LightGray);
+                MusicQueue.IsShuffle = false;
+            }
         }
 
         private void NewPlaylistButtonClick(object sender, RoutedEventArgs e)
@@ -129,12 +174,6 @@ namespace WindesMusic
             NewPlaylist.Show();
             NewPlaylist.Closed += (object sender2, EventArgs e2) => OnContentRendered(e);
         }
-
-        private void btnAccount_Click(object sender, RoutedEventArgs e)
-        {
-            Main.Content = new Account();
-        }
-
         private void HistoryPlaylistButtonClick(object sender, RoutedEventArgs e)
         {
             Main.Content = new DailyHistoryPlaylistPage(user, this);

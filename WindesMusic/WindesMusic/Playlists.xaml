@@ -9,8 +9,8 @@
       Title="Playlists">
 
     <Grid>
-        <TextBlock HorizontalAlignment="Left" Margin="367,152,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold"/>
-        <ScrollViewer Height="430" Width="780" Padding="12">
+        <TextBlock HorizontalAlignment="Left" Margin="500,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold"/>
+        <ScrollViewer Padding="12" Margin="100,50,0,24">
             <StackPanel Name="stackPlaylists" HorizontalAlignment="Left" Height="900" VerticalAlignment="Top" Width="760"/>
         </ScrollViewer>
     </Grid>

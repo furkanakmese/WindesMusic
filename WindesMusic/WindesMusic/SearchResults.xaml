@@ -6,11 +6,21 @@
       xmlns:local="clr-namespace:WindesMusic"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="SearchResults">
+      Title="SearchResults"
+      Margin="100,45,0,25">
 
     <Grid>
-        <ScrollViewer Height="430" Width="780" Padding="12">
-            <StackPanel Name="stackResults" HorizontalAlignment="Left" Height="900" VerticalAlignment="Top" Width="760"/>
+        <StackPanel Name="stackResults" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <ScrollViewer x:Name="SearchScroller" Height="467" Padding="12" Margin="-10,100,0,0">
+            <Grid x:Name="SearchList" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="300"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="500"/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+            </Grid>
         </ScrollViewer>
     </Grid>
 </Page>

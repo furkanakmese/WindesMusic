@@ -8,61 +8,62 @@ namespace WindesMusic
 {
     public static class MusicQueue
     {
-        public static Queue<int> SongQueue = new Queue<int>();
-        public static Stack<int> PreviousSongs = new Stack<int>();
+        public static Queue<Song> SongQueue = new Queue<Song>();
+        public static Stack<Song> PreviousSongs = new Stack<Song>();
+        public static bool IsShuffle = false;
 
-
-        public static void AddSongToQueue(int SongID)
+        public static void AddSongToQueue(Song song)
         {
-            SongQueue.Enqueue(SongID);
+            SongQueue.Enqueue(song);
         }
 
-        public static void AddSongToPreviousQueue(int SongID)
+        public static void AddSongToPreviousQueue(Song song)
         {
-            PreviousSongs.Push(SongID);
+            PreviousSongs.Push(song);
             if(PreviousSongs.Count > 10)
             {
-                List<int> PreviousSongsList = new List<int>(PreviousSongs);
+                List<Song> PreviousSongsList = new List<Song>(PreviousSongs);
                 PreviousSongsList.RemoveAt(9);
-                PreviousSongs = new Stack<int>(PreviousSongsList);
+                PreviousSongs = new Stack<Song>(PreviousSongsList);
             }
         }
-
-        public static void AddSongToPreviousQueue(string SongString)
-        {
-            PreviousSongs.Push(Convert.ToInt32(SongString));
-            if (PreviousSongs.Count > 10)
-            {
-                List<int> PreviousSongsList = new List<int>(PreviousSongs);
-                PreviousSongsList.RemoveAt(9);
-                PreviousSongs = new Stack<int>(PreviousSongsList);
-            }
-        }
-
+        
         public static void RemoveSongFromQueue(int Key)
         {
-            List<int> SongList = new List<int>(SongQueue);
+            List<Song> SongList = new List<Song>(SongQueue);
             SongList.RemoveAt(Key);
-            SongQueue = new Queue<int>(SongList);
+            SongQueue = new Queue<Song>(SongList);
         }
 
-        public static int GetSongFromQueue()
+        public static Song GetSongFromQueue()
         {
             if (SongQueue.Count != 0)
             {
-                int SongID = SongQueue.Dequeue();
-                return SongID;
+                Song song = SongQueue.Dequeue();
+                return song;
             }
             else
             {
-                return 23; //Temporary, change it later to start playing recommendations
+                return null; //Temporary, change it later to start playing recommendations
             }
         }
 
-        public static List<int> ReturnSongsInQueue()
+        public static List<Song> ReturnSongsInQueue()
         {
-            List<int> ReturnList = new List<int>(SongQueue);
+            List<Song> ReturnList = new List<Song>(SongQueue);
             return ReturnList;
+        }
+
+        public static void ShuffleSongs()
+        {
+            List<Song> SongList = new List<Song>(SongQueue);
+            //Create a seed for the random, this seed makes every shuffle unique
+            Random rng1 = new Random();
+            int seed = rng1.Next(0, 1000);
+
+            Random rng = new Random(seed);
+            SongList = SongList.OrderBy(x => rng.Next()).ToList();
+            SongQueue = new Queue<Song>(SongList);
         }
     }
 }
