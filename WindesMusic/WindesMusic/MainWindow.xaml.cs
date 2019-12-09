@@ -103,7 +103,7 @@ namespace WindesMusic
             user = db.GetUserData(Properties.Settings.Default.UserID);
 
             playlistSongs.rerender += (playlist) => { playlistSongs.playlistToUse = playlist; playlistSongs.reinitialize(playlist, this, user); };
-            queuePage.rerender += (queuePg) => { queuePage = queuePg; queuePage.InitialiseQueuePage(); Console.WriteLine("test"); };
+            queuePage.rerender += (queuePg) => { queuePage = queuePg; queuePage.InitialiseQueuePage(); };
             Thickness thickness = new Thickness(15, 0, 0, 5);
             foreach (var item in user.Playlists)
             {
@@ -127,7 +127,7 @@ namespace WindesMusic
             Button _ButtonPlaylist = sender as Button;
             int PlaylistId = Convert.ToInt32(_ButtonPlaylist.Name.Substring(1));
             Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == PlaylistId).FirstOrDefault();
-            playlistSongs = new PlaylistSongsPage();
+            // playlistSongs = new PlaylistSongsPage();
             playlistSongs.reinitialize(relevantPlaylist, this, user);
             Main.Content = playlistSongs;
         }
@@ -173,6 +173,10 @@ namespace WindesMusic
             NewPlaylistWindow NewPlaylist = new NewPlaylistWindow();
             NewPlaylist.Show();
             NewPlaylist.Closed += (object sender2, EventArgs e2) => OnContentRendered(e);
+        }
+        private void HistoryPlaylistButtonClick(object sender, RoutedEventArgs e)
+        {
+            Main.Content = new DailyHistoryPlaylistPage(user, this);
         }
     }
 }
