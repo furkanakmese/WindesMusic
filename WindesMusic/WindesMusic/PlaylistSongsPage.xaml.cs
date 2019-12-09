@@ -51,6 +51,10 @@ namespace WindesMusic
             _PlaylistName = playlistToUse.PlaylistName;
             _PlaylistID = playlistToUse.PlaylistID;
             user = BaseUser;
+            if (SongsInPlaylist == null)
+            {
+                SongsInPlaylist = playlistToUse.SongPlaylist;
+            }
             Thickness SongBlockThickness = new Thickness(5, 2, 0, 0);
             SolidColorBrush whiteText = new SolidColorBrush(System.Windows.Media.Colors.White);
             StackPanel sp = new StackPanel();
@@ -217,6 +221,7 @@ namespace WindesMusic
                 menu.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
                 menu.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
 
+                SongList.ContextMenu = null;
                 SongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
             }
 
@@ -408,8 +413,9 @@ namespace WindesMusic
         private void AddToPlaylistClick(object sender, RoutedEventArgs e)
         {
             MenuItem SongItem = sender as MenuItem;
+            Song song = (Song)SongItem.Tag;
             int PlaylistID = Convert.ToInt32(SongItem.Name.Substring(9));
-            int SongID = Convert.ToInt32(SongItem.Tag);
+            int SongID = song.SongID;
             Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == PlaylistID).FirstOrDefault();
             relevantPlaylist.AddSongToPlaylist(SongID);
 
@@ -419,8 +425,7 @@ namespace WindesMusic
         {
             var SongItem = sender as MenuItem;
             Song song = (Song)SongItem.Tag;
-            //int SongID = Convert.ToInt32(SongItem.Name.Substring(6));
-            MusicQueue.AddSongToQueue(song);
+            MusicQueue.AddSongToQueue(song);           
         }
 
 
@@ -437,6 +442,10 @@ namespace WindesMusic
         {
             MusicQueue.SongQueue.Clear();
             MusicQueue.SongQueue = playlistToUse.CreateQueueFromPlaylist();
+            if(MusicQueue.IsShuffle == true)
+            {
+                MusicQueue.ShuffleSongs();
+            }
             mainWindow.audioPlayer.PlayChosenSong();
         }
     }
