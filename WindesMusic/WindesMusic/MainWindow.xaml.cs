@@ -134,5 +134,10 @@ namespace WindesMusic
         {
             Main.Content = new Account();
         }
+
+        private void HistoryPlaylistButtonClick(object sender, RoutedEventArgs e)
+        {
+            Main.Content = new DailyHistoryPlaylistPage(user, this);
+        }
     }
 }

@@ -16,48 +16,50 @@ using System.Windows.Shapes;
 namespace WindesMusic
 {
     /// <summary>
-    /// Interaction logic for Page1.xaml
+    /// Interaction logic for DailyHistoryPlaylistPage.xaml
     /// </summary>
-    public partial class PlaylistSongsPage : Page
+    public partial class DailyHistoryPlaylistPage : Page
     {
-        Database db = new Database();
-        private int _PlaylistID;
+        private Database db = new Database();
         private string _PlaylistName;
-        List<Song> SongsInPlaylist;
-        List<Song> RecommendedSongs;
-        MainWindow mainWindow;
-        User user;
-        public PlaylistSongsPage(Playlist playlist, MainWindow main, User BaseUser)
+        private int _PlaylistID;
+        private MainWindow mainWindow;
+        private User user;
+        private List<Song> SongsInPlaylist;
+        private Playlist playlist;
+        public DailyHistoryPlaylistPage(User BaseUser, MainWindow main)
         {
             InitializeComponent();
-            Recommender recommender = new Recommender(db);
-            RecommendedSongs = recommender.getRecommendedSongsForPlaylist(playlist);
-            SongsInPlaylist = playlist.SongPlaylist;
-            mainWindow = main;
             user = BaseUser;
-            _PlaylistName = playlist.PlaylistName;
+            mainWindow = main;
+            Recommender recommender = new Recommender(db);
+            playlist = recommender.getHistoryPlaylist(user.Id);
+            SongsInPlaylist = playlist.SongPlaylist;
             _PlaylistID = playlist.PlaylistID;
+            _PlaylistName = playlist.PlaylistName;
+            Console.WriteLine(_PlaylistName);
+            SongsInPlaylist = playlist.SongPlaylist;
             Thickness SongBlockThickness = new Thickness(5, 2, 0, 0);
             SolidColorBrush whiteText = new SolidColorBrush(System.Windows.Media.Colors.White);
 
-            var PlaylistBlock = new TextBlock
-            {
-                Text = $"{playlist.PlaylistName}",
-                FontSize = 25,
-                Foreground = whiteText,
-                Margin = new Thickness(250, 10, 0, 5)
-            };
-            var PlayPlaylistButton = new Button
-            {
-                Name = $"_{_PlaylistID}",
-                Content = "Play",
-                FontSize = 30,
-                Margin = new Thickness(250, 10, 260, 5)
-            };
-            PlayPlaylistButton.Click += PlayPlaylist;
+        var PlaylistBlock = new TextBlock
+        {
+            Text = $"{playlist.PlaylistName}",
+            FontSize = 25,
+            Foreground = whiteText,
+            Margin = new Thickness(250, 10, 0, 5)
+        };
+        var PlayPlaylistButton = new Button
+        {
+            Name = $"_{playlist.PlaylistID}",
+            Content = "Play",
+            FontSize = 30,
+            Margin = new Thickness(250, 10, 260, 5)
+        };
+        PlayPlaylistButton.Click += PlayPlaylist;
 
-            PlaylistName.Children.Add(PlaylistBlock);
-            PlaylistName.Children.Add(PlayPlaylistButton);
+            HistoryPlaylistName.Children.Add(PlaylistBlock);
+            HistoryPlaylistName.Children.Add(PlayPlaylistButton);
 
             //Adds the necessary amount of rows for the playlist
             for (int i = 0; i < playlist.SongPlaylist.Count; i++)
@@ -65,9 +67,9 @@ namespace WindesMusic
                 Song playlistSong = playlist.SongPlaylist[i];
                 RowDefinition rowDef = new RowDefinition();
                 rowDef.Name = $"Row_{i}";
-                SongList.RowDefinitions.Add(rowDef);
+                HistorySongList.RowDefinitions.Add(rowDef);
                 //Song playlistSong = PlaylistSongs[i];
-                RowDefinitionCollection RowNames = SongList.RowDefinitions;
+                RowDefinitionCollection RowNames = HistorySongList.RowDefinitions;
                 Array RowArray = RowNames.ToArray();
 
                 // Add the play button to the Songlist grid
@@ -126,97 +128,25 @@ namespace WindesMusic
                 Grid.SetColumn(SongBlockYear, 4);
 
                 // Add the elements to the Songlist grid Children collection
-                SongList.Children.Add(PlayButton);
-                SongList.Children.Add(SongBlockName);
-                SongList.Children.Add(SongBlockArtist);
-                SongList.Children.Add(SongBlockAlbum);
-                SongList.Children.Add(SongBlockYear);
+                HistorySongList.Children.Add(PlayButton);
+                HistorySongList.Children.Add(SongBlockName);
+                HistorySongList.Children.Add(SongBlockArtist);
+                HistorySongList.Children.Add(SongBlockAlbum);
+                HistorySongList.Children.Add(SongBlockYear);
 
                 ContextMenu menu = new ContextMenu();
                 menu.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
                 menu.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
 
-                SongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
+                HistorySongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
             }
 
-            for (int i = 0; i < RecommendedSongs.Count; i++)
-            {
-                Song playlistSong = RecommendedSongs[i];
-                RowDefinition rowDef = new RowDefinition();
-                rowDef.Name = $"Row_{i}";
-                RecommendedSongList.RowDefinitions.Add(rowDef);
-                //Song playlistSong = PlaylistSongs[i];
-                RowDefinitionCollection RowNames = RecommendedSongList.RowDefinitions;
-                Array RowArray = RowNames.ToArray();
 
-                // Add the play button to the Songlist grid
-                var PlayButton = new Button
-                {
-                    Name = $"__{playlistSong.SongID}",
-                    Content = "Play",
-                    Margin = new Thickness(5, 0, 0, 5)
-                };
-                Grid.SetRow(PlayButton, i);
-                Grid.SetColumn(PlayButton, 0);
-                PlayButton.Click += PlaySongFromPlaylist;
-
-                // Add the Songname text block to the Songlist grid
-                var SongBlockName = new TextBlock
-                {
-                    Name = $"_{playlistSong.SongID}",
-                    Text = $"{playlistSong.SongName}",
-                    Foreground = whiteText,
-                    Margin = SongBlockThickness
-                };
-                Grid.SetRow(SongBlockName, i);
-                Grid.SetColumn(SongBlockName, 1);
-
-                // Add the artist text block to the Songlist grid
-                var SongBlockArtist = new TextBlock
-                {
-                    Name = $"_{playlistSong.SongID}",
-                    Text = $"{playlistSong.Artist}",
-                    Foreground = whiteText,
-                    Margin = SongBlockThickness
-                };
-                Grid.SetRow(SongBlockArtist, i);
-                Grid.SetColumn(SongBlockArtist, 2);
-
-                // Add the album text block to the Songlist grid
-                var SongBlockAlbum = new TextBlock
-                {
-                    Name = $"_{playlistSong.SongID}",
-                    Text = $"{playlistSong.Album}",
-                    Foreground = whiteText,
-                    Margin = SongBlockThickness
-                };
-                Grid.SetRow(SongBlockAlbum, i);
-                Grid.SetColumn(SongBlockAlbum, 3);
-
-                // Add the year text block to the Songlist grid
-                var SongBlockYear = new TextBlock
-                {
-                    Name = $"_{playlistSong.SongID}",
-                    Text = $"{playlistSong.Year}",
-                    Foreground = whiteText,
-                    Margin = SongBlockThickness
-                };
-                Grid.SetRow(SongBlockYear, i);
-                Grid.SetColumn(SongBlockYear, 4);
-
-                // Add the elements to the Songlist grid Children collection
-                RecommendedSongList.Children.Add(PlayButton);
-                RecommendedSongList.Children.Add(SongBlockName);
-                RecommendedSongList.Children.Add(SongBlockArtist);
-                RecommendedSongList.Children.Add(SongBlockAlbum);
-                RecommendedSongList.Children.Add(SongBlockYear);
-            }
-        }
-
+    }
         private void SongContextMenuOpening(object sender, MouseButtonEventArgs e)
         {
             List<Playlist> Playlists = user.Playlists;
-            var pos = e.GetPosition(SongList);
+            var pos = e.GetPosition(HistorySongList);
             double top = pos.Y;
             int top1 = (int)Math.Round(top);
             int amount = top1 / 25;
@@ -244,7 +174,7 @@ namespace WindesMusic
 
             menu.Items.Add(PlaylistItem);
             menu.Items.Add(QueueItem);
-            SongList.ContextMenu = menu;
+            HistorySongList.ContextMenu = menu;
         }
 
         private void AddToPlaylistClick(object sender, RoutedEventArgs e)

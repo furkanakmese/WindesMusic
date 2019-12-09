@@ -461,5 +461,218 @@ namespace WindesMusic
                 return false;
             }
         }
+
+        public void AddSongToHistory(int userID, int songID, int timeListened)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "INSERT INTO History VALUES (@UserID, @DateTime, @SongID, @TimeListened)";
+
+            var userIDParam = _command.CreateParameter();
+            userIDParam.ParameterName = "@UserID";
+            userIDParam.Value = userID;
+            _command.Parameters.Add(userIDParam);
+
+            var dateTimeParam = _command.CreateParameter();
+            dateTimeParam.ParameterName = "@DateTime";
+            dateTimeParam.Value = DateTime.Now;
+            _command.Parameters.Add(dateTimeParam);
+
+            var songIDParam = _command.CreateParameter();
+            songIDParam.ParameterName = "@SongID";
+            songIDParam.Value = songID;
+            _command.Parameters.Add(songIDParam);
+
+            var timeListenedParam = _command.CreateParameter();
+            timeListenedParam.ParameterName = "@TimeListened";
+            timeListenedParam.Value = timeListened;
+            _command.Parameters.Add(timeListenedParam);
+
+            _command.ExecuteNonQuery();
+            _connection.Close();
+        }
+
+        public object SaveGeneratedPlaylist(string name, int userID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "SELECT DateGenerated FROM GeneratedPlaylist WHERE UserID=@ID";
+
+            var idParam = _command.CreateParameter();
+            idParam.ParameterName = "@ID";
+            idParam.Value = userID;
+            _command.Parameters.Add(idParam);
+
+            _reader = _command.ExecuteReader();
+            DateTime date = new DateTime();
+            while (_reader.Read())
+            {
+                date = (DateTime)_reader["DateGenerated"];
+            }
+            string[] split = date.ToString().Split(' ');
+            string dayMonthYearFromDb = split[0];
+            _reader.Close();
+
+            DateTime currentDate = DateTime.Now;
+            split = currentDate.ToString().Split(' ');
+            string dayMonthYearCurrent = split[0];
+
+            if (dayMonthYearFromDb != dayMonthYearCurrent)
+            {
+                _command.Parameters.Clear();
+                _command.CommandText = "INSERT INTO GeneratedPlaylist OUTPUT INSERTED.PlaylistID VALUES(@Name, @userID, @Date)";
+
+                var nameParam = _command.CreateParameter();
+                nameParam.ParameterName = "@Name";
+                nameParam.Value = name;
+                _command.Parameters.Add(nameParam);
+
+                var userIDParam = _command.CreateParameter();
+                userIDParam.ParameterName = "@userID";
+                userIDParam.Value = userID;
+                _command.Parameters.Add(userIDParam);
+
+                var dateTimeParam = _command.CreateParameter();
+                dateTimeParam.ParameterName = "@Date";
+                dateTimeParam.Value = currentDate;
+                _command.Parameters.Add(dateTimeParam);
+
+                int id = (Int32)_command.ExecuteScalar();
+
+                _connection.Close();
+                return id;
+            }
+            _connection.Close();
+            Console.WriteLine($"Playlist has already been created for today {dayMonthYearCurrent}");
+            return null;
+        }
+
+        public void SaveGeneratedPlaylistToSong(List<Song> songList, int playlistID)
+        {
+            OpenConnection();
+            foreach (Song song in songList)
+            {
+                _command.Parameters.Clear();
+                _command.CommandText = "INSERT INTO GeneratedPlaylistToSong VALUES(@PlaylistID, @SongID)";
+
+                var playlistIDParam = _command.CreateParameter();
+                playlistIDParam.ParameterName = "@PlaylistID";
+                playlistIDParam.Value = playlistID;
+                _command.Parameters.Add(playlistIDParam);
+
+                var songIDParam = _command.CreateParameter();
+                songIDParam.ParameterName = "@SongID";
+                songIDParam.Value = song.SongID;
+                _command.Parameters.Add(songIDParam);
+                _command.ExecuteNonQuery();
+            }
+            _connection.Close();
+        }
+
+        public List<Song> getGeneratedPlaylistSongs(int playlistID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "SELECT * FROM Song WHERE SongID IN (SELECT SongID FROM GeneratedPlaylistToSong WHERE PlaylistID=@PlaylistID)";
+
+            var playlistIDParam = _command.CreateParameter();
+            playlistIDParam.ParameterName = "@PlaylistID";
+            playlistIDParam.Value = playlistID;
+            _command.Parameters.Add(playlistIDParam);
+
+            _reader = _command.ExecuteReader();
+            List<Song> listResult = new List<Song>();
+            while (_reader.Read())
+            {
+                Song searchResult = new Song();
+                searchResult.SongID = (int)_reader["SongID"];
+                searchResult.SongName = (string)_reader["Name"];
+                searchResult.Artist = (string)_reader["Artist"];
+                searchResult.Album = (string)_reader["Album"];
+                searchResult.Year = (int)_reader["Year"];
+                searchResult.Genre = (string)_reader["Genre"];
+                listResult.Add(searchResult);
+            }
+            _connection.Close();
+            return listResult;
+        }
+
+        public Playlist GetHistoryPlaylist(int userID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "SELECT MAX(PlaylistID), PlaylistName FROM GeneratedPlaylist WHERE UserID = @UserID GROUP BY PlaylistID, PlaylistName";
+
+            var IdParam = _command.CreateParameter();
+            IdParam.ParameterName = "@UserID";
+            IdParam.Value = userID;
+            _command.Parameters.Add(IdParam); ;
+
+            _reader = _command.ExecuteReader();
+            Playlist playlist = new Playlist();
+            while (_reader.Read())
+            {
+                playlist.PlaylistID = (int)_reader[0];
+                playlist.PlaylistName = (string)_reader[1];
+            }
+            _connection.Close();
+            return playlist;
+        }
+
+        public List<Song> GetPlayHistory(int userID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "SELECT Song.SongID, Song.Name, Song.Artist, Song.Album, Song.Year, Song.Genre " +
+                "FROM Song LEFT JOIN History ON Song.SongID=History.SongID WHERE History.UserID=@ID " +
+                "GROUP BY Song.SongID, Song.Name, Song.Artist, Song.Album, Song.Year, Song.Genre";
+
+            var idParam = _command.CreateParameter();
+            idParam.ParameterName = "@ID";
+            idParam.Value = userID;
+            _command.Parameters.Add(idParam); ;
+
+            _reader = _command.ExecuteReader();
+            List<Song> listResult = new List<Song>();
+            while (_reader.Read())
+            {
+                Song searchResult = new Song();
+                searchResult.SongID = (int)_reader["SongID"];
+                searchResult.SongName = (string)_reader["Name"];
+                searchResult.Artist = (string)_reader["Artist"];
+                searchResult.Album = (string)_reader["Album"];
+                searchResult.Year = (int)_reader["Year"];
+                searchResult.Genre = (string)_reader["Genre"];
+                listResult.Add(searchResult);
+            }
+            _connection.Close();
+            return listResult;
+        }
+
+        public Song getSong(int songID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "SELECT * FROM Song  WHERE SongID=@ID";
+
+            var idParam = _command.CreateParameter();
+            idParam.ParameterName = "@ID";
+            idParam.Value = songID;
+            _command.Parameters.Add(idParam); ;
+
+            _reader = _command.ExecuteReader();
+            Song searchResult = new Song();
+            while (_reader.Read())
+            {
+                searchResult.SongID = (int)_reader["SongID"];
+                searchResult.SongName = (string)_reader["Name"];
+                searchResult.Artist = (string)_reader["Artist"];
+                searchResult.Album = (string)_reader["Album"];
+                searchResult.Year = (int)_reader["Year"];
+                searchResult.Genre = (string)_reader["Genre"];
+            }
+            _connection.Close();
+            return searchResult;
+        }
     }
 }

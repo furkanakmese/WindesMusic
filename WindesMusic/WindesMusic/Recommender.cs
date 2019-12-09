@@ -18,7 +18,7 @@ namespace WindesMusic
         //Returns 5 random songs that are not in the playlist and with the most common genre
         public List<Song> getRecommendedSongsForPlaylist(Playlist playlist)
         {
-            //Groups songs per genre orders by count
+            //Groups songs per genre and orders them by count
             var q = from x in playlist.SongPlaylist
                     group x by x.Subgenre into g
                     let count = g.Count()
@@ -28,7 +28,7 @@ namespace WindesMusic
             string mostCommonGenre = "";
             string secondMostCommonGenre = "";
             int loopCount = 0;
-            //Determines what the most common genre is
+            //Determines what the most common and second most common genre is
             foreach (var x in q)
             {
                 if (loopCount == 0)
@@ -42,12 +42,44 @@ namespace WindesMusic
                 loopCount++;
             }
 
-            foreach (Song song in db.GetRecommendedSongsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID))
-            {
-                Console.WriteLine(song.SongName);
-            }
             return db.GetRecommendedSongsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID);
         }
 
+        //Returns a maximum of 10 previously listened to songs
+        public Playlist getHistoryPlaylist(int userID)
+        {
+            var generatedID = db.SaveGeneratedPlaylist("History Playlist", userID);
+            Playlist playlist = db.GetHistoryPlaylist(userID);
+
+            //Creates the playlist if it hasn't been created yet today
+            if (generatedID != null)
+            {
+                playlist.SongPlaylist = db.GetPlayHistory(userID);
+
+                Random random = new Random();
+                var randomizedList = from song in playlist.SongPlaylist
+                                     orderby random.Next()
+                                     select song;
+
+                List<Song> history = new List<Song>();
+                int loopCount = 0;
+                foreach (var song in randomizedList)
+                {
+                    if (loopCount < 10)
+                    {
+                        history.Add(song);
+                        loopCount++;
+                    }
+                }
+                playlist.SongPlaylist = history;
+
+                db.SaveGeneratedPlaylistToSong(history, (int)generatedID);
+                return playlist;
+            }
+
+            playlist.SongPlaylist = db.getGeneratedPlaylistSongs(playlist.PlaylistID);
+
+            return playlist;
+        }
     }
 }
