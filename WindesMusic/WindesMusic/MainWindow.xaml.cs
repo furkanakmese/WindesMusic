@@ -174,5 +174,9 @@ namespace WindesMusic
             NewPlaylist.Show();
             NewPlaylist.Closed += (object sender2, EventArgs e2) => OnContentRendered(e);
         }
+        private void HistoryPlaylistButtonClick(object sender, RoutedEventArgs e)
+        {
+            Main.Content = new DailyHistoryPlaylistPage(user, this);
+        }
     }
 }

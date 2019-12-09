@@ -1,13 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic; 
 using System.Configuration; 
 using System.Data.Common; 
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text; 
-using System.Threading.Tasks;
-using static System.Convert;
-
+using System.Threading.Tasks; 
+ 
 namespace WindesMusic
 {
     public class Database
@@ -86,59 +85,39 @@ namespace WindesMusic
             OpenConnection();
             _command.Parameters.Clear();
             User userResult = new User();
-            _command.CommandText = "SELECT * FROM [User] WHERE Email=@email";
+            _command.CommandText = "SELECT * FROM Users WHERE Email=@email AND Password=@password";
 
             var emailParam = _command.CreateParameter();
             emailParam.ParameterName = "@email";
             emailParam.Value = email;
 
-            _command.Parameters.Add(emailParam);
-            _reader = _command.ExecuteReader();
+            var sha1 = new SHA1CryptoServiceProvider();
+            var data = Encoding.ASCII.GetBytes(password);
+            var sha1data = sha1.ComputeHash(data);
 
-            
+            var passwordParam = _command.CreateParameter();
+            passwordParam.ParameterName = "@password";
+            passwordParam.Value = Encoding.ASCII.GetString(sha1data);
+
+            _command.Parameters.Add(emailParam);
+            _command.Parameters.Add(passwordParam);
+            _reader = _command.ExecuteReader();
 
             if (_reader.Read())
             {
-                string hashPassword = (string)_reader["Password"];
-                string salt = (string) _reader["Salt"];
-
-                HashAlgorithm algorithm = new SHA256Managed(); 
-                //Convert password string to byte
-                byte[] passwordByte = Encoding.ASCII.GetBytes(password);
-            
-                //Convert salt string to byte
-                byte[] saltByte =Encoding.ASCII.GetBytes(salt);
-
-                //Generate SHA256 Hash
-                byte[] plainTextWithSaltBytes =
-                    new byte[passwordByte.Length + saltByte.Length];
-                for (int i = 0; i < passwordByte.Length; i++)
-                {
-                    plainTextWithSaltBytes[i] = passwordByte[i];
-                }
-                for (int i = 0; i < salt.Length; i++)
-                {
-                    plainTextWithSaltBytes[password.Length + i] = saltByte[i];
-                }
-                var sha256Data =  Encoding.ASCII.GetString(algorithm.ComputeHash(plainTextWithSaltBytes));
-                
-                
-                if (hashPassword == sha256Data)
-                {
-                    userResult.UserID = (int)_reader["UserID"];
-                    userResult.Email = (string)_reader["Email"];
-                    userResult.Name = (string)_reader["Name"];
-                    userResult.IsArtist = (bool)_reader["IsArtist"];
-                    // save user id to application settings
-                    Properties.Settings.Default.UserID = userResult.UserID;
-                    Properties.Settings.Default.Save();
-                }
+                userResult.Id = (int)_reader["Id"];
+                userResult.Email = (string)_reader["Email"];
+                userResult.Name = (string)_reader["Name"];
+                userResult.IsArtist = (int)_reader["IsArtist"];
+                // save user id to application settings
+                Properties.Settings.Default.UserID = userResult.Id;
+                Properties.Settings.Default.Save();
             }
             _connection.Close();
             return userResult;
         }
 
-        public User Register(string name, string email, string password, string salt)
+        public User Register(string name, string email, string password)
         {
             OpenConnection();
             _command.Parameters.Clear();
@@ -156,42 +135,22 @@ namespace WindesMusic
             }
             _reader.Close();
 
-            _command.CommandText = "INSERT INTO [User] VALUES (@name, @email, @password, @salt,0, 0, 0)";
+            _command.CommandText = "INSERT INTO Users VALUES (@name, @email, @password, 0, 0)";
 
-            var saltParam = _command.CreateParameter();
-            saltParam.ParameterName = "@salt";
-            saltParam.Value = salt;
             var nameParam = _command.CreateParameter();
             nameParam.ParameterName = "@name";
             nameParam.Value = name;
-            
-            HashAlgorithm algorithm = new SHA256Managed(); 
-            //Convert password string to byte
-            byte[] passwordByte =Encoding.ASCII.GetBytes(password);
-            
-            //Convert salt string to byte
-            byte[] saltByte = Encoding.ASCII.GetBytes(salt);
 
-            //Generate SHA256 Hash
-            byte[] plainTextWithSaltBytes =
-                new byte[passwordByte.Length + saltByte.Length];
-            for (int i = 0; i < passwordByte.Length; i++)
-            {
-                plainTextWithSaltBytes[i] = passwordByte[i];
-            }
-            for (int i = 0; i < salt.Length; i++)
-            {
-                plainTextWithSaltBytes[password.Length + i] = saltByte[i];
-            }
-            var sha256Data =  algorithm.ComputeHash(plainTextWithSaltBytes);
+            var sha1 = new SHA1CryptoServiceProvider();
+            var data = Encoding.ASCII.GetBytes(password);
+            var sha1data = sha1.ComputeHash(data);
 
             var passwordParam = _command.CreateParameter();
             passwordParam.ParameterName = "@password";
-            passwordParam.Value = Encoding.ASCII.GetString(sha256Data);
+            passwordParam.Value = Encoding.ASCII.GetString(sha1data);
 
             _command.Parameters.Add(nameParam);
             _command.Parameters.Add(passwordParam);
-            _command.Parameters.Add(saltParam);
             // _reader = _command.ExecuteReader();
             
             if(_command.ExecuteNonQuery() > 0)
@@ -206,28 +165,26 @@ namespace WindesMusic
         }
 
         // method for retrieving user data after login or on startup using ID
-        public User GetUserData(int userID)
+        public User GetUserData(int id)
         {
             OpenConnection();
             _command.Parameters.Clear();
             User userResult = new User();
-
-            _command.CommandText = "SELECT * FROM [User] LEFT JOIN Playlist ON [User].UserID = Playlist.UserID WHERE [User].UserID=@UserID";
-
+            _command.CommandText = "SELECT * FROM Users LEFT JOIN Playlist ON Id = Playlist.UserID WHERE Id=@id";
 
             var idParam = _command.CreateParameter();
-            idParam.ParameterName = "@UserID";
-            idParam.Value = userID;
+            idParam.ParameterName = "@id";
+            idParam.Value = id;
             _command.Parameters.Add(idParam);
             _reader = _command.ExecuteReader();
 
             while (_reader.Read())
             {
                 Playlist playlistResult = new Playlist();
-                userResult.UserID = (int)_reader["UserID"];
+                userResult.Id = (int)_reader["Id"];
                 userResult.Email = (string)_reader["Email"];
                 userResult.Name = (string)_reader["Name"];
-                userResult.IsArtist = (bool)_reader["IsArtist"];
+                userResult.IsArtist = (int)_reader["IsArtist"];
                 try
                 {
                     playlistResult.PlaylistID = (int)_reader["PlaylistID"];
@@ -239,10 +196,10 @@ namespace WindesMusic
             }
             _connection.Close();
 
-            if (userResult.IsArtist == true)
+            if (userResult.IsArtist == 1)
             {
                 OpenConnection();
-                _command.CommandText = "SELECT * FROM Song LEFT JOIN Users ON UserID=Id WHERE UserID=@UserID";
+                _command.CommandText = "SELECT * FROM Song LEFT JOIN Users ON UserID=Id WHERE Id=@id";
                 _reader = _command.ExecuteReader();
 
                 while (_reader.Read())
@@ -527,6 +484,219 @@ namespace WindesMusic
                 return false;
             }
         }
+      
+        public void AddSongToHistory(int userID, int songID, int timeListened)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "INSERT INTO History VALUES (@UserID, @DateTime, @SongID, @TimeListened)";
+
+            var userIDParam = _command.CreateParameter();
+            userIDParam.ParameterName = "@UserID";
+            userIDParam.Value = userID;
+            _command.Parameters.Add(userIDParam);
+
+            var dateTimeParam = _command.CreateParameter();
+            dateTimeParam.ParameterName = "@DateTime";
+            dateTimeParam.Value = DateTime.Now;
+            _command.Parameters.Add(dateTimeParam);
+
+            var songIDParam = _command.CreateParameter();
+            songIDParam.ParameterName = "@SongID";
+            songIDParam.Value = songID;
+            _command.Parameters.Add(songIDParam);
+
+            var timeListenedParam = _command.CreateParameter();
+            timeListenedParam.ParameterName = "@TimeListened";
+            timeListenedParam.Value = timeListened;
+            _command.Parameters.Add(timeListenedParam);
+
+            _command.ExecuteNonQuery();
+            _connection.Close();
+        }
+
+        public object SaveGeneratedPlaylist(string name, int userID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "SELECT DateGenerated FROM GeneratedPlaylist WHERE UserID=@ID";
+
+            var idParam = _command.CreateParameter();
+            idParam.ParameterName = "@ID";
+            idParam.Value = userID;
+            _command.Parameters.Add(idParam);
+
+            _reader = _command.ExecuteReader();
+            DateTime date = new DateTime();
+            while (_reader.Read())
+            {
+                date = (DateTime)_reader["DateGenerated"];
+            }
+            string[] split = date.ToString().Split(' ');
+            string dayMonthYearFromDb = split[0];
+            _reader.Close();
+
+            DateTime currentDate = DateTime.Now;
+            split = currentDate.ToString().Split(' ');
+            string dayMonthYearCurrent = split[0];
+
+            if (dayMonthYearFromDb != dayMonthYearCurrent)
+            {
+                _command.Parameters.Clear();
+                _command.CommandText = "INSERT INTO GeneratedPlaylist OUTPUT INSERTED.PlaylistID VALUES(@Name, @userID, @Date)";
+
+                var nameParam = _command.CreateParameter();
+                nameParam.ParameterName = "@Name";
+                nameParam.Value = name;
+                _command.Parameters.Add(nameParam);
+
+                var userIDParam = _command.CreateParameter();
+                userIDParam.ParameterName = "@userID";
+                userIDParam.Value = userID;
+                _command.Parameters.Add(userIDParam);
+
+                var dateTimeParam = _command.CreateParameter();
+                dateTimeParam.ParameterName = "@Date";
+                dateTimeParam.Value = currentDate;
+                _command.Parameters.Add(dateTimeParam);
+
+                int id = (Int32)_command.ExecuteScalar();
+
+                _connection.Close();
+                return id;
+            }
+            _connection.Close();
+            Console.WriteLine($"Playlist has already been created for today {dayMonthYearCurrent}");
+            return null;
+        }
+
+        public void SaveGeneratedPlaylistToSong(List<Song> songList, int playlistID)
+        {
+            OpenConnection();
+            foreach (Song song in songList)
+            {
+                _command.Parameters.Clear();
+                _command.CommandText = "INSERT INTO GeneratedPlaylistToSong VALUES(@PlaylistID, @SongID)";
+
+                var playlistIDParam = _command.CreateParameter();
+                playlistIDParam.ParameterName = "@PlaylistID";
+                playlistIDParam.Value = playlistID;
+                _command.Parameters.Add(playlistIDParam);
+
+                var songIDParam = _command.CreateParameter();
+                songIDParam.ParameterName = "@SongID";
+                songIDParam.Value = song.SongID;
+                _command.Parameters.Add(songIDParam);
+                _command.ExecuteNonQuery();
+            }
+            _connection.Close();
+        }
+
+        public List<Song> getGeneratedPlaylistSongs(int playlistID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "SELECT * FROM Song WHERE SongID IN (SELECT SongID FROM GeneratedPlaylistToSong WHERE PlaylistID=@PlaylistID)";
+
+            var playlistIDParam = _command.CreateParameter();
+            playlistIDParam.ParameterName = "@PlaylistID";
+            playlistIDParam.Value = playlistID;
+            _command.Parameters.Add(playlistIDParam);
+
+            _reader = _command.ExecuteReader();
+            List<Song> listResult = new List<Song>();
+            while (_reader.Read())
+            {
+                Song searchResult = new Song();
+                searchResult.SongID = (int)_reader["SongID"];
+                searchResult.SongName = (string)_reader["Name"];
+                searchResult.Artist = (string)_reader["Artist"];
+                searchResult.Album = (string)_reader["Album"];
+                searchResult.Year = (int)_reader["Year"];
+                searchResult.Genre = (string)_reader["Genre"];
+                listResult.Add(searchResult);
+            }
+            _connection.Close();
+            return listResult;
+        }
+
+        public Playlist GetHistoryPlaylist(int userID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "SELECT MAX(PlaylistID), PlaylistName FROM GeneratedPlaylist WHERE UserID = @UserID GROUP BY PlaylistID, PlaylistName";
+
+            var IdParam = _command.CreateParameter();
+            IdParam.ParameterName = "@UserID";
+            IdParam.Value = userID;
+            _command.Parameters.Add(IdParam); ;
+
+            _reader = _command.ExecuteReader();
+            Playlist playlist = new Playlist();
+            while (_reader.Read())
+            {
+                playlist.PlaylistID = (int)_reader[0];
+                playlist.PlaylistName = (string)_reader[1];
+            }
+            _connection.Close();
+            return playlist;
+        }
+
+        public List<Song> GetPlayHistory(int userID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "SELECT Song.SongID, Song.Name, Song.Artist, Song.Album, Song.Year, Song.Genre " +
+                "FROM Song LEFT JOIN History ON Song.SongID=History.SongID WHERE History.UserID=@ID " +
+                "GROUP BY Song.SongID, Song.Name, Song.Artist, Song.Album, Song.Year, Song.Genre";
+
+            var idParam = _command.CreateParameter();
+            idParam.ParameterName = "@ID";
+            idParam.Value = userID;
+            _command.Parameters.Add(idParam); ;
+
+            _reader = _command.ExecuteReader();
+            List<Song> listResult = new List<Song>();
+            while (_reader.Read())
+            {
+                Song searchResult = new Song();
+                searchResult.SongID = (int)_reader["SongID"];
+                searchResult.SongName = (string)_reader["Name"];
+                searchResult.Artist = (string)_reader["Artist"];
+                searchResult.Album = (string)_reader["Album"];
+                searchResult.Year = (int)_reader["Year"];
+                searchResult.Genre = (string)_reader["Genre"];
+                listResult.Add(searchResult);
+            }
+            _connection.Close();
+            return listResult;
+        }
+
+        public Song getSong(int songID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "SELECT * FROM Song  WHERE SongID=@ID";
+
+            var idParam = _command.CreateParameter();
+            idParam.ParameterName = "@ID";
+            idParam.Value = songID;
+            _command.Parameters.Add(idParam); ;
+
+            _reader = _command.ExecuteReader();
+            Song searchResult = new Song();
+            while (_reader.Read())
+            {
+                searchResult.SongID = (int)_reader["SongID"];
+                searchResult.SongName = (string)_reader["Name"];
+                searchResult.Artist = (string)_reader["Artist"];
+                searchResult.Album = (string)_reader["Album"];
+                searchResult.Year = (int)_reader["Year"];
+                searchResult.Genre = (string)_reader["Genre"];
+            }
+            _connection.Close();
+            return searchResult;
+        }
 
         public string SubmitSongForAdvertising(int songId, int userId)
         {
@@ -575,7 +745,6 @@ namespace WindesMusic
                 _connection.Close();
                 return "Not enough credits to submit advertisement";
             }
-                
         }
     }
 }
