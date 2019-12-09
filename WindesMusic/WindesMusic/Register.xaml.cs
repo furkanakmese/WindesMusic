@@ -39,8 +39,8 @@ namespace WindesMusic
                 int max_length = 32;
                 byte[] salt = new byte[max_length];
                 random.GetNonZeroBytes(salt);
-                string saltText = Convert.ToBase64String(salt);
-
+                string saltText = Encoding.ASCII.GetString(salt);
+                
 
                 Database db = new Database();
                 if (db.Register(name, email, password, saltText).Email != null)

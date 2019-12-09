@@ -99,15 +99,15 @@ namespace WindesMusic
 
             if (_reader.Read())
             {
-                string hashPassword = (string) _reader["Password"];
+                string hashPassword = (string)_reader["Password"];
                 string salt = (string) _reader["Salt"];
 
                 HashAlgorithm algorithm = new SHA256Managed(); 
                 //Convert password string to byte
-                byte[] passwordByte = FromBase64String(password);
+                byte[] passwordByte = Encoding.ASCII.GetBytes(password);
             
                 //Convert salt string to byte
-                byte[] SaltByte = FromBase64String(salt);
+                byte[] SaltByte =Encoding.ASCII.GetBytes(salt);
 
                 //Generate SHA256 Hash
                 byte[] plainTextWithSaltBytes =
@@ -120,12 +120,12 @@ namespace WindesMusic
                 {
                     plainTextWithSaltBytes[password.Length + i] = SaltByte[i];
                 }
-                var sha256Data =  algorithm.ComputeHash(plainTextWithSaltBytes);
-                string checkPassword =  ToBase64String(sha256Data);
+                var sha256Data =  Encoding.ASCII.GetString(algorithm.ComputeHash(plainTextWithSaltBytes));
                 
-                if (password == checkPassword)
+                
+                if (hashPassword == sha256Data)
                 {
-                    userResult.Id = (int)_reader["Id"];
+                    userResult.Id = (int)_reader["UserID"];
                     userResult.Email = (string)_reader["Email"];
                     userResult.Name = (string)_reader["Name"];
                     userResult.IsArtist = (int)_reader["IsArtist"];
@@ -156,7 +156,7 @@ namespace WindesMusic
             }
             _reader.Close();
 
-            _command.CommandText = "INSERT INTO [User] VALUES (@name, @email, @password, @salt,\"False\", 0, 0)";
+            _command.CommandText = "INSERT INTO [User] VALUES (@name, @email, @password, @salt,0, 0, 0)";
 
             var saltParam = _command.CreateParameter();
             saltParam.ParameterName = "@salt";
@@ -167,27 +167,27 @@ namespace WindesMusic
             
             HashAlgorithm algorithm = new SHA256Managed(); 
             //Convert password string to byte
-            byte[] passwordByte = FromBase64String(password);
+            byte[] passwordByte =Encoding.ASCII.GetBytes(password);
             
             //Convert salt string to byte
-            byte[] SaltByte = FromBase64String(salt);
+            byte[] saltByte = Encoding.ASCII.GetBytes(salt);
 
             //Generate SHA256 Hash
             byte[] plainTextWithSaltBytes =
-                new byte[passwordByte.Length + SaltByte.Length];
+                new byte[passwordByte.Length + saltByte.Length];
             for (int i = 0; i < passwordByte.Length; i++)
             {
                 plainTextWithSaltBytes[i] = passwordByte[i];
             }
             for (int i = 0; i < salt.Length; i++)
             {
-                plainTextWithSaltBytes[password.Length + i] = SaltByte[i];
+                plainTextWithSaltBytes[password.Length + i] = saltByte[i];
             }
             var sha256Data =  algorithm.ComputeHash(plainTextWithSaltBytes);
 
             var passwordParam = _command.CreateParameter();
             passwordParam.ParameterName = "@password";
-            passwordParam.Value = ToBase64String(sha256Data);
+            passwordParam.Value = Encoding.ASCII.GetString(sha256Data);
 
             _command.Parameters.Add(nameParam);
             _command.Parameters.Add(passwordParam);
