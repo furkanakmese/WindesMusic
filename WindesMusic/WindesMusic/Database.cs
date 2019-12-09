@@ -5,8 +5,9 @@ using System.Data.Common;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text; 
-using System.Threading.Tasks; 
- 
+using System.Threading.Tasks;
+using static System.Convert;
+
 namespace WindesMusic
 {
     public class Database
@@ -85,39 +86,59 @@ namespace WindesMusic
             OpenConnection();
             _command.Parameters.Clear();
             User userResult = new User();
-            _command.CommandText = "SELECT * FROM Users WHERE Email=@email AND Password=@password";
+            _command.CommandText = "SELECT * FROM [User] WHERE Email=@email";
 
             var emailParam = _command.CreateParameter();
             emailParam.ParameterName = "@email";
             emailParam.Value = email;
 
-            var sha1 = new SHA1CryptoServiceProvider();
-            var data = Encoding.ASCII.GetBytes(password);
-            var sha1data = sha1.ComputeHash(data);
-
-            var passwordParam = _command.CreateParameter();
-            passwordParam.ParameterName = "@password";
-            passwordParam.Value = Encoding.ASCII.GetString(sha1data);
-
             _command.Parameters.Add(emailParam);
-            _command.Parameters.Add(passwordParam);
             _reader = _command.ExecuteReader();
+
+            
 
             if (_reader.Read())
             {
-                userResult.Id = (int)_reader["Id"];
-                userResult.Email = (string)_reader["Email"];
-                userResult.Name = (string)_reader["Name"];
-                userResult.IsArtist = (int)_reader["IsArtist"];
-                // save user id to application settings
-                Properties.Settings.Default.UserID = userResult.Id;
-                Properties.Settings.Default.Save();
+                string hashPassword = (string)_reader["Password"];
+                string salt = (string) _reader["Salt"];
+
+                HashAlgorithm algorithm = new SHA256Managed(); 
+                //Convert password string to byte
+                byte[] passwordByte = Encoding.ASCII.GetBytes(password);
+            
+                //Convert salt string to byte
+                byte[] saltByte =Encoding.ASCII.GetBytes(salt);
+
+                //Generate SHA256 Hash
+                byte[] plainTextWithSaltBytes =
+                    new byte[passwordByte.Length + saltByte.Length];
+                for (int i = 0; i < passwordByte.Length; i++)
+                {
+                    plainTextWithSaltBytes[i] = passwordByte[i];
+                }
+                for (int i = 0; i < salt.Length; i++)
+                {
+                    plainTextWithSaltBytes[password.Length + i] = saltByte[i];
+                }
+                var sha256Data =  Encoding.ASCII.GetString(algorithm.ComputeHash(plainTextWithSaltBytes));
+                
+                
+                if (hashPassword == sha256Data)
+                {
+                    userResult.UserID = (int)_reader["UserID"];
+                    userResult.Email = (string)_reader["Email"];
+                    userResult.Name = (string)_reader["Name"];
+                    userResult.IsArtist = (bool)_reader["IsArtist"];
+                    // save user id to application settings
+                    Properties.Settings.Default.UserID = userResult.UserID;
+                    Properties.Settings.Default.Save();
+                }
             }
             _connection.Close();
             return userResult;
         }
 
-        public User Register(string name, string email, string password)
+        public User Register(string name, string email, string password, string salt)
         {
             OpenConnection();
             _command.Parameters.Clear();
@@ -135,22 +156,42 @@ namespace WindesMusic
             }
             _reader.Close();
 
-            _command.CommandText = "INSERT INTO Users VALUES (@name, @email, @password, 0, 0)";
+            _command.CommandText = "INSERT INTO [User] VALUES (@name, @email, @password, @salt,0, 0, 0)";
 
+            var saltParam = _command.CreateParameter();
+            saltParam.ParameterName = "@salt";
+            saltParam.Value = salt;
             var nameParam = _command.CreateParameter();
             nameParam.ParameterName = "@name";
             nameParam.Value = name;
+            
+            HashAlgorithm algorithm = new SHA256Managed(); 
+            //Convert password string to byte
+            byte[] passwordByte =Encoding.ASCII.GetBytes(password);
+            
+            //Convert salt string to byte
+            byte[] saltByte = Encoding.ASCII.GetBytes(salt);
 
-            var sha1 = new SHA1CryptoServiceProvider();
-            var data = Encoding.ASCII.GetBytes(password);
-            var sha1data = sha1.ComputeHash(data);
+            //Generate SHA256 Hash
+            byte[] plainTextWithSaltBytes =
+                new byte[passwordByte.Length + saltByte.Length];
+            for (int i = 0; i < passwordByte.Length; i++)
+            {
+                plainTextWithSaltBytes[i] = passwordByte[i];
+            }
+            for (int i = 0; i < salt.Length; i++)
+            {
+                plainTextWithSaltBytes[password.Length + i] = saltByte[i];
+            }
+            var sha256Data =  algorithm.ComputeHash(plainTextWithSaltBytes);
 
             var passwordParam = _command.CreateParameter();
             passwordParam.ParameterName = "@password";
-            passwordParam.Value = Encoding.ASCII.GetString(sha1data);
+            passwordParam.Value = Encoding.ASCII.GetString(sha256Data);
 
             _command.Parameters.Add(nameParam);
             _command.Parameters.Add(passwordParam);
+            _command.Parameters.Add(saltParam);
             // _reader = _command.ExecuteReader();
             
             if(_command.ExecuteNonQuery() > 0)
@@ -165,26 +206,28 @@ namespace WindesMusic
         }
 
         // method for retrieving user data after login or on startup using ID
-        public User GetUserData(int id)
+        public User GetUserData(int userID)
         {
             OpenConnection();
             _command.Parameters.Clear();
             User userResult = new User();
-            _command.CommandText = "SELECT * FROM Users LEFT JOIN Playlist ON Id = Playlist.UserID WHERE Id=@id";
+
+            _command.CommandText = "SELECT * FROM [User] LEFT JOIN Playlist ON [User].UserID = Playlist.UserID WHERE [User].UserID=@UserID";
+
 
             var idParam = _command.CreateParameter();
-            idParam.ParameterName = "@id";
-            idParam.Value = id;
+            idParam.ParameterName = "@UserID";
+            idParam.Value = userID;
             _command.Parameters.Add(idParam);
             _reader = _command.ExecuteReader();
 
             while (_reader.Read())
             {
                 Playlist playlistResult = new Playlist();
-                userResult.Id = (int)_reader["Id"];
+                userResult.UserID = (int)_reader["UserID"];
                 userResult.Email = (string)_reader["Email"];
                 userResult.Name = (string)_reader["Name"];
-                userResult.IsArtist = (int)_reader["IsArtist"];
+                userResult.IsArtist = (bool)_reader["IsArtist"];
                 try
                 {
                     playlistResult.PlaylistID = (int)_reader["PlaylistID"];
@@ -196,10 +239,10 @@ namespace WindesMusic
             }
             _connection.Close();
 
-            if (userResult.IsArtist == 1)
+            if (userResult.IsArtist == true)
             {
                 OpenConnection();
-                _command.CommandText = "SELECT * FROM Song LEFT JOIN Users ON UserID=Id WHERE Id=@id";
+                _command.CommandText = "SELECT * FROM Song LEFT JOIN Users ON UserID=Id WHERE UserID=@UserID";
                 _reader = _command.ExecuteReader();
 
                 while (_reader.Read())
