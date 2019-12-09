@@ -5,13 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WindesMusic"
         mc:Ignorable="d"
-        WindowStyle="None"
-        Title="NewPlaylistWindow" Height="200" Width="250"
+        WindowStyle="ToolWindow"
+        Title="NewPlaylistWindow" Height="250" Width="400"
         WindowStartupLocation="CenterScreen"
         Background="DarkGray">
     <Grid>
-        <Label Content="New playlist"  HorizontalContentAlignment="Center" HorizontalAlignment="Center" Height="47" Margin="20" VerticalAlignment="Top" Width="191"  FontSize="20" FontFamily="Arial"/>
-        <TextBox Name="InputName"  HorizontalAlignment="Center" BorderThickness="0,0,0,1" Height="23" Margin="61,72,62.2,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120"/>
-        <Button Name="CreateNewPlaylistButton" Click="MakeNewPlaylistButton" Content="Create new playlist" HorizontalAlignment="Center" Margin="0,100,0,0" VerticalAlignment="Top" Width="120"/>
+        <Label Content="Create a new playlist"  HorizontalContentAlignment="Center" HorizontalAlignment="Center" Height="47" Margin="20" VerticalAlignment="Top" Width="400"  FontSize="30" FontFamily="Arial"/>
+        <TextBox Name="InputName"  HorizontalAlignment="Center" BorderThickness="0,0,0,1" Height="30" Margin="0,80,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="250" FontSize="20"/>
+        <Button Name="CreateNewPlaylistButton" Click="MakeNewPlaylistButton" Content="Create new playlist" HorizontalAlignment="Center" Margin="0,125,0,0" VerticalAlignment="Top" Width="200" FontSize="21"/>
+        <TextBlock x:Name="NewPlaylistMessage" Text="" HorizontalAlignment="Center" Margin="0,175,0,0" VerticalAlignment="Top" Width="190" FontSize="18"/>
     </Grid>
 </Window>

@@ -30,11 +30,14 @@ namespace WindesMusic
         private Database db = new Database();
         private Account account = new Account();
         private PlaylistSongsPage playlistSongs = new PlaylistSongsPage();
+        private QueuePage queuePage;
+
 
         public MainWindow()
         {
             InitializeComponent();
             audioPlayer = new AudioPlayer(this);
+            queuePage = new QueuePage(this);
             //  DispatcherTimer setup
             dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler((object sender, EventArgs e) => {
@@ -88,6 +91,7 @@ namespace WindesMusic
         private void NextButtonClick(object sender, RoutedEventArgs e)
         {
             audioPlayer.OnButtonNextClick();
+            queuePage.RerenderQueuePage();
 
         }
 
@@ -99,7 +103,7 @@ namespace WindesMusic
             user = db.GetUserData(Properties.Settings.Default.UserID);
 
             playlistSongs.rerender += (playlist) => { playlistSongs.playlistToUse = playlist; playlistSongs.reinitialize(playlist, this, user); };
-
+            queuePage.rerender += (queuePg) => { queuePage = queuePg; queuePage.InitialiseQueuePage(); };
             Thickness thickness = new Thickness(15, 0, 0, 5);
             foreach (var item in user.Playlists)
             {
@@ -123,9 +127,45 @@ namespace WindesMusic
             Button _ButtonPlaylist = sender as Button;
             int PlaylistId = Convert.ToInt32(_ButtonPlaylist.Name.Substring(1));
             Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == PlaylistId).FirstOrDefault();
-            playlistSongs.playlistToUse = relevantPlaylist;
+            // playlistSongs = new PlaylistSongsPage();
             playlistSongs.reinitialize(relevantPlaylist, this, user);
             Main.Content = playlistSongs;
+        }
+
+        private void ButtonClickQueue(object sender, RoutedEventArgs e)
+        {
+            if (Main.Content != queuePage)
+            {
+                queuePage.InitialiseQueuePage();
+                Main.Content = queuePage;
+            }
+            else
+            {
+                if (playlistSongs != null)
+                {
+                    Main.Content = playlistSongs;
+                }
+                else
+                {
+                    Playlists playlists = new Playlists();
+                    Main.Content = playlists;
+                }
+            }
+        }
+
+        private void ShuffleButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (MusicQueue.IsShuffle == false)
+            {
+                btnShuffle.Background = new SolidColorBrush(System.Windows.Media.Colors.DarkOrange);
+                MusicQueue.ShuffleSongs();
+                MusicQueue.IsShuffle = true;
+            }
+            else
+            {
+                btnShuffle.Background = new SolidColorBrush(System.Windows.Media.Colors.LightGray);
+                MusicQueue.IsShuffle = false;
+            }
         }
 
         private void NewPlaylistButtonClick(object sender, RoutedEventArgs e)

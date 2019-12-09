@@ -10,7 +10,7 @@ namespace WindesMusic
     {
         public static Queue<Song> SongQueue = new Queue<Song>();
         public static Stack<Song> PreviousSongs = new Stack<Song>();
-
+        public static bool IsShuffle = false;
 
         public static void AddSongToQueue(Song song)
         {
@@ -27,20 +27,7 @@ namespace WindesMusic
                 PreviousSongs = new Stack<Song>(PreviousSongsList);
             }
         }
-
-        /*
-        public static void AddSongToPreviousQueue(string SongString)
-        {
-            PreviousSongs.Push(Convert.ToInt32(SongString));
-            if (PreviousSongs.Count > 10)
-            {
-                List<int> PreviousSongsList = new List<int>(PreviousSongs);
-                PreviousSongsList.RemoveAt(9);
-                PreviousSongs = new Stack<int>(PreviousSongsList);
-            }
-        }
-        */
-
+        
         public static void RemoveSongFromQueue(int Key)
         {
             List<Song> SongList = new List<Song>(SongQueue);
@@ -65,6 +52,18 @@ namespace WindesMusic
         {
             List<Song> ReturnList = new List<Song>(SongQueue);
             return ReturnList;
+        }
+
+        public static void ShuffleSongs()
+        {
+            List<Song> SongList = new List<Song>(SongQueue);
+            //Create a seed for the random, this seed makes every shuffle unique
+            Random rng1 = new Random();
+            int seed = rng1.Next(0, 1000);
+
+            Random rng = new Random(seed);
+            SongList = SongList.OrderBy(x => rng.Next()).ToList();
+            SongQueue = new Queue<Song>(SongList);
         }
     }
 }
