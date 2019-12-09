@@ -10,14 +10,22 @@
         Background="{DynamicResource MainColor}"
         ResizeMode="NoResize"
         >
-   
+
     <Grid x:Name="MainGrid">
         <Frame x:Name="MainFrame" Margin="150,50,-0.4,76" NavigationUIVisibility="Hidden"/>
         <DockPanel LastChildFill="False">
             <StackPanel DockPanel.Dock="Top" Height="100" Background="DarkGray" Margin="250,0,0,0" Orientation="Horizontal">
                 <TextBox Name="inputSearch" Margin="10,0,0,0" Style="{StaticResource placeHolder}" Background="DarkGray" FontSize="50" Tag="Search.." Width="616" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionBrush="#FFFFCB05"/>
             </StackPanel>
-            <StackPanel DockPanel.Dock="Left" Width="150" Margin="0,-49.6,0,50" Background="DimGray">
+            <StackPanel DockPanel.Dock="Left" Width="250" Margin="0,-96,0,50" Background="DimGray" RenderTransformOrigin="0.5,0.5">
+                <StackPanel.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-0.431"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </StackPanel.RenderTransform>
                 <Image Source="Img/WindesheimLogoMetTekst.jpg" HorizontalAlignment="Left" Height="41" Margin="20,5,0,5"/>
                 <Button x:Name="btnAccount" Style="{StaticResource MenuButton}" Content="Account" Margin="25,25,0,5"/>
                 <Button Style="{StaticResource MenuButton}" Content="History Playlist" Margin="25,0,0,5" Click="HistoryPlaylistButtonClick"/>
@@ -65,8 +73,8 @@
                 <Label x:Name="Song" HorizontalAlignment="Left" Content="" Margin="10,-85,140,0" FontSize="20"/>
                 <Label  x:Name="Artist" HorizontalAlignment="Left" Content="" Margin="10,-50,0,0" FontSize="20"/>
             </StackPanel>
-            
+
         </DockPanel>
-        <Frame NavigationUIVisibility="Hidden" x:Name="Main" Margin="150,50,-0.333,76"/>
+        <Frame NavigationUIVisibility="Hidden" x:Name="Main" Margin="252,50,-0.333,76"/>
     </Grid>
 </Window>

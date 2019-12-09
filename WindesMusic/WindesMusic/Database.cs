@@ -105,12 +105,12 @@ namespace WindesMusic
 
             if (_reader.Read())
             {
-                userResult.Id = (int)_reader["UserID"];
+                userResult.UserID = (int)_reader["UserID"];
                 userResult.Email = (string)_reader["Email"];
                 userResult.Name = (string)_reader["Name"];
-                userResult.IsArtist = (int)_reader["IsArtist"];
+                userResult.IsArtist = Convert.ToBoolean(_reader["IsArtist"]);
                 // save user id to application settings
-                Properties.Settings.Default.UserID = userResult.Id;
+                Properties.Settings.Default.UserID = userResult.UserID;
                 Properties.Settings.Default.Save();
             }
             _connection.Close();
@@ -170,7 +170,7 @@ namespace WindesMusic
             OpenConnection();
             _command.Parameters.Clear();
             User userResult = new User();
-            _command.CommandText = "SELECT * FROM Users LEFT JOIN Playlist ON Id = Playlist.UserID WHERE Id=@id";
+            _command.CommandText = "SELECT * FROM Users LEFT JOIN Playlist ON Users.UserID = Playlist.UserID WHERE Users.UserID=@id";
 
             var idParam = _command.CreateParameter();
             idParam.ParameterName = "@id";
@@ -181,10 +181,10 @@ namespace WindesMusic
             while (_reader.Read())
             {
                 Playlist playlistResult = new Playlist();
-                userResult.Id = (int)_reader["Id"];
+                userResult.UserID = (int)_reader["UserID"];
                 userResult.Email = (string)_reader["Email"];
                 userResult.Name = (string)_reader["Name"];
-                userResult.IsArtist = (int)_reader["IsArtist"];
+                userResult.IsArtist = Convert.ToBoolean(_reader["IsArtist"]);
                 try
                 {
                     playlistResult.PlaylistID = (int)_reader["PlaylistID"];
@@ -196,10 +196,10 @@ namespace WindesMusic
             }
             _connection.Close();
 
-            if (userResult.IsArtist == 1)
+            if (userResult.IsArtist == true)
             {
                 OpenConnection();
-                _command.CommandText = "SELECT * FROM Song LEFT JOIN Users ON UserID=Id WHERE Id=@id";
+                _command.CommandText = "SELECT * FROM Song LEFT JOIN Users ON Users.UserID=Song.UserID WHERE Users.UserID=@id";
                 _reader = _command.ExecuteReader();
 
                 while (_reader.Read())
@@ -466,7 +466,7 @@ namespace WindesMusic
 
             OpenConnection();
             _command.Parameters.Clear();
-            _command.CommandText = "UPDATE Users SET IsArtist=1 WHERE Id=@id";
+            _command.CommandText = "UPDATE Users SET IsArtist=1 WHERE UserID=@id";
 
             var idParam = _command.CreateParameter();
             idParam.ParameterName = "@id";
