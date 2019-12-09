@@ -202,8 +202,9 @@ namespace WindesMusic
         private void AddToPlaylistClick(object sender, RoutedEventArgs e)
         {
             MenuItem SongItem = sender as MenuItem;
+            Song song = (Song)SongItem.Tag;
             int PlaylistID = Convert.ToInt32(SongItem.Name.Substring(9));
-            int SongID = Convert.ToInt32(SongItem.Tag);
+            int SongID = song.SongID;
             Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == PlaylistID).FirstOrDefault();
             relevantPlaylist.AddSongToPlaylist(SongID);
 

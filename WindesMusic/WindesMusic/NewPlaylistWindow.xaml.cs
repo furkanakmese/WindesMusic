@@ -26,10 +26,19 @@ namespace WindesMusic
 
         private void MakeNewPlaylistButton(object sender, RoutedEventArgs e)
         {
-            Database data = new Database();
-            string PlaylistName = InputName.Text;
-            data.CreateNewPlaylist(PlaylistName, WindesMusic.Properties.Settings.Default.UserID);   
-            this.Close();
+            string input = InputName.Text;
+
+            if (input.Trim() != "" && !input.Trim().Contains("_"))
+            {
+                Database data = new Database();
+                string PlaylistName = input;
+                data.CreateNewPlaylist(PlaylistName, WindesMusic.Properties.Settings.Default.UserID);
+                this.Close();
+            }
+            else
+            {
+                NewPlaylistMessage.Text = "Please use a valid name";
+            }
         }
     }
 }

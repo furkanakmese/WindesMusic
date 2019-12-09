@@ -128,6 +128,7 @@ namespace WindesMusic
             if (MusicQueue.SongQueue.Count != 0 && audioFile == null)
             {
                 this.PlayChosenSong();
+                
             }
         }
 
