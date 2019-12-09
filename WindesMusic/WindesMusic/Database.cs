@@ -105,7 +105,7 @@ namespace WindesMusic
 
             if (_reader.Read())
             {
-                userResult.Id = (int)_reader["Id"];
+                userResult.Id = (int)_reader["UserID"];
                 userResult.Email = (string)_reader["Email"];
                 userResult.Name = (string)_reader["Name"];
                 userResult.IsArtist = (int)_reader["IsArtist"];
@@ -135,7 +135,7 @@ namespace WindesMusic
             }
             _reader.Close();
 
-            _command.CommandText = "INSERT INTO [User] VALUES (@name, @email, @password, \"hier komt salt\",\"False\", 0, 0)";
+            _command.CommandText = "INSERT INTO [User] VALUES (@name, @email, @password, 0, 0, 0, 0)";
 
             var nameParam = _command.CreateParameter();
             nameParam.ParameterName = "@name";
@@ -526,7 +526,7 @@ namespace WindesMusic
                     return "Error occured";
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 _connection.Close();
                 return "Not enough credits to submit advertisement";
