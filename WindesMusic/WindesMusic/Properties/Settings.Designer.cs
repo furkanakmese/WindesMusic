@@ -34,5 +34,16 @@ namespace WindesMusic.Properties {
                 this["UserID"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=windesmusicdb.database.windows.net;Initial Catalog=WindesMusicDB;Pers" +
+            "ist Security Info=True;User ID=beheer")]
+        public string WindesMusicDBConnectionString {
+            get {
+                return ((string)(this["WindesMusicDBConnectionString"]));
+            }
+        }
     }
 }

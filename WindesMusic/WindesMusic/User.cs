@@ -8,10 +8,12 @@ namespace WindesMusic
 {
     public class User
     {
-        public int Id { get; set; }
+        public int UserID { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public int IsArtist { get; set; }
+        public bool IsArtist { get; set; }
+        public string Password { get; set; }
+        public string Salt { get; set; }
         public List<Playlist> Playlists { get; set; } = new List<Playlist>();
         public List<Song> Songs { get; set; } = new List<Song>();
     }
