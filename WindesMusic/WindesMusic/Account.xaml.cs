@@ -34,6 +34,7 @@ namespace WindesMusic
             btnRequestArtistStatus.Visibility = user.IsArtist == 1 ? Visibility.Hidden : Visibility.Visible;
 
             lblRequestAd.Text = user.IsArtist == 1 ? "Request song for advertising" : "";
+            boxSongs.Visibility = user.IsArtist == 1 ? Visibility.Visible : Visibility.Hidden;
             btnSubmit.Visibility = user.IsArtist == 1 ? Visibility.Visible : Visibility.Hidden;
             foreach (var item in user.Songs)
             {
