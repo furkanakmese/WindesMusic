@@ -46,7 +46,7 @@ namespace WindesMusic
             RecommendedSongList.Children.Clear();
 
             Recommender recommender = new Recommender(db);
-            RecommendedSongs = recommender.getRecommendedSongsForPlaylist(playlist);
+            RecommendedSongs = recommender.GetRecommendedSongsForPlaylist(playlist);
             playlistToUse = playlist;
             mainWindow = main;
             user = BaseUser;
@@ -439,9 +439,9 @@ namespace WindesMusic
             SongID = SongID.Substring(2);
 
             //Adds the song the the users play history
-            db.AddSongToHistory(user.Id, Int32.Parse(SongID), 10);
+            db.AddSongToHistory(user.UserID, Int32.Parse(SongID), 10);
 
-            mainWindow.audioPlayer.PlayChosenSong(SongID);
+            mainWindow.audioPlayer.PlayChosenSong(db.getSong(Int32.Parse(SongID)));
             
             Song songObject = (Song)_ButtonSong.Tag;
             mainWindow.audioPlayer.PlayChosenSong(songObject);
