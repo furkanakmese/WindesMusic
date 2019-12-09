@@ -191,18 +191,40 @@ namespace WindesMusic
                     playlistResult.PlaylistName = (string)_reader["PlaylistName"];
                     userResult.Playlists.Add(playlistResult);
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
+                catch (Exception e) { Console.WriteLine(e); }
+
             }
             _connection.Close();
+
+            if (userResult.IsArtist == 1)
+            {
+                OpenConnection();
+                _command.CommandText = "SELECT * FROM Song LEFT JOIN Users ON UserID=Id WHERE Id=@id";
+                _reader = _command.ExecuteReader();
+
+                while (_reader.Read())
+                {
+                    try
+                    {
+                        Song song = new Song();
+                        song.SongID = (int)_reader["SongID"];
+                        song.SongName = (string)_reader["Name"];
+                        song.Artist = (string)_reader["Artist"];
+                        song.Album = (string)_reader["Album"];
+                        song.Genre = (string)_reader["Genre"];
+                        song.UserID = (int)_reader["UserID"];
+                        userResult.Songs.Add(song);
+                    }
+                    catch (Exception e) { Console.WriteLine(e); }
+                }
+                _connection.Close();
+            }
+            
             foreach(Playlist playlist in userResult.Playlists)
             {
                 playlist.SongPlaylist = GetSongsInPlaylist(playlist.PlaylistID);
             }
             return userResult;
-
         }
 
         // method to retieve search results
@@ -460,6 +482,56 @@ namespace WindesMusic
                 _connection.Close();
                 return false;
             }
+        }
+
+        public string SubmitSongForAdvertising(int songId, int userId)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+
+            _command.CommandText = "SELECT * FROM AdvertisedSong WHERE SongID=@SongID";
+
+            var songIdParam = _command.CreateParameter();
+            songIdParam.ParameterName = "@SongID";
+            songIdParam.Value = songId;
+            _command.Parameters.Add(songIdParam);
+
+            _reader = _command.ExecuteReader();
+            if (_reader.Read())
+            {
+                _connection.Close();
+                return "Song already submitted for advertisement";
+            }
+            _reader.Close();
+
+            _command.CommandText = "UPDATE Users SET Credits = Credits - 5 WHERE Id=@UserID";
+            var userIdParam = _command.CreateParameter();
+            userIdParam.ParameterName = "@UserID";
+            userIdParam.Value = userId;
+            _command.Parameters.Add(userIdParam);
+
+            try
+            {
+                _command.ExecuteNonQuery();
+                _command.CommandText = "INSERT INTO AdvertisedSong (SongID) VALUES(@SongID)";
+
+                if (_command.ExecuteNonQuery() > 0)
+                {
+                    _connection.Close();
+                    return "Song succesfully submitted for advertisement";
+                }
+                else
+                {
+                    _connection.Close();
+                    return "Error occured";
+                }
+            }
+            catch(Exception e)
+            {
+                _connection.Close();
+                return "Not enough credits to submit advertisement";
+            }
+                
         }
     }
 }
