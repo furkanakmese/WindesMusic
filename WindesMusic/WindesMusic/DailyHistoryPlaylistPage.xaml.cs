@@ -33,7 +33,7 @@ namespace WindesMusic
             user = BaseUser;
             mainWindow = main;
             Recommender recommender = new Recommender(db);
-            playlist = recommender.getHistoryPlaylist(user.Id);
+            playlist = recommender.getHistoryPlaylist(user.UserID);
             SongsInPlaylist = playlist.SongPlaylist;
             _PlaylistID = playlist.PlaylistID;
             _PlaylistName = playlist.PlaylistName;
@@ -191,7 +191,7 @@ namespace WindesMusic
         {
             var SongItem = sender as MenuItem;
             int SongID = Convert.ToInt32(SongItem.Name.Substring(6));
-            MusicQueue.AddSongToQueue(SongID);
+            MusicQueue.AddSongToQueue(db.getSong(SongID));
         }
 
 
@@ -204,9 +204,9 @@ namespace WindesMusic
             SongID = SongID.Substring(2);
 
             //Adds the song the the users play history
-            db.AddSongToHistory(user.Id, Int32.Parse(SongID), 10);
+            db.AddSongToHistory(user.UserID, Int32.Parse(SongID), 10);
 
-            mainWindow.audioPlayer.PlayChosenSong(SongID);
+            mainWindow.audioPlayer.PlayChosenSong(db.getSong(Int32.Parse(SongID)));
         }
 
         private void PlayPlaylist(object sender, RoutedEventArgs e)
