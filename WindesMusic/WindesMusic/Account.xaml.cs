@@ -30,11 +30,11 @@ namespace WindesMusic
             InitializeComponent();
 
             user = db.GetUserData(Properties.Settings.Default.UserID);
-            lblName.Text = (user.IsArtist == 1 ? "Artist: " : "User: ") + user.Name;
-            btnRequestArtistStatus.Visibility = user.IsArtist == 1 ? Visibility.Hidden : Visibility.Visible;
+            lblName.Text = (user.IsArtist == true ? "Artist: " : "User: ") + user.Name;
+            btnRequestArtistStatus.Visibility = user.IsArtist == true ? Visibility.Hidden : Visibility.Visible;
 
-            lblRequestAd.Text = user.IsArtist == 1 ? "Request song for advertising" : "";
-            btnSubmit.Visibility = user.IsArtist == 1 ? Visibility.Visible : Visibility.Hidden;
+            lblRequestAd.Text = user.IsArtist == true ? "Request song for advertising" : "";
+            btnSubmit.Visibility = user.IsArtist == true ? Visibility.Visible : Visibility.Hidden;
             foreach (var item in user.Songs)
             {
                 boxSongs.Items.Add(item.SongName);
@@ -61,7 +61,7 @@ namespace WindesMusic
         {
             if(boxSongs.SelectedItem != null)
             {
-                string submitAdvertisement = db.SubmitSongForAdvertising(user.Songs.Where(i => i.SongName.Equals(boxSongs.SelectedItem.ToString())).Select(i => i.SongID).First(), user.Id);
+                string submitAdvertisement = db.SubmitSongForAdvertising(user.Songs.Where(i => i.SongName.Equals(boxSongs.SelectedItem.ToString())).Select(i => i.SongID).First(), user.UserID);
                 lblMessage.Text = submitAdvertisement;
             } else
             {
