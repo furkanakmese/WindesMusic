@@ -15,7 +15,7 @@
         <Frame x:Name="MainFrame" Margin="150,50,-0.4,76" NavigationUIVisibility="Hidden"/>
         <DockPanel LastChildFill="False">
             <StackPanel DockPanel.Dock="Top" Height="100" Background="DarkGray" Margin="250,0,0,0" Orientation="Horizontal">
-                <TextBox Name="inputSearch" Margin="10,0,0,0" Style="{StaticResource placeHolder}" Background="DarkGray" FontSize="50" Tag="Search" Width="616" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionBrush="#FFFFCB05"/>
+                <TextBox Name="inputSearch" Margin="10,0,0,0" Style="{StaticResource placeHolder}" Background="DarkGray" FontSize="50" Tag="Search.." Width="616" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionBrush="#FFFFCB05"/>
             </StackPanel>
 
             <StackPanel DockPanel.Dock="Left" Width="250" Margin="0,-100,0,50" Background="DimGray">

@@ -26,7 +26,7 @@ namespace WindesMusic
         private int _PlaylistID;
         private string _PlaylistName;
         List<Song> SongsInPlaylist;
-        List<Song> RecommendedSongs;
+        List<Song> RecommendedSongs = new List<Song>();
         MainWindow mainWindow;
         User user;
 
@@ -43,8 +43,10 @@ namespace WindesMusic
             InitializeComponent();
             SongList.Children.Clear();
             PlaylistName.Children.Clear();
-            //Recommender recommender = new Recommender(db);
-            //RecommendedSongs = recommender.getRecommendedSongsForPlaylist(playlist);
+            RecommendedSongList.Children.Clear();
+
+            Recommender recommender = new Recommender(db);
+            RecommendedSongs = recommender.getRecommendedSongsForPlaylist(playlist);
             playlistToUse = playlist;
             mainWindow = main;
             user = BaseUser;
@@ -225,7 +227,6 @@ namespace WindesMusic
                 SongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
             }
 
-            /*
             for (int i = 0; i < RecommendedSongs.Count; i++)
             {
                 Song playlistSong = RecommendedSongs[i];
@@ -305,16 +306,16 @@ namespace WindesMusic
 
                 RecommendedSongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuFromRecommended);
             }
-            */
+            
         }
         private void OnLabelClick(object sender, EventArgs args)
         {
             Playlist newPlaylist = new Playlist();
             newPlaylist.PlaylistID = playlistToUse.PlaylistID;
             newPlaylist.PlaylistName = playlistToUse.PlaylistName;
-            //newPlaylist.Recommender = playlistToUse.Recommender;
+            newPlaylist.Recommender = playlistToUse.Recommender;
 
-            switch(_orderBy)
+            switch (_orderBy)
             {
                 case "name":
                     newPlaylist.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.SongName).ToList();

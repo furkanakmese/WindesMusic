@@ -41,10 +41,12 @@ namespace WindesMusic
                 loopCount++;
             }
 
-            foreach (Song song in db.GetRecommendedSongsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID))
+            /*foreach (Song song in db.GetRecommendedSongsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID))
             {
                 Console.WriteLine(song.SongName);
-            }
+            }*/
+
+            Console.WriteLine(mostCommonGenre);
 
             return db.GetRecommendedSongsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID);
         }
