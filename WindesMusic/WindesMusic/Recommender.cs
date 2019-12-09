@@ -15,7 +15,7 @@ namespace WindesMusic
             this.db = db;
         }
         //Returns 5 random songs that are not in the playlist and with the most common genre
-        public List<Song> getRecommendedSongsForPlaylist(Playlist playlist)
+        public List<Song> GetRecommendedSongsForPlaylist(Playlist playlist)
         {
             //Groups songs per genre and orders them by count
             var q = from x in playlist.SongPlaylist
