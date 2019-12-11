@@ -135,7 +135,7 @@ namespace WindesMusic
             }
             _reader.Close();
 
-            _command.CommandText = "INSERT INTO [User] VALUES (@name, @email, @password, 0, 0, 0, 0)";
+            _command.CommandText = "INSERT INTO Users VALUES (@name, @email, @password, 0, 0, 0, 0)";
 
             var nameParam = _command.CreateParameter();
             nameParam.ParameterName = "@name";
@@ -234,7 +234,7 @@ namespace WindesMusic
             OpenConnection();
             _command.Parameters.Clear();
             List<Song> listResult = new List<Song>();
-            _command.CommandText = "SELECT * FROM Song WHERE Name LIKE '%' + @criteria + '%' OR Artist LIKE '%' + @criteria + '%' OR Album LIKE '%' + @criteria + '%'";
+            _command.CommandText = "SELECT s.Name, s.Artist, s.Genre, a.AlbumName FROM Song s left join Album a on s.AlbumID=a.AlbumID WHERE Name LIKE '%' + @criteria + '%' OR Artist LIKE '%' + @criteria + '%' OR a.AlbumName LIKE '%' + @criteria + '%'";
 
             var criteriaParam = _command.CreateParameter();
             criteriaParam.ParameterName = "@criteria";
