@@ -329,7 +329,7 @@ namespace WindesMusic
         }
 
         //Return a list of songs for the playlist recommender
-        public List<Song> GetRecommendedSongsForPlaylist(string mostCommonGenre, string secondMostCommonGenre, int playlistID)
+        public List<Song> GetRecommendedSongsForPlaylist(string mostCommonGenre, string secondMostCommonGenre, int playlistID, int amount)
         {
 
             OpenConnection();
@@ -337,12 +337,17 @@ namespace WindesMusic
             List<Song> listResult = new List<Song>();
             if (secondMostCommonGenre == "")
             {
-                _command.CommandText = "SELECT TOP 5 * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID WHERE Subgenre = @mostCommonGenre AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) ORDER BY NewID()";
+                _command.CommandText = "SELECT * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID WHERE Subgenre = @mostCommonGenre AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) ORDER BY NewID()";
             }
             else
             {
-                _command.CommandText = "SELECT TOP 5 * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID WHERE Subgenre IN(@mostCommonGenre, @secondMostCommonGenre) AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) ORDER BY NewID()";
+                _command.CommandText = "SELECT * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID WHERE Subgenre IN(@mostCommonGenre, @secondMostCommonGenre) AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) ORDER BY NewID()";
             }
+
+            var amountParam = _command.CreateParameter();
+            amountParam.ParameterName = "@Amount";
+            amountParam.Value = amount;
+            _command.Parameters.Add(amountParam);
 
             var mostCommonGenreParam = _command.CreateParameter();
             mostCommonGenreParam.ParameterName = "@mostCommonGenre";
@@ -360,17 +365,19 @@ namespace WindesMusic
             _command.Parameters.Add(criteriaParam);
             _reader = _command.ExecuteReader();
 
-            while (_reader.Read())
+            int loopCount = 0;
+            while (_reader.Read() && loopCount < amount)
             {
                 Song searchResult = new Song();
                 searchResult.SongID = (int)_reader["SongID"];
                 searchResult.SongName = (string)_reader["Name"];
                 searchResult.Artist = (string)_reader["Artist"];
-                searchResult.Album = (string)_reader["AlbumName"];
+                searchResult.Album = (string)_reader["AlbumID"].ToString();
                 searchResult.Year = (int)_reader["Year"];
                 searchResult.Genre = (string)_reader["Genre"];
                 searchResult.Subgenre = (string)_reader["SubGenre"];
                 listResult.Add(searchResult);
+                loopCount++;
             }
 
             _connection.Close();
@@ -560,12 +567,17 @@ namespace WindesMusic
         {
             OpenConnection();
             _command.Parameters.Clear();
-            _command.CommandText = "SELECT DateGenerated FROM GeneratedPlaylist WHERE UserID=@ID";
+            _command.CommandText = "SELECT DateGenerated FROM GeneratedPlaylist WHERE UserID=@ID AND PlaylistName=@Name";
 
             var idParam = _command.CreateParameter();
             idParam.ParameterName = "@ID";
             idParam.Value = userID;
             _command.Parameters.Add(idParam);
+
+            var namePara = _command.CreateParameter();
+            namePara.ParameterName = "@Name";
+            namePara.Value = name;
+            _command.Parameters.Add(namePara);
 
             _reader = _command.ExecuteReader();
             DateTime date = new DateTime();
@@ -652,25 +664,31 @@ namespace WindesMusic
                 searchResult.SongID = (int)_reader["SongID"];
                 searchResult.SongName = (string)_reader["Name"];
                 searchResult.Artist = (string)_reader["Artist"];
-                searchResult.Album = (string)_reader["Album"];
+                searchResult.Album = (string)_reader["AlbumID"].ToString();
                 searchResult.Year = (int)_reader["Year"];
                 searchResult.Genre = (string)_reader["Genre"];
+                searchResult.Subgenre = (string)_reader["SubGenre"];
                 listResult.Add(searchResult);
             }
             _connection.Close();
             return listResult;
         }
 
-        public Playlist GetHistoryPlaylist(int userID)
+        public Playlist GetHistoryPlaylist(int userID, string name)
         {
             OpenConnection();
             _command.Parameters.Clear();
-            _command.CommandText = "SELECT MAX(PlaylistID), PlaylistName FROM GeneratedPlaylist WHERE UserID = @UserID GROUP BY PlaylistID, PlaylistName";
+            _command.CommandText = "SELECT MAX(PlaylistID), PlaylistName FROM GeneratedPlaylist WHERE UserID = @UserID AND PlaylistName=@Name GROUP BY PlaylistID, PlaylistName";
 
             var IdParam = _command.CreateParameter();
             IdParam.ParameterName = "@UserID";
             IdParam.Value = userID;
-            _command.Parameters.Add(IdParam); ;
+            _command.Parameters.Add(IdParam);
+
+            var nameParam = _command.CreateParameter();
+            nameParam.ParameterName = "@Name";
+            nameParam.Value = name;
+            _command.Parameters.Add(nameParam);
 
             _reader = _command.ExecuteReader();
             Playlist playlist = new Playlist();
@@ -687,9 +705,9 @@ namespace WindesMusic
         {
             OpenConnection();
             _command.Parameters.Clear();
-            _command.CommandText = "SELECT Song.SongID, Song.Name, Song.Artist, Song.Album, Song.Year, Song.Genre " +
+            _command.CommandText = "SELECT Song.SongID, Song.Name, Song.Artist, Song.AlbumID, Song.Year, Song.Genre, Song.SubGenre " +
                 "FROM Song LEFT JOIN History ON Song.SongID=History.SongID WHERE History.UserID=@ID " +
-                "GROUP BY Song.SongID, Song.Name, Song.Artist, Song.Album, Song.Year, Song.Genre";
+                "GROUP BY Song.SongID, Song.Name, Song.Artist, Song.AlbumID, Song.Year, Song.Genre, Song.SubGenre";
 
             var idParam = _command.CreateParameter();
             idParam.ParameterName = "@ID";
@@ -704,9 +722,10 @@ namespace WindesMusic
                 searchResult.SongID = (int)_reader["SongID"];
                 searchResult.SongName = (string)_reader["Name"];
                 searchResult.Artist = (string)_reader["Artist"];
-                searchResult.Album = (string)_reader["Album"];
+                searchResult.Album = (string)_reader["AlbumID"].ToString();
                 searchResult.Year = (int)_reader["Year"];
                 searchResult.Genre = (string)_reader["Genre"];
+                searchResult.Subgenre = (string)_reader["SubGenre"];
                 listResult.Add(searchResult);
             }
             _connection.Close();

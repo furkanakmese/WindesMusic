@@ -29,6 +29,7 @@
                 <Image Source="Img/WindesheimLogoMetTekst.jpg" HorizontalAlignment="Left" Height="75" Margin="20,5,0,5"/>
                 <Button x:Name="btnAccount" Style="{StaticResource MenuButton}" Content="Account" Margin="25,25,0,5"/>
                 <Button Style="{StaticResource MenuButton}" Content="History Playlist" Margin="25,0,0,5" Click="HistoryPlaylistButtonClick"/>
+                <Button Style="{StaticResource MenuButton}" Content="Daily Playlist" Margin="25,0,0,5" Click="DailyPlaylistButtonClick" />
                 <Button x:Name="btnPlaylists" Style="{StaticResource MenuButton}" Content="Playlists" Margin="25,20,0,5"/>
                 <Separator Width="100" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                 <Button Style="{StaticResource MenuButton}" Click="NewPlaylistButtonClick" Content="+ Create Playlist" Margin="25,5,0,5"/>
@@ -75,6 +76,6 @@
             </StackPanel>
 
         </DockPanel>
-        <Frame NavigationUIVisibility="Hidden" x:Name="Main" Margin="160,102,-0.333,76"/>
+        <Frame NavigationUIVisibility="Hidden" x:Name="Main" Margin="253,259,-93.4,-80.6"/>
     </Grid>
 </Window>

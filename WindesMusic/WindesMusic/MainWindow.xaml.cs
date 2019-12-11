@@ -178,5 +178,10 @@ namespace WindesMusic
         {
             Main.Content = new DailyHistoryPlaylistPage(user, this);
         }
+
+        private void DailyPlaylistButtonClick(object sender, RoutedEventArgs e)
+        {
+            Main.Content = new DailyPlaylistPage(user, this);
+        }
     }
 }
