@@ -9,12 +9,26 @@ namespace WindesMusic
     public static class MusicQueue
     {
         public static Queue<Song> SongQueue = new Queue<Song>();
+        public static Queue<Song> RecommendedSongQueue = new Queue<Song>();
         public static Stack<Song> PreviousSongs = new Stack<Song>();
         public static bool IsShuffle = false;
 
         public static void AddSongToQueue(Song song)
         {
             SongQueue.Enqueue(song);
+        }
+
+        public static void AddPlaylistToQueue(Playlist playlist, List<Song> RecommendedSongs)
+        {
+            foreach (Song song in playlist.SongPlaylist)
+            {
+                SongQueue.Enqueue(song);
+            }
+            RecommendedSongQueue.Clear();
+            foreach(Song song in RecommendedSongs)
+            {
+                RecommendedSongQueue.Enqueue(song);
+            }
         }
 
         public static void AddSongToPreviousQueue(Song song)
