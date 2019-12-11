@@ -79,45 +79,65 @@ namespace WindesMusic
             return results;
         }
 
-        // this function sends the login data to the database and returns a user object, empty if the data is wrong
+       // this function sends the login data to the database and returns a user object, empty if the data is wrong
         public User Login(string email, string password)
         {
             OpenConnection();
             _command.Parameters.Clear();
             User userResult = new User();
-            _command.CommandText = "SELECT * FROM Users WHERE Email=@email AND Password=@password";
+            _command.CommandText = "SELECT * FROM Users WHERE Email=@email";
 
             var emailParam = _command.CreateParameter();
             emailParam.ParameterName = "@email";
             emailParam.Value = email;
 
-            var sha1 = new SHA1CryptoServiceProvider();
-            var data = Encoding.ASCII.GetBytes(password);
-            var sha1data = sha1.ComputeHash(data);
-
-            var passwordParam = _command.CreateParameter();
-            passwordParam.ParameterName = "@password";
-            passwordParam.Value = Encoding.ASCII.GetString(sha1data);
-
             _command.Parameters.Add(emailParam);
-            _command.Parameters.Add(passwordParam);
             _reader = _command.ExecuteReader();
+
+            
 
             if (_reader.Read())
             {
-                userResult.UserID = (int)_reader["UserID"];
-                userResult.Email = (string)_reader["Email"];
-                userResult.Name = (string)_reader["Name"];
-                userResult.IsArtist = Convert.ToBoolean(_reader["IsArtist"]);
-                // save user id to application settings
-                Properties.Settings.Default.UserID = userResult.UserID;
-                Properties.Settings.Default.Save();
+                string hashPassword = (string)_reader["Password"];
+                string salt = (string) _reader["Salt"];
+
+                HashAlgorithm algorithm = new SHA256Managed(); 
+                //Convert password string to byte
+                byte[] passwordByte = Encoding.ASCII.GetBytes(password);
+            
+                //Convert salt string to byte
+                byte[] saltByte =Encoding.ASCII.GetBytes(salt);
+
+                //Generate SHA256 Hash
+                byte[] plainTextWithSaltBytes =
+                    new byte[passwordByte.Length + saltByte.Length];
+                for (int i = 0; i < passwordByte.Length; i++)
+                {
+                    plainTextWithSaltBytes[i] = passwordByte[i];
+                }
+                for (int i = 0; i < salt.Length; i++)
+                {
+                    plainTextWithSaltBytes[password.Length + i] = saltByte[i];
+                }
+                var sha256Data =  Encoding.ASCII.GetString(algorithm.ComputeHash(plainTextWithSaltBytes));
+                
+                
+                if (hashPassword == sha256Data)
+                {
+                    userResult.UserID = (int)_reader["UserID"];
+                    userResult.Email = (string)_reader["Email"];
+                    userResult.Name = (string)_reader["Name"];
+                    userResult.IsArtist = Convert.ToBoolean(_reader["IsArtist"]);
+                    // save user id to application settings
+                    Properties.Settings.Default.UserID = userResult.UserID;
+                    Properties.Settings.Default.Save();
+                }
             }
             _connection.Close();
             return userResult;
         }
 
-        public User Register(string name, string email, string password)
+        public User Register(string name, string email, string password, string salt)
         {
             OpenConnection();
             _command.Parameters.Clear();
@@ -135,22 +155,43 @@ namespace WindesMusic
             }
             _reader.Close();
 
-            _command.CommandText = "INSERT INTO Users VALUES (@name, @email, @password, 0, 0, 0, 0)";
 
+            _command.CommandText = "INSERT INTO Users VALUES (@name, @email, @password, @salt,0, 0, 0)";
+
+            var saltParam = _command.CreateParameter();
+            saltParam.ParameterName = "@salt";
+            saltParam.Value = salt;
             var nameParam = _command.CreateParameter();
             nameParam.ParameterName = "@name";
             nameParam.Value = name;
+            
+            HashAlgorithm algorithm = new SHA256Managed(); 
+            //Convert password string to byte
+            byte[] passwordByte =Encoding.ASCII.GetBytes(password);
+            
+            //Convert salt string to byte
+            byte[] saltByte = Encoding.ASCII.GetBytes(salt);
 
-            var sha1 = new SHA1CryptoServiceProvider();
-            var data = Encoding.ASCII.GetBytes(password);
-            var sha1data = sha1.ComputeHash(data);
+            //Generate SHA256 Hash
+            byte[] plainTextWithSaltBytes =
+                new byte[passwordByte.Length + saltByte.Length];
+            for (int i = 0; i < passwordByte.Length; i++)
+            {
+                plainTextWithSaltBytes[i] = passwordByte[i];
+            }
+            for (int i = 0; i < salt.Length; i++)
+            {
+                plainTextWithSaltBytes[password.Length + i] = saltByte[i];
+            }
+            var sha256Data =  algorithm.ComputeHash(plainTextWithSaltBytes);
 
             var passwordParam = _command.CreateParameter();
             passwordParam.ParameterName = "@password";
-            passwordParam.Value = Encoding.ASCII.GetString(sha1data);
+            passwordParam.Value = Encoding.ASCII.GetString(sha256Data);
 
             _command.Parameters.Add(nameParam);
             _command.Parameters.Add(passwordParam);
+            _command.Parameters.Add(saltParam);
             // _reader = _command.ExecuteReader();
             
             if(_command.ExecuteNonQuery() > 0)
