@@ -155,6 +155,7 @@ namespace WindesMusic
             }
             _reader.Close();
 
+
             _command.CommandText = "INSERT INTO Users VALUES (@name, @email, @password, @salt,0, 0, 0)";
 
             var saltParam = _command.CreateParameter();
