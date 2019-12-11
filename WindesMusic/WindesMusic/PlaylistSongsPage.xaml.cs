@@ -396,6 +396,7 @@ namespace WindesMusic
                 RecommendedSongList.Children.Add(SongBlockAlbum);
                 RecommendedSongList.Children.Add(SongBlockYear);
 
+                RecommendedSongList.ContextMenu = null;
                 RecommendedSongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuFromRecommended);
             }
             
@@ -475,7 +476,7 @@ namespace WindesMusic
             int top1 = (int)Math.Round(top);
             int amount = top1 / 28;
             ContextMenu menu = new ContextMenu();
-            Song song = SongsInPlaylist.ElementAt(amount);
+            Song song = RecommendedSongs.ElementAt(amount);
             int CorrectSongID = RecommendedSongs.ElementAt(amount).SongID;
 
             MenuItem PlaylistItem = new MenuItem();
@@ -500,7 +501,7 @@ namespace WindesMusic
 
             menu.Items.Add(PlaylistItem);
             menu.Items.Add(QueueItem);
-            SongList.ContextMenu = menu;
+            RecommendedSongList.ContextMenu = menu;
         }
 
         private void AddToPlaylistClick(object sender, RoutedEventArgs e)
@@ -540,7 +541,7 @@ namespace WindesMusic
         private void PlayPlaylist(object sender, RoutedEventArgs e)
         {
             MusicQueue.SongQueue.Clear();
-            MusicQueue.AddPlaylistToQueue(playlistToUse);
+            MusicQueue.AddPlaylistToQueue(playlistToUse, RecommendedSongs);
             if(MusicQueue.IsShuffle == true)
             {
                 MusicQueue.ShuffleSongs();

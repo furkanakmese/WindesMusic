@@ -69,6 +69,30 @@ namespace WindesMusic
                 {
                     Console.WriteLine("File not found");
                 }
+            }else if(MusicQueue.RecommendedSongQueue.Count != 0)
+            {
+                Song song = MusicQueue.RecommendedSongQueue.Dequeue();
+                StringBuilder fileName = new StringBuilder();
+                fileName.Append(song.SongID);
+                fileName.Append(".mp3");
+                _CurrentSong = null;
+                DisposeOfSong();
+                audioFile = null;
+                try
+                {
+                    audioFile = new AudioFileReader(fileName.ToString());
+                    outputDevice.Stop();
+                    outputDevice.Init(audioFile);
+                    outputDevice.Play();
+                    _CurrentSong = song;
+                    isPlaying = true;
+                    mainWindow.Song.Content = song.SongName;
+                    mainWindow.Artist.Content = song.Artist;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("File not found");
+                }
             }
         }
 
@@ -129,6 +153,9 @@ namespace WindesMusic
             {
                 this.PlayChosenSong();
                 
+            }else if(MusicQueue.RecommendedSongQueue.Count != 0 && audioFile == null)
+            {
+                this.PlayChosenSong();
             }
         }
 
