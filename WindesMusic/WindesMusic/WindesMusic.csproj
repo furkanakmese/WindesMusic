@@ -69,6 +69,9 @@
     <Compile Include="DailyHistoryPlaylistPage.xaml.cs">
       <DependentUpon>DailyHistoryPlaylistPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DailyPlaylistPage.xaml.cs">
+      <DependentUpon>DailyPlaylistPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NewPlaylistWindow.xaml.cs">
       <DependentUpon>NewPlaylistWindow.xaml</DependentUpon>
     </Compile>
@@ -99,6 +102,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="DailyHistoryPlaylistPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DailyPlaylistPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

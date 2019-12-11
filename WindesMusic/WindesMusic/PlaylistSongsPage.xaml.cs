@@ -48,7 +48,7 @@ namespace WindesMusic
             RecommendedAdsList.Children.Clear();
 
             Recommender recommender = new Recommender(db);
-            RecommendedSongs = recommender.GetRecommendedSongsForPlaylist(playlist);
+            RecommendedSongs = recommender.GetRecommendedSongsForPlaylist(playlist, 5);
             RecommendedAds = recommender.GetRecommendedAdsFromPlaylist(playlist);
             playlistToUse = playlist;
             mainWindow = main;

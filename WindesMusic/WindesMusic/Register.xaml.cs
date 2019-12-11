@@ -43,7 +43,7 @@ namespace WindesMusic
                 
 
                 Database db = new Database();
-                if (db.Register(name, email, password).Email != null)
+                if (db.Register(name, email, password, salt.ToString()).Email != null)
                 {
                     MainWindow main = new MainWindow();
                     main.Show();

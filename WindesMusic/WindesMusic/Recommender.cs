@@ -15,8 +15,13 @@ namespace WindesMusic
             this.db = db;
         }
         //Returns 5 random songs that are not in the playlist and with the most common genre
-        public List<Song> GetRecommendedSongsForPlaylist(Playlist playlist)
+        public List<Song> GetRecommendedSongsForPlaylist(Playlist playlist, int amount)
         {
+            Console.WriteLine();
+            foreach(Song song in playlist.SongPlaylist)
+            {
+                Console.WriteLine(song.SongName);
+            }
             //Groups songs per genre and orders them by count
             var q = from x in playlist.SongPlaylist
                     group x by x.Subgenre into g
@@ -40,40 +45,55 @@ namespace WindesMusic
                 }
                 loopCount++;
             }
-
-            return db.GetRecommendedSongsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID);
+            Console.WriteLine();
+            foreach(Song song in db.GetRecommendedSongsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID, amount))
+            {
+                Console.WriteLine(song.SongName);
+            }
+            return db.GetRecommendedSongsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID, amount);
         }
 
         //Returns a maximum of 10 previously listened to songs
-        public Playlist getHistoryPlaylist(int userID)
+        public Playlist getDailyPlaylist(int userID, string playlistName)
         {
-            var generatedID = db.SaveGeneratedPlaylist("History Playlist", userID);
-            Playlist playlist = db.GetHistoryPlaylist(userID);
+            var generatedID = db.SaveGeneratedPlaylist(playlistName, userID);
+            Playlist playlist = db.GetHistoryPlaylist(userID, playlistName);
+            //Console.WriteLine(playlist.PlaylistName);
 
             //Creates the playlist if it hasn't been created yet today
             if (generatedID != null)
             {
-                playlist.SongPlaylist = db.GetPlayHistory(userID);
-
-                Random random = new Random();
-                var randomizedList = from song in playlist.SongPlaylist
-                                     orderby random.Next()
-                                     select song;
-
-                List<Song> history = new List<Song>();
-                int loopCount = 0;
-                foreach (var song in randomizedList)
+                if(playlistName == "History Playlist")
                 {
-                    if (loopCount < 10)
-                    {
-                        history.Add(song);
-                        loopCount++;
-                    }
-                }
-                playlist.SongPlaylist = history;
+                    playlist.SongPlaylist = db.GetPlayHistory(userID);
 
-                db.SaveGeneratedPlaylistToSong(history, (int)generatedID);
-                return playlist;
+                    Random random = new Random();
+                    var randomizedList = from song in playlist.SongPlaylist
+                                         orderby random.Next()
+                                         select song;
+
+                    List<Song> history = new List<Song>();
+                    int loopCount = 0;
+                    foreach (var song in randomizedList)
+                    {
+                        if (loopCount < 10)
+                        {
+                            history.Add(song);
+                            loopCount++;
+                        }
+                    }
+                    playlist.SongPlaylist = history;
+
+                    db.SaveGeneratedPlaylistToSong(history, (int)generatedID);
+                    return playlist;
+                }
+                else
+                {
+                    playlist.SongPlaylist = db.GetPlayHistory(userID);
+                    db.SaveGeneratedPlaylistToSong(GetRecommendedSongsForPlaylist(playlist, 10), (int)generatedID);
+                    return playlist;
+                }
+                
             }
 
             playlist.SongPlaylist = db.getGeneratedPlaylistSongs(playlist.PlaylistID);
