@@ -94,14 +94,6 @@
     </Compile>
     <Compile Include="Song.cs" />
     <Compile Include="User.cs" />
-    <Compile Include="WindesMusicDBDataSet.cs">
-      <DependentUpon>WindesMusicDBDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="WindesMusicDBDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>WindesMusicDBDataSet.xsd</DependentUpon>
-    </Compile>
     <Page Include="Account.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -183,17 +175,6 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="WindesMusicDBDataSet.xsc">
-      <DependentUpon>WindesMusicDBDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="WindesMusicDBDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>WindesMusicDBDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="WindesMusicDBDataSet.xss">
-      <DependentUpon>WindesMusicDBDataSet.xsd</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
