@@ -28,7 +28,7 @@ namespace WindesMusic
         private DispatcherTimer dispatcherTimer;
         private User user;
         private Database db = new Database();
-        private Account account = new Account();
+        private Account account;
         private PlaylistSongsPage playlistSongs = new PlaylistSongsPage();
         private QueuePage queuePage;
 
@@ -36,6 +36,8 @@ namespace WindesMusic
         public MainWindow()
         {
             InitializeComponent();
+            account = new Account(this);
+
             audioPlayer = new AudioPlayer(this);
             queuePage = new QueuePage(this);
             //  DispatcherTimer setup
