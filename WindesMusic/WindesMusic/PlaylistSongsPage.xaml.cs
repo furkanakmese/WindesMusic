@@ -440,8 +440,6 @@ namespace WindesMusic
 
             //Adds the song the the users play history
             db.AddSongToHistory(user.UserID, Int32.Parse(SongID), 10);
-
-            mainWindow.audioPlayer.PlayChosenSong(db.getSong(Int32.Parse(SongID)));
             
             Song songObject = (Song)_ButtonSong.Tag;
             mainWindow.audioPlayer.PlayChosenSong(songObject);
@@ -450,7 +448,7 @@ namespace WindesMusic
         private void PlayPlaylist(object sender, RoutedEventArgs e)
         {
             MusicQueue.SongQueue.Clear();
-            MusicQueue.SongQueue = playlistToUse.CreateQueueFromPlaylist();
+            MusicQueue.AddPlaylistToQueue(playlistToUse);
             if(MusicQueue.IsShuffle == true)
             {
                 MusicQueue.ShuffleSongs();

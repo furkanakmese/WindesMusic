@@ -199,7 +199,7 @@ namespace WindesMusic
             if (userResult.IsArtist == true)
             {
                 OpenConnection();
-                _command.CommandText = "SELECT * FROM Song LEFT JOIN Users ON Users.UserID=Song.UserID WHERE Users.UserID=@id";
+                _command.CommandText = "SELECT * FROM Song s LEFT JOIN Users ON Users.UserID=Song.UserID WHERE Users.UserID=@id LEFT JOIN Album a on s.AlbumID = a.AlbumID";
                 _reader = _command.ExecuteReader();
 
                 while (_reader.Read())
@@ -210,7 +210,7 @@ namespace WindesMusic
                         song.SongID = (int)_reader["SongID"];
                         song.SongName = (string)_reader["Name"];
                         song.Artist = (string)_reader["Artist"];
-                        song.Album = (string)_reader["Album"];
+                        song.Album = (string)_reader["AlbumName"];
                         song.Genre = (string)_reader["Genre"];
                         song.Subgenre = (string)_reader["SubGenre"]; 
                         song.UserID = (int)_reader["UserID"];
@@ -234,7 +234,7 @@ namespace WindesMusic
             OpenConnection();
             _command.Parameters.Clear();
             List<Song> listResult = new List<Song>();
-            _command.CommandText = "SELECT s.Name, s.Artist, s.Genre, a.AlbumName FROM Song s left join Album a on s.AlbumID=a.AlbumID WHERE Name LIKE '%' + @criteria + '%' OR Artist LIKE '%' + @criteria + '%' OR a.AlbumName LIKE '%' + @criteria + '%'";
+            _command.CommandText = "SELECT s.SongID, s.Name, s.Artist, s.Genre, a.AlbumName, s.Year FROM Song s left join Album a on s.AlbumID=a.AlbumID WHERE Name LIKE '%' + @criteria + '%' OR Artist LIKE '%' + @criteria + '%' OR a.AlbumName LIKE '%' + @criteria + '%'";
 
             var criteriaParam = _command.CreateParameter();
             criteriaParam.ParameterName = "@criteria";
@@ -248,7 +248,7 @@ namespace WindesMusic
                 searchResult.SongID = (int)_reader["SongID"];
                 searchResult.SongName = (string)_reader["Name"];
                 searchResult.Artist = (string)_reader["Artist"];
-                searchResult.Album = (string)_reader["Album"];
+                searchResult.Album = (string)_reader["AlbumName"];
                 searchResult.Year = (int)_reader["Year"];
                 listResult.Add(searchResult);
             }
@@ -262,7 +262,7 @@ namespace WindesMusic
             OpenConnection();
             _command.Parameters.Clear();
             List<Song> listResult = new List<Song>();
-            _command.CommandText = "SELECT * FROM Song WHERE SongID IN(SELECT SongID FROM PlaylistToSong WHERE PlaylistID = @PlaylistID)";
+            _command.CommandText = "SELECT * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID WHERE SongID IN(SELECT SongID FROM PlaylistToSong WHERE PlaylistID = @PlaylistID)";
 
             var criteriaParam = _command.CreateParameter();
             criteriaParam.ParameterName = "@PlaylistID";
@@ -276,7 +276,7 @@ namespace WindesMusic
                 searchResult.SongID = (int)_reader["SongID"];
                 searchResult.SongName = (string)_reader["Name"];
                 searchResult.Artist = (string)_reader["Artist"];
-                searchResult.Album = (string)_reader["Album"];
+                searchResult.Album = (string)_reader["AlbumName"];
                 searchResult.Year = (int)_reader["Year"];
                 searchResult.Genre = (string)_reader["Genre"];
                 searchResult.Subgenre = (string)_reader["Subgenre"];
@@ -296,11 +296,11 @@ namespace WindesMusic
             List<Song> listResult = new List<Song>();
             if (secondMostCommonGenre == "")
             {
-                _command.CommandText = "SELECT TOP 5 * FROM Song WHERE Subgenre = @mostCommonGenre AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) ORDER BY NewID()";
+                _command.CommandText = "SELECT TOP 5 * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID WHERE Subgenre = @mostCommonGenre AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) ORDER BY NewID()";
             }
             else
             {
-                _command.CommandText = "SELECT TOP 5 * FROM Song WHERE Subgenre IN(@mostCommonGenre, @secondMostCommonGenre) AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) ORDER BY NewID()";
+                _command.CommandText = "SELECT TOP 5 * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID WHERE Subgenre IN(@mostCommonGenre, @secondMostCommonGenre) AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) ORDER BY NewID()";
             }
 
             var mostCommonGenreParam = _command.CreateParameter();
@@ -325,7 +325,7 @@ namespace WindesMusic
                 searchResult.SongID = (int)_reader["SongID"];
                 searchResult.SongName = (string)_reader["Name"];
                 searchResult.Artist = (string)_reader["Artist"];
-                searchResult.Album = (string)_reader["Album"];
+                searchResult.Album = (string)_reader["AlbumName"];
                 searchResult.Year = (int)_reader["Year"];
                 searchResult.Genre = (string)_reader["Genre"];
                 searchResult.Subgenre = (string)_reader["SubGenre"];
@@ -690,7 +690,7 @@ namespace WindesMusic
                 searchResult.SongID = (int)_reader["SongID"];
                 searchResult.SongName = (string)_reader["Name"];
                 searchResult.Artist = (string)_reader["Artist"];
-                searchResult.Album = (string)_reader["Album"];
+                searchResult.Album = (string)_reader["AlbumName"];
                 searchResult.Year = (int)_reader["Year"];
                 searchResult.Genre = (string)_reader["Genre"];
             }
