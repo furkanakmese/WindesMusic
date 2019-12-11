@@ -27,6 +27,7 @@ namespace WindesMusic
         private string _PlaylistName;
         List<Song> SongsInPlaylist;
         List<Song> RecommendedSongs = new List<Song>();
+        List<Song> RecommendedAds = new List<Song>();
         MainWindow mainWindow;
         User user;
 
@@ -44,9 +45,11 @@ namespace WindesMusic
             SongList.Children.Clear();
             PlaylistName.Children.Clear();
             RecommendedSongList.Children.Clear();
+            RecommendedAdsList.Children.Clear();
 
             Recommender recommender = new Recommender(db);
             RecommendedSongs = recommender.GetRecommendedSongsForPlaylist(playlist);
+            RecommendedAds = recommender.GetRecommendedAdsFromPlaylist(playlist);
             playlistToUse = playlist;
             mainWindow = main;
             user = BaseUser;
@@ -225,6 +228,95 @@ namespace WindesMusic
 
                 SongList.ContextMenu = null;
                 SongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
+            }
+
+            // show ads in suggestions
+            for (int i = 0; i < RecommendedAds.Count(); i++)
+            {
+                Song playlistSong = RecommendedAds[i];
+                RowDefinition rowDef = new RowDefinition();
+                rowDef.Name = $"Row_{i}";
+                RecommendedAdsList.RowDefinitions.Add(rowDef);
+                RowDefinitionCollection RowNames = RecommendedAdsList.RowDefinitions;
+                Array RowArray = RowNames.ToArray();
+
+                // Add the play button to the Songlist grid
+                var PlayButton = new Button
+                {
+                    Name = $"__{playlistSong.SongID}",
+                    Content = "Play",
+                    Margin = new Thickness(5, 0, 0, 5),
+                    FontSize = 15,
+                    Tag = playlistSong
+                };
+                Grid.SetRow(PlayButton, i);
+                Grid.SetColumn(PlayButton, 0);
+                PlayButton.Click += (ob, s) => { db.AddCreditsFromSongClick(true, playlistSong.SongID); PlaySongFromPlaylist(ob, s); };
+
+                // Add the Songname text block to the Songlist grid
+                var SongBlockName = new TextBlock
+                {
+                    Name = $"_{playlistSong.SongID}",
+                    Text = $"(Ad) {playlistSong.SongName}",
+                    Foreground = whiteText,
+                    Margin = SongBlockThickness,
+                    FontSize = 15
+                };
+                Grid.SetRow(SongBlockName, i);
+                Grid.SetColumn(SongBlockName, 1);
+
+                // Add the artist text block to the Songlist grid
+                var SongBlockArtist = new TextBlock
+                {
+                    Name = $"_{playlistSong.SongID}",
+                    Text = $"{playlistSong.Artist}",
+                    Foreground = whiteText,
+                    Margin = SongBlockThickness,
+                    FontSize = 15
+                };
+                Grid.SetRow(SongBlockArtist, i);
+                Grid.SetColumn(SongBlockArtist, 2);
+
+                // Add the album text block to the Songlist grid
+                var SongBlockAlbum = new TextBlock
+                {
+                    Name = $"_{playlistSong.SongID}",
+                    Text = $"{playlistSong.Album}",
+                    Foreground = whiteText,
+                    Margin = SongBlockThickness,
+                    FontSize = 15
+                };
+                Grid.SetRow(SongBlockAlbum, i);
+                Grid.SetColumn(SongBlockAlbum, 3);
+
+                // Add the year text block to the Songlist grid
+                var SongBlockYear = new TextBlock
+                {
+                    Name = $"_{playlistSong.SongID}",
+                    Text = $"{playlistSong.Year}",
+                    Foreground = whiteText,
+                    Margin = SongBlockThickness,
+                    FontSize = 15
+                };
+                Grid.SetRow(SongBlockYear, i);
+                Grid.SetColumn(SongBlockYear, 4);
+
+                // Add the elements to the Songlist grid Children collection
+                RecommendedAdsList.Children.Add(PlayButton);
+                RecommendedAdsList.Children.Add(SongBlockName);
+                RecommendedAdsList.Children.Add(SongBlockArtist);
+                RecommendedAdsList.Children.Add(SongBlockAlbum);
+                RecommendedAdsList.Children.Add(SongBlockYear);
+
+                ContextMenu menu = new ContextMenu();
+                menu.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
+                menu.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
+
+                RecommendedAdsList.ContextMenu = null;
+                RecommendedAdsList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
+
+                // Update times displayed per advertised song
+                db.UpdateTimesDisplayedAd(playlistSong.SongID);
             }
 
             for (int i = 0; i < RecommendedSongs.Count; i++)

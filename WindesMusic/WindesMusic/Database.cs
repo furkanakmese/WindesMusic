@@ -759,7 +759,7 @@ namespace WindesMusic
             }
             _reader.Close();
 
-            _command.CommandText = "UPDATE Users SET Credits = Credits - 5 WHERE Id=@UserID";
+            _command.CommandText = "UPDATE Users SET Credits = Credits - 5 WHERE UserID=@UserID";
             var userIdParam = _command.CreateParameter();
             userIdParam.ParameterName = "@UserID";
             userIdParam.Value = userId;
@@ -785,6 +785,112 @@ namespace WindesMusic
             {
                 _connection.Close();
                 return "Not enough credits to submit advertisement";
+            }
+        }
+
+        public List<Song> GetRecommendedAdsForPlaylist(string mostCommonGenre, string secondMostCommonGenre, int playlistID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            List<Song> listResult = new List<Song>();
+            if (secondMostCommonGenre == "")
+            {
+                _command.CommandText = "SELECT TOP 3 * FROM Song WHERE Subgenre = @mostCommonGenre AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) AND SongID IN (SELECT SongID FROM AdvertisedSong) ORDER BY NewID()";
+            }
+            else
+            {
+                _command.CommandText = "SELECT TOP 3 * FROM Song WHERE Subgenre IN(@mostCommonGenre, @secondMostCommonGenre) AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) AND SongID IN (SELECT SongID FROM AdvertisedSong) ORDER BY NewID()";
+            }
+
+            var mostCommonGenreParam = _command.CreateParameter();
+            mostCommonGenreParam.ParameterName = "@mostCommonGenre";
+            mostCommonGenreParam.Value = mostCommonGenre;
+            _command.Parameters.Add(mostCommonGenreParam);
+
+            var secondMostCommonGenreParam = _command.CreateParameter();
+            secondMostCommonGenreParam.ParameterName = "@secondMostCommonGenre";
+            secondMostCommonGenreParam.Value = secondMostCommonGenre;
+            _command.Parameters.Add(secondMostCommonGenreParam);
+
+            var criteriaParam = _command.CreateParameter();
+            criteriaParam.ParameterName = "@playlistID";
+            criteriaParam.Value = playlistID;
+            _command.Parameters.Add(criteriaParam);
+            _reader = _command.ExecuteReader();
+
+            while (_reader.Read())
+            {
+                Song searchResult = new Song();
+                searchResult.SongID = (int)_reader["SongID"];
+                searchResult.SongName = (string)_reader["Name"];
+                searchResult.Artist = (string)_reader["Artist"];
+                searchResult.Album = (string)_reader["Album"];
+                searchResult.Year = (int)_reader["Year"];
+                searchResult.Genre = (string)_reader["Genre"];
+                searchResult.Subgenre = (string)_reader["SubGenre"];
+                listResult.Add(searchResult);
+            }
+
+            _connection.Close();
+            return listResult;
+        }
+
+        public void AddCreditsFromSongClick(bool ad, int SongID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "UPDATE Users SET Credits = Credits + 1 WHERE UserID = (SELECT UserID FROM Song WHERE SongID=@SongID)";
+            var songIdParam = _command.CreateParameter();
+            songIdParam.ParameterName = "@SongID";
+            songIdParam.Value = SongID;
+            _command.Parameters.Add(songIdParam);
+            if (_command.ExecuteNonQuery() > 0)
+            {
+                _connection.Close();
+                Console.WriteLine("Artist received credits");
+            }
+            else
+            {
+                _connection.Close();
+                Console.WriteLine("Error occured");
+            }
+
+            OpenConnection();
+            // _command.Parameters.Clear();
+            if(ad)
+            {
+                _command.CommandText = "UPDATE AdvertisedSong SET TimesClicked = TimesClicked + 1 WHERE SongID=@SongID";
+                if (_command.ExecuteNonQuery() > 0)
+                {
+                    _connection.Close();
+                    Console.WriteLine("Amount of clicks updated");
+                }
+                else
+                {
+                    _connection.Close();
+                    Console.WriteLine("Error occured");
+                }
+            }
+        }
+
+        public void UpdateTimesDisplayedAd(int SongID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "UPDATE AdvertisedSong SET TimesDisplayed = TimesDisplayed + 1 WHERE SongID = @SongID";
+            var songIdParam = _command.CreateParameter();
+            songIdParam.ParameterName = "@SongID";
+            songIdParam.Value = SongID;
+            _command.Parameters.Add(songIdParam);
+            if (_command.ExecuteNonQuery() > 0)
+            {
+                _connection.Close();
+                Console.WriteLine("Times displayed updated");
+            }
+            else
+            {
+                _connection.Close();
+                Console.WriteLine("Error occured");
             }
         }
     }

@@ -80,5 +80,35 @@ namespace WindesMusic
 
             return playlist;
         }
+
+        public List<Song> GetRecommendedAdsFromPlaylist(Playlist playlist)
+        {
+            //Groups songs per genre and orders them by count
+            var q = from x in playlist.SongPlaylist
+                    group x by x.Subgenre into g
+                    let count = g.Count()
+                    orderby count descending
+                    select new { Value = g.Key, Count = count };
+
+            string mostCommonGenre = "";
+            string secondMostCommonGenre = "";
+            int loopCount = 0;
+            //Determines what the most common and second most common genre is
+            foreach (var x in q)
+            {
+                if (loopCount == 0)
+                {
+                    mostCommonGenre = x.Value;
+                }
+                else if (loopCount == 1)
+                {
+                    secondMostCommonGenre = x.Value;
+                }
+                loopCount++;
+            }
+            List<Song> test = db.GetRecommendedAdsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID);
+            foreach (var item in test) Console.WriteLine(item.SongName);
+            return db.GetRecommendedAdsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID);
+        }
     }
 }
