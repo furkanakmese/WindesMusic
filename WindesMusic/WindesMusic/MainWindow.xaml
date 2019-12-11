@@ -14,10 +14,10 @@
     <Grid x:Name="MainGrid">
         <Frame x:Name="MainFrame" Margin="150,50,-0.4,76" NavigationUIVisibility="Hidden"/>
         <DockPanel LastChildFill="False">
-            <StackPanel DockPanel.Dock="Top" Height="100" Background="DarkGray" Margin="250,0,0,0" Orientation="Horizontal">
+            <StackPanel DockPanel.Dock="Top" Height="100" Background="DarkGray" Margin="246,0,-0.333,0" Orientation="Horizontal">
                 <TextBox Name="inputSearch" Margin="10,0,0,0" Style="{StaticResource placeHolder}" Background="DarkGray" FontSize="50" Tag="Search.." Width="616" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionBrush="#FFFFCB05"/>
             </StackPanel>
-            <StackPanel DockPanel.Dock="Left" Width="250" Margin="0,-96,0,50" Background="DimGray" RenderTransformOrigin="0.5,0.5">
+            <StackPanel DockPanel.Dock="Left" Width="249" Margin="0,-105,0,50" Background="DimGray" RenderTransformOrigin="0.5,0.5">
                 <StackPanel.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -26,13 +26,13 @@
                         <TranslateTransform/>
                     </TransformGroup>
                 </StackPanel.RenderTransform>
-                <Image Source="Img/WindesheimLogoMetTekst.jpg" HorizontalAlignment="Left" Height="41" Margin="20,5,0,5"/>
+                <Image Source="Img/WindesheimLogoMetTekst.jpg" HorizontalAlignment="Left" Height="75" Margin="20,5,0,5"/>
                 <Button x:Name="btnAccount" Style="{StaticResource MenuButton}" Content="Account" Margin="25,25,0,5"/>
                 <Button Style="{StaticResource MenuButton}" Content="History Playlist" Margin="25,0,0,5" Click="HistoryPlaylistButtonClick"/>
                 <Button x:Name="btnPlaylists" Style="{StaticResource MenuButton}" Content="Playlists" Margin="25,20,0,5"/>
                 <Separator Width="100" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                 <Button Style="{StaticResource MenuButton}" Click="NewPlaylistButtonClick" Content="+ Create Playlist" Margin="25,5,0,5"/>
-                <ScrollViewer HorizontalAlignment="Left" Height="126" Margin="10,10,0,0" VerticalAlignment="Top" Width="140">
+                <ScrollViewer HorizontalAlignment="Left" Height="370" Margin="10,10,0,0" VerticalAlignment="Top" Width="240">
                     <StackPanel Name="PlaylistList">
 
                     </StackPanel>
@@ -75,6 +75,6 @@
             </StackPanel>
 
         </DockPanel>
-        <Frame NavigationUIVisibility="Hidden" x:Name="Main" Margin="252,50,-0.333,76"/>
+        <Frame NavigationUIVisibility="Hidden" x:Name="Main" Margin="160,102,-0.333,76"/>
     </Grid>
 </Window>
