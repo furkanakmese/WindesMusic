@@ -45,7 +45,7 @@ namespace WindesMusic
             SongList.Children.Clear();
             PlaylistName.Children.Clear();
             RecommendedSongList.Children.Clear();
-            RecommendedAdsList.Children.Clear();
+            //RecommendedAdsList.Children.Clear();
 
             Recommender recommender = new Recommender(db);
             RecommendedSongs = recommender.GetRecommendedSongsForPlaylist(playlist, 5);
@@ -230,6 +230,106 @@ namespace WindesMusic
                 SongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
             }
 
+            List<Song> RecommendedSongsAndAds = new List<Song>(RecommendedAds);
+            foreach(Song song in RecommendedSongs)
+            {
+                RecommendedSongsAndAds.Add(song);
+            }
+
+            for (int i = 0; i < RecommendedSongsAndAds.Count(); i++)
+            {
+                int amount = RecommendedAds.Count;
+                Song playlistSong = RecommendedSongsAndAds[i];
+                RowDefinition rowDef = new RowDefinition();
+                rowDef.Name = $"Row_{i}";
+                RecommendedSongList.RowDefinitions.Add(rowDef);
+                RowDefinitionCollection RowNames = RecommendedSongList.RowDefinitions;
+                Array RowArray = RowNames.ToArray();
+
+                // Add the play button to the Songlist grid
+                var PlayButton = new Button
+                {
+                    Name = $"__{playlistSong.SongID}",
+                    Content = "Play",
+                    Margin = new Thickness(5, 0, 0, 5),
+                    FontSize = 15,
+                    Tag = playlistSong
+                };
+                Grid.SetRow(PlayButton, i);
+                Grid.SetColumn(PlayButton, 0);
+                PlayButton.Click += (ob, s) => { db.AddCreditsFromSongClick(true, playlistSong.SongID); PlaySongFromPlaylist(ob, s); };
+
+                var SongBlockName = new TextBlock
+                {
+                    Name = $"_{playlistSong.SongID}",
+                    Foreground = whiteText,
+                    Margin = SongBlockThickness,
+                    FontSize = 15
+                };
+                // Add the Songname text block to the Songlist grid
+                if (i < amount)
+                {
+                    SongBlockName.Text = $"(Ad) {playlistSong.SongName}";
+                    db.UpdateTimesDisplayedAd(playlistSong.SongID);
+                }
+                else
+                {
+                    SongBlockName.Text = $"{playlistSong.SongName}";
+                }
+                Grid.SetRow(SongBlockName, i);
+                Grid.SetColumn(SongBlockName, 1);
+
+                // Add the artist text block to the Songlist grid
+                var SongBlockArtist = new TextBlock
+                {
+                    Name = $"_{playlistSong.SongID}",
+                    Text = $"{playlistSong.Artist}",
+                    Foreground = whiteText,
+                    Margin = SongBlockThickness,
+                    FontSize = 15
+                };
+                Grid.SetRow(SongBlockArtist, i);
+                Grid.SetColumn(SongBlockArtist, 2);
+
+                // Add the album text block to the Songlist grid
+                var SongBlockAlbum = new TextBlock
+                {
+                    Name = $"_{playlistSong.SongID}",
+                    Text = $"{playlistSong.Album}",
+                    Foreground = whiteText,
+                    Margin = SongBlockThickness,
+                    FontSize = 15
+                };
+                Grid.SetRow(SongBlockAlbum, i);
+                Grid.SetColumn(SongBlockAlbum, 3);
+
+                // Add the year text block to the Songlist grid
+                var SongBlockYear = new TextBlock
+                {
+                    Name = $"_{playlistSong.SongID}",
+                    Text = $"{playlistSong.Year}",
+                    Foreground = whiteText,
+                    Margin = SongBlockThickness,
+                    FontSize = 15
+                };
+                Grid.SetRow(SongBlockYear, i);
+                Grid.SetColumn(SongBlockYear, 4);
+
+                // Add the elements to the Songlist grid Children collection
+                RecommendedSongList.Children.Add(PlayButton);
+                RecommendedSongList.Children.Add(SongBlockName);
+                RecommendedSongList.Children.Add(SongBlockArtist);
+                RecommendedSongList.Children.Add(SongBlockAlbum);
+                RecommendedSongList.Children.Add(SongBlockYear);
+
+                ContextMenu menu = new ContextMenu();
+                menu.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
+                menu.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
+
+                RecommendedSongList.ContextMenu = null;
+                RecommendedSongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
+            }
+            /*
             // show ads in suggestions
             for (int i = 0; i < RecommendedAds.Count(); i++)
             {
@@ -399,6 +499,7 @@ namespace WindesMusic
                 RecommendedSongList.ContextMenu = null;
                 RecommendedSongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuFromRecommended);
             }
+            */
             
         }
         private void OnLabelClick(object sender, EventArgs args)

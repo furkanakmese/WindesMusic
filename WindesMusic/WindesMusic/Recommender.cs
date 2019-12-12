@@ -103,6 +103,7 @@ namespace WindesMusic
 
         public List<Song> GetRecommendedAdsFromPlaylist(Playlist playlist)
         {
+            playlist.SongPlaylist = playlist.SongPlaylist.OrderBy(x => x.SongID).ToList();
             //Groups songs per genre and orders them by count
             var q = from x in playlist.SongPlaylist
                     group x by x.Subgenre into g
@@ -126,8 +127,6 @@ namespace WindesMusic
                 }
                 loopCount++;
             }
-            List<Song> test = db.GetRecommendedAdsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID);
-            foreach (var item in test) Console.WriteLine(item.SongName);
             return db.GetRecommendedAdsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID);
         }
     }
