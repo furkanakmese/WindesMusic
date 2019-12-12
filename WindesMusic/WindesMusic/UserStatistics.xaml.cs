@@ -31,14 +31,14 @@ namespace WindesMusic
 
         protected void LoadUserStatistics()
         {
-            Statistics.Children.Clear();
+            //Statistics.Children.Clear();
             List<string> result = db.GetSongStatistic();
 
             for (int i = 0; i < result.Count; i++)
             {
                 Label songLabel = new Label();
                 songLabel.Content = $"{result[i]} ";
-                Statistics.Children.Add(songLabel);
+                //Statistics.Children.Add(songLabel);
             }
             //hoevaak alle nummers beluisterd door gebruiker.
             //SELECT COUNT(*), s.Name FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = 1 GROUP BY s.Name;
