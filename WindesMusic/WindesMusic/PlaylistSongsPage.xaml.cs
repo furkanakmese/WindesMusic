@@ -27,6 +27,7 @@ namespace WindesMusic
         private string _PlaylistName;
         List<Song> SongsInPlaylist;
         List<Song> RecommendedSongs = new List<Song>();
+        List<Song> RecommendedAds = new List<Song>();
         MainWindow mainWindow;
         User user;
 
@@ -44,9 +45,11 @@ namespace WindesMusic
             SongList.Children.Clear();
             PlaylistName.Children.Clear();
             RecommendedSongList.Children.Clear();
+            RecommendedAdsList.Children.Clear();
 
             Recommender recommender = new Recommender(db);
-            RecommendedSongs = recommender.GetRecommendedSongsForPlaylist(playlist);
+            RecommendedSongs = recommender.GetRecommendedSongsForPlaylist(playlist, 5);
+            RecommendedAds = recommender.GetRecommendedAdsFromPlaylist(playlist);
             playlistToUse = playlist;
             mainWindow = main;
             user = BaseUser;
@@ -227,6 +230,95 @@ namespace WindesMusic
                 SongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
             }
 
+            // show ads in suggestions
+            for (int i = 0; i < RecommendedAds.Count(); i++)
+            {
+                Song playlistSong = RecommendedAds[i];
+                RowDefinition rowDef = new RowDefinition();
+                rowDef.Name = $"Row_{i}";
+                RecommendedAdsList.RowDefinitions.Add(rowDef);
+                RowDefinitionCollection RowNames = RecommendedAdsList.RowDefinitions;
+                Array RowArray = RowNames.ToArray();
+
+                // Add the play button to the Songlist grid
+                var PlayButton = new Button
+                {
+                    Name = $"__{playlistSong.SongID}",
+                    Content = "Play",
+                    Margin = new Thickness(5, 0, 0, 5),
+                    FontSize = 15,
+                    Tag = playlistSong
+                };
+                Grid.SetRow(PlayButton, i);
+                Grid.SetColumn(PlayButton, 0);
+                PlayButton.Click += (ob, s) => { db.AddCreditsFromSongClick(true, playlistSong.SongID); PlaySongFromPlaylist(ob, s); };
+
+                // Add the Songname text block to the Songlist grid
+                var SongBlockName = new TextBlock
+                {
+                    Name = $"_{playlistSong.SongID}",
+                    Text = $"(Ad) {playlistSong.SongName}",
+                    Foreground = whiteText,
+                    Margin = SongBlockThickness,
+                    FontSize = 15
+                };
+                Grid.SetRow(SongBlockName, i);
+                Grid.SetColumn(SongBlockName, 1);
+
+                // Add the artist text block to the Songlist grid
+                var SongBlockArtist = new TextBlock
+                {
+                    Name = $"_{playlistSong.SongID}",
+                    Text = $"{playlistSong.Artist}",
+                    Foreground = whiteText,
+                    Margin = SongBlockThickness,
+                    FontSize = 15
+                };
+                Grid.SetRow(SongBlockArtist, i);
+                Grid.SetColumn(SongBlockArtist, 2);
+
+                // Add the album text block to the Songlist grid
+                var SongBlockAlbum = new TextBlock
+                {
+                    Name = $"_{playlistSong.SongID}",
+                    Text = $"{playlistSong.Album}",
+                    Foreground = whiteText,
+                    Margin = SongBlockThickness,
+                    FontSize = 15
+                };
+                Grid.SetRow(SongBlockAlbum, i);
+                Grid.SetColumn(SongBlockAlbum, 3);
+
+                // Add the year text block to the Songlist grid
+                var SongBlockYear = new TextBlock
+                {
+                    Name = $"_{playlistSong.SongID}",
+                    Text = $"{playlistSong.Year}",
+                    Foreground = whiteText,
+                    Margin = SongBlockThickness,
+                    FontSize = 15
+                };
+                Grid.SetRow(SongBlockYear, i);
+                Grid.SetColumn(SongBlockYear, 4);
+
+                // Add the elements to the Songlist grid Children collection
+                RecommendedAdsList.Children.Add(PlayButton);
+                RecommendedAdsList.Children.Add(SongBlockName);
+                RecommendedAdsList.Children.Add(SongBlockArtist);
+                RecommendedAdsList.Children.Add(SongBlockAlbum);
+                RecommendedAdsList.Children.Add(SongBlockYear);
+
+                ContextMenu menu = new ContextMenu();
+                menu.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
+                menu.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
+
+                RecommendedAdsList.ContextMenu = null;
+                RecommendedAdsList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
+
+                // Update times displayed per advertised song
+                db.UpdateTimesDisplayedAd(playlistSong.SongID);
+            }
+
             for (int i = 0; i < RecommendedSongs.Count; i++)
             {
                 Song playlistSong = RecommendedSongs[i];
@@ -304,6 +396,7 @@ namespace WindesMusic
                 RecommendedSongList.Children.Add(SongBlockAlbum);
                 RecommendedSongList.Children.Add(SongBlockYear);
 
+                RecommendedSongList.ContextMenu = null;
                 RecommendedSongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuFromRecommended);
             }
             
@@ -370,8 +463,15 @@ namespace WindesMusic
             QueueItem.Tag = song;
             QueueItem.Click += AddToQueueClick;
 
+            MenuItem DeleteItem = new MenuItem();
+            DeleteItem.Name = $"Delete_{playlistToUse.PlaylistName}";
+            DeleteItem.Header = "Delete from playlist";
+            DeleteItem.Tag = song;
+            DeleteItem.Click += DeleteFromPlaylistClick;
+
             menu.Items.Add(PlaylistItem);
             menu.Items.Add(QueueItem);
+            menu.Items.Add(DeleteItem);
             SongList.ContextMenu = menu;
         }
 
@@ -383,7 +483,7 @@ namespace WindesMusic
             int top1 = (int)Math.Round(top);
             int amount = top1 / 28;
             ContextMenu menu = new ContextMenu();
-            Song song = SongsInPlaylist.ElementAt(amount);
+            Song song = RecommendedSongs.ElementAt(amount);
             int CorrectSongID = RecommendedSongs.ElementAt(amount).SongID;
 
             MenuItem PlaylistItem = new MenuItem();
@@ -408,7 +508,7 @@ namespace WindesMusic
 
             menu.Items.Add(PlaylistItem);
             menu.Items.Add(QueueItem);
-            SongList.ContextMenu = menu;
+            RecommendedSongList.ContextMenu = menu;
         }
 
         private void AddToPlaylistClick(object sender, RoutedEventArgs e)
@@ -429,6 +529,16 @@ namespace WindesMusic
             MusicQueue.AddSongToQueue(song);           
         }
 
+        private void DeleteFromPlaylistClick(object sender, RoutedEventArgs e)
+        {
+            var SongItem = sender as MenuItem;
+            Song song = (Song)SongItem.Tag;
+            playlistToUse.DeleteSongFromPlaylist(song.SongID);
+            playlistToUse.RefreshPlaylist();
+            rerender(playlistToUse);
+        }
+
+
 
         private void PlaySongFromPlaylist(object sender, RoutedEventArgs e)
         {
@@ -440,8 +550,6 @@ namespace WindesMusic
 
             //Adds the song the the users play history
             db.AddSongToHistory(user.UserID, Int32.Parse(SongID), 10);
-
-            mainWindow.audioPlayer.PlayChosenSong(db.getSong(Int32.Parse(SongID)));
             
             Song songObject = (Song)_ButtonSong.Tag;
             mainWindow.audioPlayer.PlayChosenSong(songObject);
@@ -450,7 +558,7 @@ namespace WindesMusic
         private void PlayPlaylist(object sender, RoutedEventArgs e)
         {
             MusicQueue.SongQueue.Clear();
-            MusicQueue.SongQueue = playlistToUse.CreateQueueFromPlaylist();
+            MusicQueue.AddPlaylistToQueue(playlistToUse, RecommendedSongs);
             if(MusicQueue.IsShuffle == true)
             {
                 MusicQueue.ShuffleSongs();

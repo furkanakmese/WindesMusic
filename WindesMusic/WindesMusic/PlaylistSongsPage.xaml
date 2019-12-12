@@ -8,7 +8,7 @@
       d:DesignHeight="400" d:DesignWidth="750"
       Title="PlaylistSongsPage"
       Background="{DynamicResource MainColor}"
-      Margin="100,45,0,25"
+      Margin="0,-155,0,180"
       >
 
     <Grid x:Name="PlaylistSongsPageMainGrid">
@@ -36,6 +36,15 @@
             </ScrollViewer>
             <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Height="1" />
             <Label Content="Recommended songs" Foreground="{DynamicResource mouseOverColor}" Margin="0,2,0,0" FontSize="15"/>
+                <Grid x:Name="RecommendedAdsList" Margin="0,0, 0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="300"/>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="500"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                </Grid>
             <Grid x:Name="RecommendedSongList" Margin="0,0, 0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50"/>

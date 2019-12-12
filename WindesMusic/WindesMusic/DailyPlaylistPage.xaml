@@ -1,4 +1,4 @@
-﻿<Page x:Class="WindesMusic.DailyHistoryPlaylistPage"
+﻿<Page x:Class="WindesMusic.DailyPlaylistPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,13 +6,13 @@
       xmlns:local="clr-namespace:WindesMusic"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="644"
-      Title="PlaylistSongsPage"
+      Title="DailyPlaylistPage"
       Background="{DynamicResource MainColor}"
       Margin="0,-155,0,180">
 
-    <Grid x:Name="DailyHistoryPlaylistPageMainGrid">
-        <StackPanel x:Name="HistoryPlaylistSongs" VerticalAlignment="Top" HorizontalAlignment="Left" Width="1100">
-            <StackPanel x:Name="HistoryPlaylistName" Height="75" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,0,0,0"/>
+    <Grid x:Name="DailyPlaylisyMainGrid">
+        <StackPanel x:Name="DailyPlaylistSongs" VerticalAlignment="Top" HorizontalAlignment="Left" Width="1100">
+            <StackPanel x:Name="DailyPlaylistName" Height="75" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,0,0,0"/>
             <Grid x:Name="OrderList" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,-35,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50"/>
@@ -23,7 +23,7 @@
                 </Grid.ColumnDefinitions>
             </Grid>
             <ScrollViewer Height="419" Margin="0,0,-35,0">
-                <Grid x:Name="HistorySongList" VerticalAlignment="Top" HorizontalAlignment="Left">
+                <Grid x:Name="DailySongList" VerticalAlignment="Top" HorizontalAlignment="Left">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="300"/>

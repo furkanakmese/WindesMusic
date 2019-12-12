@@ -16,9 +16,9 @@ using System.Windows.Shapes;
 namespace WindesMusic
 {
     /// <summary>
-    /// Interaction logic for DailyHistoryPlaylistPage.xaml
+    /// Interaction logic for DailyPlaylistPage.xaml
     /// </summary>
-    public partial class DailyHistoryPlaylistPage : Page
+    public partial class DailyPlaylistPage : Page
     {
         private Database db = new Database();
         private string _PlaylistName;
@@ -27,14 +27,13 @@ namespace WindesMusic
         private User user;
         private List<Song> SongsInPlaylist;
         private Playlist playlist;
-        public DailyHistoryPlaylistPage(User BaseUser, MainWindow main)
+        public DailyPlaylistPage(User BaseUser, MainWindow main)
         {
             InitializeComponent();
             user = BaseUser;
             mainWindow = main;
             Recommender recommender = new Recommender(db);
-            playlist = recommender.getDailyPlaylist(user.UserID, "History Playlist");
-            SongsInPlaylist = playlist.SongPlaylist;
+            playlist = recommender.getDailyPlaylist(user.UserID, "Daily Playlist");
             _PlaylistID = playlist.PlaylistID;
             _PlaylistName = playlist.PlaylistName;
             Console.WriteLine(_PlaylistName);
@@ -62,7 +61,7 @@ namespace WindesMusic
 
             sp.Children.Add(PlaylistBlock);
             sp.Children.Add(PlayPlaylistButton);
-            HistoryPlaylistName.Children.Add(sp);
+            DailyPlaylistName.Children.Add(sp);
 
             OrderList.RowDefinitions.Add(new RowDefinition());
 
@@ -126,8 +125,8 @@ namespace WindesMusic
                 Song playlistSong = playlist.SongPlaylist[i];
                 RowDefinition rowDef = new RowDefinition();
                 rowDef.Name = $"Row_{i}";
-                HistorySongList.RowDefinitions.Add(rowDef);
-                RowDefinitionCollection RowNames = HistorySongList.RowDefinitions;
+                DailySongList.RowDefinitions.Add(rowDef);
+                RowDefinitionCollection RowNames = DailySongList.RowDefinitions;
                 Array RowArray = RowNames.ToArray();
 
                 // Add the play button to the Songlist grid
@@ -192,26 +191,26 @@ namespace WindesMusic
                 Grid.SetColumn(SongBlockYear, 4);
 
                 // Add the elements to the Songlist grid Children collection
-                HistorySongList.Children.Add(PlayButton);
-                HistorySongList.Children.Add(SongBlockName);
-                HistorySongList.Children.Add(SongBlockArtist);
-                HistorySongList.Children.Add(SongBlockAlbum);
-                HistorySongList.Children.Add(SongBlockYear);
+                DailySongList.Children.Add(PlayButton);
+                DailySongList.Children.Add(SongBlockName);
+                DailySongList.Children.Add(SongBlockArtist);
+                DailySongList.Children.Add(SongBlockAlbum);
+                DailySongList.Children.Add(SongBlockYear);
 
                 ContextMenu menu = new ContextMenu();
                 menu.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
                 menu.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
 
-                HistorySongList.ContextMenu = null;
-                HistorySongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
+                DailySongList.ContextMenu = null;
+                DailySongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
             }
 
 
-    }
+        }
         private void SongContextMenuOpening(object sender, MouseButtonEventArgs e)
         {
             List<Playlist> Playlists = user.Playlists;
-            var pos = e.GetPosition(HistorySongList);
+            var pos = e.GetPosition(DailySongList);
             double top = pos.Y;
             int top1 = (int)Math.Round(top);
             int amount = top1 / 25;
@@ -239,7 +238,7 @@ namespace WindesMusic
 
             menu.Items.Add(PlaylistItem);
             menu.Items.Add(QueueItem);
-            HistorySongList.ContextMenu = menu;
+            DailySongList.ContextMenu = menu;
         }
 
         private void AddToPlaylistClick(object sender, RoutedEventArgs e)
