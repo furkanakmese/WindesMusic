@@ -483,7 +483,28 @@ namespace WindesMusic
             _command.ExecuteNonQuery();
             _connection.Close();
         }
-        
+
+        public void RenamePlaylist(Playlist pl, string input)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "UPDATE Playlist SET PlaylistName = @Input WHERE PlaylistID = @PlaylistID";
+
+            var criteriaParamInput = _command.CreateParameter();
+            criteriaParamInput.ParameterName = "@Input";
+            criteriaParamInput.Value = input;
+            _command.Parameters.Add(criteriaParamInput);
+
+            var criteriaParamPlaylistID = _command.CreateParameter();
+            criteriaParamPlaylistID.ParameterName = "@PlaylistID";
+            criteriaParamPlaylistID.Value = pl.PlaylistID;
+            _command.Parameters.Add(criteriaParamPlaylistID);
+
+            _command.ExecuteNonQuery();
+            _connection.Close();
+        }
+
+
 
         public string GetNameFromPlaylist(int PlaylistID)
         {
