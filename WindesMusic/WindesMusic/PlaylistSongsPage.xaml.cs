@@ -463,8 +463,15 @@ namespace WindesMusic
             QueueItem.Tag = song;
             QueueItem.Click += AddToQueueClick;
 
+            MenuItem DeleteItem = new MenuItem();
+            DeleteItem.Name = $"Delete_{playlistToUse.PlaylistName}";
+            DeleteItem.Header = "Delete from playlist";
+            DeleteItem.Tag = song;
+            DeleteItem.Click += DeleteFromPlaylistClick;
+
             menu.Items.Add(PlaylistItem);
             menu.Items.Add(QueueItem);
+            menu.Items.Add(DeleteItem);
             SongList.ContextMenu = menu;
         }
 
@@ -521,6 +528,16 @@ namespace WindesMusic
             Song song = (Song)SongItem.Tag;
             MusicQueue.AddSongToQueue(song);           
         }
+
+        private void DeleteFromPlaylistClick(object sender, RoutedEventArgs e)
+        {
+            var SongItem = sender as MenuItem;
+            Song song = (Song)SongItem.Tag;
+            playlistToUse.DeleteSongFromPlaylist(song.SongID);
+            playlistToUse.RefreshPlaylist();
+            rerender(playlistToUse);
+        }
+
 
 
         private void PlaySongFromPlaylist(object sender, RoutedEventArgs e)

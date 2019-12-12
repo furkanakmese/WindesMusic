@@ -8,7 +8,7 @@
       d:DesignHeight="450" d:DesignWidth="644"
       Title="DailyPlaylistPage"
       Background="{DynamicResource MainColor}"
-      Margin="100,45,0,25">
+      Margin="0,-155,0,180">
 
     <Grid x:Name="DailyPlaylisyMainGrid">
         <StackPanel x:Name="DailyPlaylistSongs" VerticalAlignment="Top" HorizontalAlignment="Left" Width="1100">

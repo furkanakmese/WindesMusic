@@ -8,7 +8,7 @@
       d:DesignHeight="400" d:DesignWidth="750"
       Title="PlaylistSongsPage"
       Background="{DynamicResource MainColor}"
-      Margin="100,0,0,25"
+      Margin="0,-155,0,180"
       >
 
     <Grid x:Name="PlaylistSongsPageMainGrid">
