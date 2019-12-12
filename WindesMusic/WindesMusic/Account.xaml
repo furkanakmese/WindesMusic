@@ -8,7 +8,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Account"
       Background="{DynamicResource MainColor}"
-      Margin="100,45,0,25">
+      Margin="0,-155,0,180">
 
     <Grid>
         <TextBlock x:Name="lblName" Foreground="White" HorizontalAlignment="Left" Margin="10,87,0,0" TextWrapping="Wrap" Text="User: " VerticalAlignment="Top" FontSize="20" Width="126"/>

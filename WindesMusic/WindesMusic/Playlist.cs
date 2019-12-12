@@ -47,6 +47,11 @@ namespace WindesMusic
             this.RefreshPlaylist();
         }
 
+        public void DeleteSongFromPlaylist(int songId)
+        {
+            data.RemoveSongFromPlaylist(this.PlaylistID, songId);
+        }
+
         /*
         public void ShowPlaylistSongsPage(MainWindow main)
         {

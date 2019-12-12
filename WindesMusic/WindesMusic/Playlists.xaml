@@ -6,7 +6,8 @@
       xmlns:local="clr-namespace:WindesMusic"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="Playlists">
+      Title="Playlists"
+      Margin="0,-155,0,180">
 
     <Grid>
         <TextBlock HorizontalAlignment="Left" Margin="500,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold"/>

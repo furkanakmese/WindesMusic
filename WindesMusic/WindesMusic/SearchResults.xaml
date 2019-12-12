@@ -7,7 +7,7 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="SearchResults"
-      Margin="100,45,0,25">
+      Margin="0,-155,0,180">
 
     <Grid>
         <StackPanel Name="stackResults" HorizontalAlignment="Left" VerticalAlignment="Top" />
