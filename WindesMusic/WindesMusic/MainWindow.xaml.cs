@@ -64,7 +64,7 @@ namespace WindesMusic
             sldVolume.ValueChanged += (object sender, RoutedPropertyChangedEventArgs<double> e) => {
                 audioPlayer.SetVolume((float)e.NewValue / 100);
             };
-            btnAccount.Click += (object sender, RoutedEventArgs e) => Main.Content = account;
+            //btnAccount.Click += (object sender, RoutedEventArgs e) => Main.Content = account;
             btnPlaylists.Click += (object sender, RoutedEventArgs e) => Main.Content = new Playlists();
         }
         
@@ -179,6 +179,11 @@ namespace WindesMusic
         private void HistoryPlaylistButtonClick(object sender, RoutedEventArgs e)
         {
             Main.Content = new DailyHistoryPlaylistPage(user, this);
+        }
+
+        private void ButtonClickAccount(object sender, RoutedEventArgs e)
+        {
+            Main.Content = account;
         }
     }
 }

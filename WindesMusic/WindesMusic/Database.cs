@@ -746,22 +746,29 @@ namespace WindesMusic
             }
         }
 
-        public string[,] GetSongStatistic()
+        public List<string> GetSongStatistic()
         {
+            var UserID = _command.CreateParameter();
+            UserID.ParameterName = "@UserID";
+            UserID.Value = GetUserData(Properties.Settings.Default.UserID).UserID;
+            
+
             OpenConnection();
             _command.Parameters.Clear();
-            string[,] result;
-            
-            _command.CommandText = "SELECT COUNT(*), s.Name FROM History h LEFT JOIN Song s on h.SongID = s.SongID WHERE h.UserID = @id GROUP BY s.Name;";
+            List<string> result = new List<string>();
+
+            _command.CommandText = "SELECT COUNT(*) Count, s.Name Name FROM History h LEFT JOIN Song s on h.SongID = s.SongID WHERE h.UserID = @UserID GROUP BY s.Name;";
+            _command.Parameters.Add(UserID);
             _reader = _command.ExecuteReader();
-            result = new string[_reader.FieldCount, 2];
+
 
             for (int i = 0; _reader.Read(); i++)
             {
                 try
                 {
-                    result[i % 2, 0] = _reader["COUNT(*)"].ToString();
-                    result[i % 2, 0] = (string)_reader["Name"];
+                    result.Add(_reader["Count"].ToString()) ;
+                    i++;
+                    result.Add( (string)_reader["Name"]);
                 }
                 catch (Exception e) { Console.WriteLine(e); }
             }

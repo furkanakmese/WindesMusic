@@ -1,5 +1,6 @@
 ﻿using LiveCharts;
 using LiveCharts.Wpf;
+using System.Collections.Generic;
 using System.Windows.Controls;
 
 namespace WindesMusic
@@ -15,6 +16,7 @@ namespace WindesMusic
         {
             InitializeComponent();
             DrawGraphs();
+            LoadUserStatistics();
         }
 
         public void DrawGraphs()
@@ -30,12 +32,12 @@ namespace WindesMusic
         protected void LoadUserStatistics()
         {
             Statistics.Children.Clear();
-            string[,] result = db.GetSongStatistic();
+            List<string> result = db.GetSongStatistic();
 
-            for (int i = 0; i < result.GetLength(0); i++)
+            for (int i = 0; i < result.Count; i++)
             {
                 Label songLabel = new Label();
-                songLabel.Content = $"{result[i, 0]} {result[i, 1]}";
+                songLabel.Content = $"{result[i]} ";
                 Statistics.Children.Add(songLabel);
             }
             //hoevaak alle nummers beluisterd door gebruiker.
