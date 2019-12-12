@@ -81,6 +81,6 @@
             </StackPanel>
 
         </DockPanel>
-        <Frame NavigationUIVisibility="Hidden" x:Name="Main" Margin="253,220.2,-93.4,-80.6" Grid.Row="2"/>
+        <Frame NavigationUIVisibility="Hidden" x:Name="Main" Margin="250,102,-90.4,76.4"/>
     </Grid>
 </Window>

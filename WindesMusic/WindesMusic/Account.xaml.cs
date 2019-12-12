@@ -31,6 +31,10 @@ namespace WindesMusic
             {
                 boxSongs.Items.Add(item.SongName);
             }
+            foreach (var item in db.GetAllArtists())
+            {
+                boxArtists.Items.Add(item);
+            }
         }
 
         private void btnStatisticsClick(object sender, RoutedEventArgs e)
@@ -65,6 +69,18 @@ namespace WindesMusic
             else
             {
                 lblMessage.Text = "Please select a song";
+            }
+        }
+
+        private void btnSubmitCredits_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string result = db.DonateCredits(user.UserID, boxArtists.Text, Convert.ToInt32(inputCredits.Text));
+                lblMessage.Text = result;
+            } catch(Exception)
+            {
+                lblMessage.Text = "Please select an amount";
             }
         }
     }

@@ -14,6 +14,7 @@
     <Grid x:Name="PlaylistSongsPageMainGrid">
         <StackPanel x:Name="PlaylistSongs" VerticalAlignment="Top" HorizontalAlignment="Left" Width="1100">
             <StackPanel x:Name="PlaylistName" Height="75" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,0,0,0"/>
+            <StackPanel x:Name="DeletePlaylist" Height="75" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,-75,0,0"/>
             <Grid x:Name="OrderList" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,-35,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50"/>
