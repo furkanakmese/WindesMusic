@@ -331,7 +331,6 @@ namespace WindesMusic
         //Return a list of songs for the playlist recommender
         public List<Song> GetRecommendedSongsForPlaylist(string mostCommonGenre, string secondMostCommonGenre, int playlistID, int amount)
         {
-
             OpenConnection();
             _command.Parameters.Clear();
             List<Song> listResult = new List<Song>();
@@ -343,11 +342,6 @@ namespace WindesMusic
             {
                 _command.CommandText = "SELECT * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID WHERE Subgenre IN(@mostCommonGenre, @secondMostCommonGenre) AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) ORDER BY NewID()";
             }
-
-            var amountParam = _command.CreateParameter();
-            amountParam.ParameterName = "@Amount";
-            amountParam.Value = amount;
-            _command.Parameters.Add(amountParam);
 
             var mostCommonGenreParam = _command.CreateParameter();
             mostCommonGenreParam.ParameterName = "@mostCommonGenre";
@@ -563,7 +557,7 @@ namespace WindesMusic
             _connection.Close();
         }
 
-        public object SaveGeneratedPlaylist(string name, int userID)
+        public object SaveGeneratedPlaylist(int userID, string playlistName)
         {
             OpenConnection();
             _command.Parameters.Clear();
@@ -576,7 +570,7 @@ namespace WindesMusic
 
             var namePara = _command.CreateParameter();
             namePara.ParameterName = "@Name";
-            namePara.Value = name;
+            namePara.Value = playlistName;
             _command.Parameters.Add(namePara);
 
             _reader = _command.ExecuteReader();
@@ -600,7 +594,7 @@ namespace WindesMusic
 
                 var nameParam = _command.CreateParameter();
                 nameParam.ParameterName = "@Name";
-                nameParam.Value = name;
+                nameParam.Value = playlistName;
                 _command.Parameters.Add(nameParam);
 
                 var userIDParam = _command.CreateParameter();
