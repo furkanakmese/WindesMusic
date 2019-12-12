@@ -106,14 +106,6 @@
     <Compile Include="UserStatistics.xaml.cs">
       <DependentUpon>UserStatistics.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindesMusicDBDataSet.cs">
-      <DependentUpon>WindesMusicDBDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="WindesMusicDBDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>WindesMusicDBDataSet.xsd</DependentUpon>
-    </Compile>
     <Page Include="Account.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
