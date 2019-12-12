@@ -372,7 +372,7 @@ namespace WindesMusic
                 searchResult.SongID = (int)_reader["SongID"];
                 searchResult.SongName = (string)_reader["Name"];
                 searchResult.Artist = (string)_reader["Artist"];
-                searchResult.Album = (string)_reader["AlbumID"].ToString();
+                searchResult.Album = (string)_reader["Name"];
                 searchResult.Year = (int)_reader["Year"];
                 searchResult.Genre = (string)_reader["Genre"];
                 searchResult.Subgenre = (string)_reader["SubGenre"];
@@ -814,11 +814,11 @@ namespace WindesMusic
             List<Song> listResult = new List<Song>();
             if (secondMostCommonGenre == "")
             {
-                _command.CommandText = "SELECT TOP 3 * FROM Song WHERE Subgenre = @mostCommonGenre AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) AND SongID IN (SELECT SongID FROM AdvertisedSong) ORDER BY NewID()";
+                _command.CommandText = "SELECT TOP 3 * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID WHERE Subgenre = @mostCommonGenre AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) AND SongID IN (SELECT SongID FROM AdvertisedSong) ORDER BY NewID()";
             }
             else
             {
-                _command.CommandText = "SELECT TOP 3 * FROM Song WHERE Subgenre IN(@mostCommonGenre, @secondMostCommonGenre) AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) AND SongID IN (SELECT SongID FROM AdvertisedSong) ORDER BY NewID()";
+                _command.CommandText = "SELECT TOP 3 * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID WHERE Subgenre IN(@mostCommonGenre, @secondMostCommonGenre) AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) AND SongID IN (SELECT SongID FROM AdvertisedSong) ORDER BY NewID()";
             }
 
             var mostCommonGenreParam = _command.CreateParameter();
@@ -843,7 +843,7 @@ namespace WindesMusic
                 searchResult.SongID = (int)_reader["SongID"];
                 searchResult.SongName = (string)_reader["Name"];
                 searchResult.Artist = (string)_reader["Artist"];
-                searchResult.Album = (string)_reader["Album"];
+                searchResult.Album = (string)_reader["AlbumName"];
                 searchResult.Year = (int)_reader["Year"];
                 searchResult.Genre = (string)_reader["Genre"];
                 searchResult.Subgenre = (string)_reader["SubGenre"];
