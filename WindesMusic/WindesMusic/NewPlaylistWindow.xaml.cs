@@ -19,25 +19,59 @@ namespace WindesMusic
     /// </summary>
     public partial class NewPlaylistWindow : Window
     {
+        public bool IsRename = false;
+        public Playlist playlist;
         public NewPlaylistWindow()
         {
             InitializeComponent();
+            if(IsRename == true)
+            {
+                TextTop.Content = "Rename playlist";
+            }
+        }
+
+        public NewPlaylistWindow(bool isRename, Playlist pl)
+        {
+            InitializeComponent();
+            IsRename = isRename;
+            if (IsRename == true)
+            {
+                TextTop.Content = "Rename playlist";
+                CreateNewPlaylistButton.Content = "Rename playlist";
+                playlist = pl;
+            }
         }
 
         private void MakeNewPlaylistButton(object sender, RoutedEventArgs e)
         {
             string input = InputName.Text;
 
-            if (input.Trim() != "" && !input.Trim().Contains("_"))
+            if (IsRename == false)
             {
-                Database data = new Database();
-                string PlaylistName = input;
-                data.CreateNewPlaylist(PlaylistName, WindesMusic.Properties.Settings.Default.UserID);
-                this.Close();
+                if (input.Trim() != "" && !input.Trim().Contains("_"))
+                {
+                    Database data = new Database();
+                    string PlaylistName = input;
+                    data.CreateNewPlaylist(PlaylistName, WindesMusic.Properties.Settings.Default.UserID);
+                    this.Close();
+                }
+                else
+                {
+                    NewPlaylistMessage.Text = "Please use a valid name";
+                }
             }
             else
             {
-                NewPlaylistMessage.Text = "Please use a valid name";
+                if (input.Trim() != "" && !input.Trim().Contains("_"))
+                {
+                    string PlaylistName = input;
+                    playlist.RenamePlaylist(input);
+                    this.Close();
+                }
+                else
+                {
+                    NewPlaylistMessage.Text = "Please use a valid name";
+                }
             }
         }
     }

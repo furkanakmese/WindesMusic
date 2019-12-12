@@ -8,7 +8,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="QueuePage"
       Background="{DynamicResource MainColor}"
-      Margin="100,45,0,25">
+      Margin="0,-155,0,180">
 
     <Grid x:Name="QueuePageMainGrid">
         <Label x:Name="PlaylistSongs" Content="Queue" FontSize="25" Foreground="White" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,20,0,0"/>

@@ -124,6 +124,31 @@ namespace WindesMusic
             }
         }
 
+        public void RerenderPlaylists()
+        {
+            PlaylistList.Children.Clear();
+            user = db.GetUserData(Properties.Settings.Default.UserID);
+
+            playlistSongs.rerender += (playlist) => { playlistSongs.playlistToUse = playlist; playlistSongs.reinitialize(playlist, this, user); };
+            queuePage.rerender += (queuePg) => { queuePage = queuePg; queuePage.InitialiseQueuePage(); };
+            Thickness thickness = new Thickness(15, 0, 0, 5);
+            foreach (var item in user.Playlists)
+            {
+                var PlaylistButton = new Button
+                {
+                    //Style = StaticResource MenuButton,
+                    Name = $"_{item.PlaylistID}",
+                    Content = $"{item.PlaylistName}",
+                    FontSize = 23,
+                    Margin = thickness
+                };
+                StaticResourceExtension menuButton = new StaticResourceExtension("MenuButton");
+                PlaylistButton.Style = (Style)FindResource("MenuButton");
+                PlaylistButton.Click += ButtonClickPlaylist;
+                PlaylistList.Children.Add(PlaylistButton);
+            }
+        }
+
         private void ButtonClickPlaylist(object sender, RoutedEventArgs e)
         {
             Button _ButtonPlaylist = sender as Button;
