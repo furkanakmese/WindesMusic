@@ -419,7 +419,7 @@ namespace WindesMusic
             QueueItem.Click += AddToQueueClick;
 
             MenuItem DeleteItem = new MenuItem();
-            DeleteItem.Name = $"Delete_{playlistToUse.PlaylistName}";
+            DeleteItem.Name = $"Delete_{playlistToUse.PlaylistID}";
             DeleteItem.Header = "Delete from playlist";
             DeleteItem.Tag = song;
             DeleteItem.Click += DeleteFromPlaylistClick;

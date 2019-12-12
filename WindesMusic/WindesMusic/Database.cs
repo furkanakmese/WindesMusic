@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic; 
-using System.Configuration; 
-using System.Data.Common; 
-using System.Linq;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data.Common;
 using System.Security.Cryptography;
-using System.Text; 
-using System.Threading.Tasks; 
- 
+using System.Text;
+
 namespace WindesMusic
 {
     public class Database
@@ -149,7 +147,7 @@ namespace WindesMusic
             _command.Parameters.Add(emailParam);
 
             _reader = _command.ExecuteReader();
-            if(_reader.Read())
+            if (_reader.Read())
             {
                 return new User();
             }
@@ -193,12 +191,13 @@ namespace WindesMusic
             _command.Parameters.Add(passwordParam);
             _command.Parameters.Add(saltParam);
             // _reader = _command.ExecuteReader();
-            
-            if(_command.ExecuteNonQuery() > 0)
+
+            if (_command.ExecuteNonQuery() > 0)
             {
                 _connection.Close();
                 return Login(email, password);
-            } else
+            }
+            else
             {
                 _connection.Close();
                 return new User();
@@ -253,7 +252,7 @@ namespace WindesMusic
                         song.Artist = (string)_reader["Artist"];
                         song.Album = (string)_reader["AlbumName"];
                         song.Genre = (string)_reader["Genre"];
-                        song.Subgenre = (string)_reader["SubGenre"]; 
+                        song.Subgenre = (string)_reader["SubGenre"];
                         song.UserID = (int)_reader["UserID"];
                         userResult.Songs.Add(song);
                     }
@@ -261,8 +260,8 @@ namespace WindesMusic
                 }
                 _connection.Close();
             }
-            
-            foreach(Playlist playlist in userResult.Playlists)
+
+            foreach (Playlist playlist in userResult.Playlists)
             {
                 playlist.SongPlaylist = GetSongsInPlaylist(playlist.PlaylistID);
             }
@@ -303,6 +302,7 @@ namespace WindesMusic
             OpenConnection();
             _command.Parameters.Clear();
             List<Song> listResult = new List<Song>();
+
             _command.CommandText = "SELECT * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID WHERE SongID IN(SELECT SongID FROM PlaylistToSong WHERE PlaylistID = @PlaylistID)";
 
             var criteriaParam = _command.CreateParameter();
@@ -331,7 +331,6 @@ namespace WindesMusic
         //Return a list of songs for the playlist recommender
         public List<Song> GetRecommendedSongsForPlaylist(string mostCommonGenre, string secondMostCommonGenre, int playlistID, int amount)
         {
-
             OpenConnection();
             _command.Parameters.Clear();
             List<Song> listResult = new List<Song>();
@@ -343,11 +342,6 @@ namespace WindesMusic
             {
                 _command.CommandText = "SELECT * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID WHERE Subgenre IN(@mostCommonGenre, @secondMostCommonGenre) AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) ORDER BY NewID()";
             }
-
-            var amountParam = _command.CreateParameter();
-            amountParam.ParameterName = "@Amount";
-            amountParam.Value = amount;
-            _command.Parameters.Add(amountParam);
 
             var mostCommonGenreParam = _command.CreateParameter();
             mostCommonGenreParam.ParameterName = "@mostCommonGenre";
@@ -504,8 +498,6 @@ namespace WindesMusic
             _connection.Close();
         }
 
-
-
         public string GetNameFromPlaylist(int PlaylistID)
         {
             string Result = "";
@@ -553,7 +545,7 @@ namespace WindesMusic
                 return false;
             }
         }
-      
+
         public void AddSongToHistory(int userID, int songID, int timeListened)
         {
             OpenConnection();
@@ -584,7 +576,7 @@ namespace WindesMusic
             _connection.Close();
         }
 
-        public object SaveGeneratedPlaylist(string name, int userID)
+        public object SaveGeneratedPlaylist(int userID, string playlistName)
         {
             OpenConnection();
             _command.Parameters.Clear();
@@ -597,7 +589,7 @@ namespace WindesMusic
 
             var namePara = _command.CreateParameter();
             namePara.ParameterName = "@Name";
-            namePara.Value = name;
+            namePara.Value = playlistName;
             _command.Parameters.Add(namePara);
 
             _reader = _command.ExecuteReader();
@@ -621,7 +613,7 @@ namespace WindesMusic
 
                 var nameParam = _command.CreateParameter();
                 nameParam.ParameterName = "@Name";
-                nameParam.Value = name;
+                nameParam.Value = playlistName;
                 _command.Parameters.Add(nameParam);
 
                 var userIDParam = _command.CreateParameter();
@@ -821,13 +813,45 @@ namespace WindesMusic
                     return "Error occured";
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 _connection.Close();
                 return "Not enough credits to submit advertisement";
             }
         }
 
+
+        public List<string> GetSongStatistic()
+        {
+            var UserID = _command.CreateParameter();
+            UserID.ParameterName = "@UserID";
+            UserID.Value = GetUserData(Properties.Settings.Default.UserID).UserID;
+            
+
+            OpenConnection();
+            _command.Parameters.Clear();
+            List<string> result = new List<string>();
+
+            _command.CommandText = "SELECT COUNT(*) Count, s.Name Name FROM History h LEFT JOIN Song s on h.SongID = s.SongID WHERE h.UserID = @UserID GROUP BY s.Name;";
+            _command.Parameters.Add(UserID);
+            _reader = _command.ExecuteReader();
+
+
+            for (int i = 0; _reader.Read(); i++)
+            {
+                try
+                {
+                    result.Add(_reader["Count"].ToString()) ;
+                    i++;
+                    result.Add( (string)_reader["Name"]);
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            _connection.Close();
+
+            return result;
+        }
+      
         public List<Song> GetRecommendedAdsForPlaylist(string mostCommonGenre, string secondMostCommonGenre, int playlistID)
         {
             OpenConnection();
@@ -931,6 +955,86 @@ namespace WindesMusic
             {
                 _connection.Close();
                 Console.WriteLine("Error occured");
+            }
+        }
+
+        public List<string> GetAllArtists()
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            List<string> listResult = new List<string>();
+
+            _command.CommandText = "SELECT Name FROM Users";
+            _reader = _command.ExecuteReader();
+
+            while (_reader.Read())
+            {
+                var name = (string)_reader["Name"];
+                listResult.Add(name);
+            }
+
+            _connection.Close();
+            return listResult;
+        }
+
+        public string DonateCredits(int userId, string artistName, int amount)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+
+            int artistId = 0;
+            _command.CommandText = "SELECT UserID FROM Users WHERE Name=@ArtistName";
+            var artistNameParam = _command.CreateParameter();
+            artistNameParam.ParameterName = "@ArtistName";
+            artistNameParam.Value = artistName;
+            _command.Parameters.Add(artistNameParam);
+            _reader = _command.ExecuteReader();
+
+            if (_reader.Read())
+            {
+                artistId = (int)_reader["UserID"];
+            }
+            Console.WriteLine(artistId);
+            _connection.Close();
+
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "UPDATE Users SET Credits = Credits - @Amount WHERE UserID=@UserID";
+            var userIdParam = _command.CreateParameter();
+            userIdParam.ParameterName = "@UserID";
+            userIdParam.Value = userId;
+            _command.Parameters.Add(userIdParam);
+
+            var amountParameter = _command.CreateParameter();
+            amountParameter.ParameterName = "@Amount";
+            amountParameter.Value = amount;
+            _command.Parameters.Add(amountParameter);
+
+            try
+            {
+                _command.ExecuteNonQuery();
+                _command.CommandText = "UPDATE Users SET Credits = Credits + @Amount WHERE UserID=@ArtistID";
+
+                var artistIdParam = _command.CreateParameter();
+                artistIdParam.ParameterName = "@ArtistID";
+                artistIdParam.Value = artistId;
+                _command.Parameters.Add(artistIdParam);
+
+                if (_command.ExecuteNonQuery() > 0)
+                {
+                    _connection.Close();
+                    return "Donation made succesfully";
+                }
+                else
+                {
+                    _connection.Close();
+                    return "Error occured";
+                }
+            }
+            catch (Exception)
+            {
+                _connection.Close();
+                return "Not enough credits to submit advertisement";
             }
         }
     }
