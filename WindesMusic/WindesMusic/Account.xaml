@@ -19,5 +19,8 @@
         <TextBlock x:Name="lblRequestAd" Foreground="White" HorizontalAlignment="Left" Margin="177,87,0,0" TextWrapping="Wrap" Text="Submit song for advertising" VerticalAlignment="Top" FontSize="20" Width="252"/>
         <ComboBox x:Name="boxSongs" HorizontalAlignment="Left" Margin="177,147,0,0" VerticalAlignment="Top" Width="148"/>
         <Button x:Name="btnSubmit" Content="Submit" HorizontalAlignment="Left" Margin="177,191,0,0" VerticalAlignment="Top" Width="148" Height="30" FontSize="14" Click="btnSubmit_Click"/>
+        <TextBox x:Name="inputCredits" HorizontalAlignment="Left" Height="23" Margin="636,146,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="148"/>
+        <ComboBox x:Name="boxArtists" HorizontalAlignment="Left" Margin="636,174,0,0" VerticalAlignment="Top" Width="148"/>
+        <Button x:Name="btnSubmitCredits" Content="Submit" HorizontalAlignment="Left" Margin="636,206,0,0" VerticalAlignment="Top" Width="148" Height="30" FontSize="14" Click="btnSubmitCredits_Click"/>
     </Grid>
 </Page>

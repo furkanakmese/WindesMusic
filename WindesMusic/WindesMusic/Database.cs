@@ -912,5 +912,85 @@ namespace WindesMusic
                 Console.WriteLine("Error occured");
             }
         }
+
+        public List<string> GetAllArtists()
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            List<string> listResult = new List<string>();
+
+            _command.CommandText = "SELECT Name FROM Users";
+            _reader = _command.ExecuteReader();
+
+            while (_reader.Read())
+            {
+                var name = (string)_reader["Name"];
+                listResult.Add(name);
+            }
+
+            _connection.Close();
+            return listResult;
+        }
+
+        public string DonateCredits(int userId, string artistName, int amount)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+
+            int artistId = 0;
+            _command.CommandText = "SELECT UserID FROM Users WHERE Name=@ArtistName";
+            var artistNameParam = _command.CreateParameter();
+            artistNameParam.ParameterName = "@ArtistName";
+            artistNameParam.Value = artistName;
+            _command.Parameters.Add(artistNameParam);
+            _reader = _command.ExecuteReader();
+
+            if (_reader.Read())
+            {
+                artistId = (int)_reader["UserID"];
+            }
+            Console.WriteLine(artistId);
+            _connection.Close();
+
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "UPDATE Users SET Credits = Credits - @Amount WHERE UserID=@UserID";
+            var userIdParam = _command.CreateParameter();
+            userIdParam.ParameterName = "@UserID";
+            userIdParam.Value = userId;
+            _command.Parameters.Add(userIdParam);
+
+            var amountParameter = _command.CreateParameter();
+            amountParameter.ParameterName = "@Amount";
+            amountParameter.Value = amount;
+            _command.Parameters.Add(amountParameter);
+
+            try
+            {
+                _command.ExecuteNonQuery();
+                _command.CommandText = "UPDATE Users SET Credits = Credits + @Amount WHERE UserID=@ArtistID";
+
+                var artistIdParam = _command.CreateParameter();
+                artistIdParam.ParameterName = "@ArtistID";
+                artistIdParam.Value = artistId;
+                _command.Parameters.Add(artistIdParam);
+
+                if (_command.ExecuteNonQuery() > 0)
+                {
+                    _connection.Close();
+                    return "Donation made succesfully";
+                }
+                else
+                {
+                    _connection.Close();
+                    return "Error occured";
+                }
+            }
+            catch (Exception)
+            {
+                _connection.Close();
+                return "Not enough credits to submit advertisement";
+            }
+        }
     }
 }
