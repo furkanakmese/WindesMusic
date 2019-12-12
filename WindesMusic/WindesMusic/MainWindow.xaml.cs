@@ -28,7 +28,7 @@ namespace WindesMusic
         private DispatcherTimer dispatcherTimer;
         private User user;
         private Database db = new Database();
-        private Account account = new Account();
+        private Account account;
         private PlaylistSongsPage playlistSongs = new PlaylistSongsPage();
         private QueuePage queuePage;
 
@@ -36,6 +36,8 @@ namespace WindesMusic
         public MainWindow()
         {
             InitializeComponent();
+            account = new Account(this);
+
             audioPlayer = new AudioPlayer(this);
             queuePage = new QueuePage(this);
             //  DispatcherTimer setup
@@ -62,7 +64,7 @@ namespace WindesMusic
             sldVolume.ValueChanged += (object sender, RoutedPropertyChangedEventArgs<double> e) => {
                 audioPlayer.SetVolume((float)e.NewValue / 100);
             };
-            btnAccount.Click += (object sender, RoutedEventArgs e) => Main.Content = account;
+            //btnAccount.Click += (object sender, RoutedEventArgs e) => Main.Content = account;
             btnPlaylists.Click += (object sender, RoutedEventArgs e) => Main.Content = new Playlists();
         }
         
@@ -177,6 +179,11 @@ namespace WindesMusic
         private void HistoryPlaylistButtonClick(object sender, RoutedEventArgs e)
         {
             Main.Content = new DailyHistoryPlaylistPage(user, this);
+        }
+
+        private void ButtonClickAccount(object sender, RoutedEventArgs e)
+        {
+            Main.Content = account;
         }
 
         private void DailyPlaylistButtonClick(object sender, RoutedEventArgs e)

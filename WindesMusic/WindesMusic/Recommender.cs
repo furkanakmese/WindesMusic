@@ -17,11 +17,6 @@ namespace WindesMusic
         //Returns 5 random songs that are not in the playlist and with the most common genre
         public List<Song> GetRecommendedSongsForPlaylist(Playlist playlist, int amount)
         {
-            Console.WriteLine();
-            foreach(Song song in playlist.SongPlaylist)
-            {
-                Console.WriteLine(song.SongName);
-            }
             //Groups songs per genre and orders them by count
             var q = from x in playlist.SongPlaylist
                     group x by x.Subgenre into g
@@ -45,20 +40,15 @@ namespace WindesMusic
                 }
                 loopCount++;
             }
-            Console.WriteLine();
-            foreach(Song song in db.GetRecommendedSongsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID, amount))
-            {
-                Console.WriteLine(song.SongName);
-            }
+
             return db.GetRecommendedSongsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID, amount);
         }
 
         //Returns a maximum of 10 previously listened to songs
         public Playlist getDailyPlaylist(int userID, string playlistName)
         {
-            var generatedID = db.SaveGeneratedPlaylist(playlistName, userID);
+            var generatedID = db.SaveGeneratedPlaylist(userID, playlistName);
             Playlist playlist = db.GetHistoryPlaylist(userID, playlistName);
-            //Console.WriteLine(playlist.PlaylistName);
 
             //Creates the playlist if it hasn't been created yet today
             if (generatedID != null)
@@ -87,22 +77,23 @@ namespace WindesMusic
                     db.SaveGeneratedPlaylistToSong(history, (int)generatedID);
                     return playlist;
                 }
-                else
+                else if(playlistName == "Daily Playlist")
                 {
                     playlist.SongPlaylist = db.GetPlayHistory(userID);
-                    db.SaveGeneratedPlaylistToSong(GetRecommendedSongsForPlaylist(playlist, 10), (int)generatedID);
+                    playlist.SongPlaylist = GetRecommendedSongsForPlaylist(playlist, 10);
+                    db.SaveGeneratedPlaylistToSong(playlist.SongPlaylist, (int)generatedID);
                     return playlist;
                 }
                 
             }
 
             playlist.SongPlaylist = db.getGeneratedPlaylistSongs(playlist.PlaylistID);
-
             return playlist;
         }
 
         public List<Song> GetRecommendedAdsFromPlaylist(Playlist playlist)
         {
+            playlist.SongPlaylist = playlist.SongPlaylist.OrderBy(x => x.SongID).ToList();
             //Groups songs per genre and orders them by count
             var q = from x in playlist.SongPlaylist
                     group x by x.Subgenre into g
@@ -126,8 +117,6 @@ namespace WindesMusic
                 }
                 loopCount++;
             }
-            List<Song> test = db.GetRecommendedAdsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID);
-            foreach (var item in test) Console.WriteLine(item.SongName);
             return db.GetRecommendedAdsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID);
         }
     }
