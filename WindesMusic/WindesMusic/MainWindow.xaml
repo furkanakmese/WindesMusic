@@ -27,7 +27,7 @@
                     </TransformGroup>
                 </StackPanel.RenderTransform>
                 <Image Source="Img/WindesheimLogoMetTekst.jpg" HorizontalAlignment="Left" Height="75" Margin="20,5,0,5"/>
-                <Button x:Name="btnAccount" Style="{StaticResource MenuButton}" Content="Account" Margin="25,25,0,5"/>
+                <Button x:Name="btnAccount" Style="{StaticResource MenuButton}" Content="Account" Margin="25,25,0,5" Click="ButtonClickAccount"/>
                 <Button Style="{StaticResource MenuButton}" Content="History Playlist" Margin="25,0,0,5" Click="HistoryPlaylistButtonClick"/>
                 <Button Style="{StaticResource MenuButton}" Content="Daily Playlist" Margin="25,0,0,5" Click="DailyPlaylistButtonClick" />
                 <Button x:Name="btnPlaylists" Style="{StaticResource MenuButton}" Content="Playlists" Margin="25,20,0,5"/>

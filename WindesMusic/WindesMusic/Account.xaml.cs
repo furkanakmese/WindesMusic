@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LiveCharts;
+using LiveCharts.Wpf;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,10 +26,13 @@ namespace WindesMusic
         User user;
         public delegate void Logout();
         public event Logout logout;
+        private MainWindow mainWindow;
+        private UserStatistics UserStatistics = new UserStatistics();
 
-        public Account()
+        public Account(MainWindow mainWindow)
         {
             InitializeComponent();
+            this.mainWindow = mainWindow;
 
             user = db.GetUserData(Properties.Settings.Default.UserID);
             lblName.Text = (user.IsArtist == true ? "Artist: " : "User: ") + user.Name;
@@ -40,6 +45,11 @@ namespace WindesMusic
             {
                 boxSongs.Items.Add(item.SongName);
             }
+        }
+
+        private void btnStatisticsClick(object sender, RoutedEventArgs e)
+        {
+            mainWindow.Content = UserStatistics;
         }
 
         private void btnLogout_Click(object sender, RoutedEventArgs e)

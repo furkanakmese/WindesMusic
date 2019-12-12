@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic; 
-using System.Configuration; 
-using System.Data.Common; 
-using System.Linq;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data.Common;
 using System.Security.Cryptography;
-using System.Text; 
-using System.Threading.Tasks; 
- 
+using System.Text;
+
 namespace WindesMusic
 {
     public class Database
@@ -149,7 +147,7 @@ namespace WindesMusic
             _command.Parameters.Add(emailParam);
 
             _reader = _command.ExecuteReader();
-            if(_reader.Read())
+            if (_reader.Read())
             {
                 return new User();
             }
@@ -193,12 +191,13 @@ namespace WindesMusic
             _command.Parameters.Add(passwordParam);
             _command.Parameters.Add(saltParam);
             // _reader = _command.ExecuteReader();
-            
-            if(_command.ExecuteNonQuery() > 0)
+
+            if (_command.ExecuteNonQuery() > 0)
             {
                 _connection.Close();
                 return Login(email, password);
-            } else
+            }
+            else
             {
                 _connection.Close();
                 return new User();
@@ -253,7 +252,7 @@ namespace WindesMusic
                         song.Artist = (string)_reader["Artist"];
                         song.Album = (string)_reader["AlbumName"];
                         song.Genre = (string)_reader["Genre"];
-                        song.Subgenre = (string)_reader["SubGenre"]; 
+                        song.Subgenre = (string)_reader["SubGenre"];
                         song.UserID = (int)_reader["UserID"];
                         userResult.Songs.Add(song);
                     }
@@ -261,8 +260,8 @@ namespace WindesMusic
                 }
                 _connection.Close();
             }
-            
-            foreach(Playlist playlist in userResult.Playlists)
+
+            foreach (Playlist playlist in userResult.Playlists)
             {
                 playlist.SongPlaylist = GetSongsInPlaylist(playlist.PlaylistID);
             }
@@ -303,6 +302,7 @@ namespace WindesMusic
             OpenConnection();
             _command.Parameters.Clear();
             List<Song> listResult = new List<Song>();
+
             _command.CommandText = "SELECT * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID WHERE SongID IN(SELECT SongID FROM PlaylistToSong WHERE PlaylistID = @PlaylistID)";
 
             var criteriaParam = _command.CreateParameter();
@@ -483,7 +483,7 @@ namespace WindesMusic
             _command.ExecuteNonQuery();
             _connection.Close();
         }
-        
+
 
         public string GetNameFromPlaylist(int PlaylistID)
         {
@@ -532,7 +532,7 @@ namespace WindesMusic
                 return false;
             }
         }
-      
+
         public void AddSongToHistory(int userID, int songID, int timeListened)
         {
             OpenConnection();
@@ -800,13 +800,45 @@ namespace WindesMusic
                     return "Error occured";
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 _connection.Close();
                 return "Not enough credits to submit advertisement";
             }
         }
 
+
+        public List<string> GetSongStatistic()
+        {
+            var UserID = _command.CreateParameter();
+            UserID.ParameterName = "@UserID";
+            UserID.Value = GetUserData(Properties.Settings.Default.UserID).UserID;
+            
+
+            OpenConnection();
+            _command.Parameters.Clear();
+            List<string> result = new List<string>();
+
+            _command.CommandText = "SELECT COUNT(*) Count, s.Name Name FROM History h LEFT JOIN Song s on h.SongID = s.SongID WHERE h.UserID = @UserID GROUP BY s.Name;";
+            _command.Parameters.Add(UserID);
+            _reader = _command.ExecuteReader();
+
+
+            for (int i = 0; _reader.Read(); i++)
+            {
+                try
+                {
+                    result.Add(_reader["Count"].ToString()) ;
+                    i++;
+                    result.Add( (string)_reader["Name"]);
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            _connection.Close();
+
+            return result;
+        }
+      
         public List<Song> GetRecommendedAdsForPlaylist(string mostCommonGenre, string secondMostCommonGenre, int playlistID)
         {
             OpenConnection();
