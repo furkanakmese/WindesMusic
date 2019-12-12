@@ -1,36 +1,15 @@
-﻿<Page x:Class="WindesMusic.UserStatistics"
-     xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+﻿<Window x:Class="WindesMusic.UserStatistics"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WindesMusic"
       mc:Ignorable="d" 
-      d:DesignHeight="800" d:DesignWidth="1400"
+      Background="{DynamicResource MainColor}"
+        WindowState="Maximized"
+        SizeChanged="WindowOnSizeChanged"
       Title="UserStatistics">
-    <StackPanel Orientation="Horizontal">
-        <ScrollViewer Width="700" x:Name="Statistics">
-            
-        </ScrollViewer>
-        <ScrollViewer Width="670" x:Name="Graphs" Margin="10, 20, 0, 20">
-            <lvc:CartesianChart x:Name="myChart"/>
-        </ScrollViewer>
-        <!--<TextBlock Foreground="White" FontSize="20" HorizontalAlignment="Left" Margin="10,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="53" Width="315" Grid.RowSpan="2"><InlineUIContainer>
-                <Label Content="User statistics" Foreground="White" Height="60" Width="303" Margin="0, 20, 0, 0"/>
-            </InlineUIContainer></TextBlock>
-            <ScrollViewer HorizontalAlignment="Left" Height="437" Margin="10,0,0,0" VerticalAlignment="Bottom" Width="443">
-                <StackPanel Name="Statistics">
 
-                </StackPanel>
-            </ScrollViewer>
-            <ScrollViewer HorizontalAlignment="Right" Height="964" Width="462" Grid.RowSpan="4">
-                <Grid Name="Graphs">
-                    <lvc:CartesianChart x:Name="myChart" Margin="20,10,0.4,0"/>
-                </Grid>
-            </ScrollViewer>-->
-        </StackPanel>
- 
-</Page>
-
-
-
+    <StackPanel Orientation="Horizontal" x:Name="WindowStackPanel"/>
+</Window>

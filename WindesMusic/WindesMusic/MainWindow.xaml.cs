@@ -36,7 +36,8 @@ namespace WindesMusic
         public MainWindow()
         {
             InitializeComponent();
-            account = new Account(this);
+            Playlists playlists = new Playlists();
+            account = new Account(this, playlists);
 
             audioPlayer = new AudioPlayer(this);
             queuePage = new QueuePage(this);
@@ -48,7 +49,6 @@ namespace WindesMusic
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             dispatcherTimer.Start();
 
-            Playlists playlists = new Playlists();
             Main.Content = playlists;
             account.logout += () => {
                 LoginWindow login = new LoginWindow();
