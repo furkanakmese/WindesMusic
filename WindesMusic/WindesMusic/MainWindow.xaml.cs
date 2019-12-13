@@ -37,7 +37,7 @@ namespace WindesMusic
         {
             InitializeComponent();
             Playlists playlists = new Playlists();
-            account = new Account(this, playlists);
+            account = new Account();
 
             audioPlayer = new AudioPlayer(this);
             queuePage = new QueuePage(this);

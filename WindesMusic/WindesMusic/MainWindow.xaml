@@ -12,13 +12,8 @@
         >
 
     <Grid x:Name="MainGrid">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="0*"/>
-            <RowDefinition Height="13*"/>
-            <RowDefinition Height="244*"/>
-        </Grid.RowDefinitions>
-        <Frame x:Name="MainFrame" Margin="150,11.2,-0.4,76.4" NavigationUIVisibility="Hidden" Grid.Row="2"/>
-        <DockPanel LastChildFill="False" Margin="0,0,-0.4,0.4" Grid.RowSpan="3">
+        <Frame x:Name="MainFrame" Margin="150,50,-0.4,76" NavigationUIVisibility="Hidden"/>
+        <DockPanel LastChildFill="False">
             <StackPanel DockPanel.Dock="Top" Height="100" Background="DarkGray" Margin="246,0,-0.333,0" Orientation="Horizontal">
                 <TextBox Name="inputSearch" Margin="10,0,0,0" Style="{StaticResource placeHolder}" Background="DarkGray" FontSize="50" Tag="Search.." Width="616" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionBrush="#FFFFCB05"/>
             </StackPanel>
@@ -35,7 +30,7 @@
                 <Button x:Name="btnAccount" Style="{StaticResource MenuButton}" Content="Account" Margin="25,25,0,5" Click="ButtonClickAccount"/>
                 <Button Style="{StaticResource MenuButton}" Content="History Playlist" Margin="25,0,0,5" Click="HistoryPlaylistButtonClick"/>
                 <Button Style="{StaticResource MenuButton}" Content="Daily Playlist" Margin="25,0,0,5" Click="DailyPlaylistButtonClick" />
-                <Button x:Name="btnPlaylists" Style="{StaticResource MenuButton}" Content="Playlists" Margin="30,20,0,5"/>
+                <Button x:Name="btnPlaylists" Style="{StaticResource MenuButton}" Content="Playlists" Margin="25,20,0,5"/>
                 <Separator Width="100" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                 <Button Style="{StaticResource MenuButton}" Click="NewPlaylistButtonClick" Content="+ Create Playlist" Margin="25,5,0,5"/>
                 <ScrollViewer HorizontalAlignment="Left" Height="370" Margin="10,10,0,0" VerticalAlignment="Top" Width="240">
