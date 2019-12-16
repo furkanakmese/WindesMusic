@@ -25,10 +25,11 @@ namespace WindesMusic
         private string _orderBy;
         private int _PlaylistID;
         private string _PlaylistName;
-        List<Song> SongsInPlaylist;
+        public List<Song> SongsInPlaylist = new List<Song>();
         List<Song> RecommendedSongs = new List<Song>();
         List<Song> RecommendedAds = new List<Song>();
         MainWindow mainWindow;
+        string orderBy;
         User user;
 
         public delegate void OnRerender(Playlist playlist);
@@ -55,8 +56,26 @@ namespace WindesMusic
             user = BaseUser;
             _PlaylistName = playlistToUse.PlaylistName;
             _PlaylistID = playlistToUse.PlaylistID;
+            switch (orderBy)
+            {
+                case "name":
+                    playlistToUse.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.SongName).ToList();
+                    break;
+                case "album":
+                    playlistToUse.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.Album).ToList();
+                    break;
+                case "year":
+                    playlistToUse.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.Year).ToList();
+                    break;
+                case "artist":
+                    playlistToUse.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.Artist).ToList();
+                    break;
+                default:
+                    playlistToUse.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.SongID).ToList();
+                    break;
+            }
             user = BaseUser;
-            SongsInPlaylist = playlistToUse.SongPlaylist;
+            SongsInPlaylist = playlist.SongPlaylist;
             Thickness SongBlockThickness = new Thickness(5, 2, 0, 0);
             SolidColorBrush whiteText = new SolidColorBrush(System.Windows.Media.Colors.White);
             StackPanel sp = new StackPanel();
@@ -167,9 +186,9 @@ namespace WindesMusic
             OrderList.Children.Add(OrderYear);
 
             //Adds the necessary amount of rows for the playlist
-            for (int i = 0; i < playlistToUse.SongPlaylist.Count; i++)
+            for (int i = 0; i < SongsInPlaylist.Count; i++)
             {
-                Song playlistSong = playlistToUse.SongPlaylist[i];
+                Song playlistSong = SongsInPlaylist[i];
                 RowDefinition rowDef = new RowDefinition();
                 rowDef.Name = $"Row_{i}";
                 SongList.RowDefinitions.Add(rowDef);
@@ -355,25 +374,8 @@ namespace WindesMusic
             newPlaylist.PlaylistID = playlistToUse.PlaylistID;
             newPlaylist.PlaylistName = playlistToUse.PlaylistName;
             newPlaylist.Recommender = playlistToUse.Recommender;
-
-            switch (_orderBy)
-            {
-                case "name":
-                    newPlaylist.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.SongName).ToList();
-                    break;
-                case "album":
-                    newPlaylist.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.Album).ToList();
-                    break;
-                case "year":
-                    newPlaylist.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.Year).ToList();
-                    break;
-                case "artist":
-                    newPlaylist.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.Artist).ToList();
-                    break;
-                default:
-                    newPlaylist.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.SongID).ToList();
-                    break;
-            }
+            Console.WriteLine(_orderBy);
+            orderBy = _orderBy;
             if (rerender != null)
             {
                 rerender(newPlaylist);
