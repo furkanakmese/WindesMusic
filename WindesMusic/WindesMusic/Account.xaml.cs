@@ -14,12 +14,10 @@ namespace WindesMusic
         User user;
         public delegate void Logout();
         public event Logout logout;
-        private MainWindow mainWindow;
 
-        public Account(MainWindow mainWindow, Playlists playlists)
+        public Account()
         {
             InitializeComponent();
-            this.mainWindow = mainWindow;
 
             user = db.GetUserData(Properties.Settings.Default.UserID);
             lblName.Text = (user.IsArtist == true ? "Artist: " : "User: ") + user.Name;
@@ -79,7 +77,8 @@ namespace WindesMusic
             {
                 string result = db.DonateCredits(user.UserID, boxArtists.Text, Convert.ToInt32(inputCredits.Text));
                 lblMessage.Text = result;
-            } catch(Exception)
+            }
+            catch (Exception)
             {
                 lblMessage.Text = "Please select an amount";
             }

@@ -1,5 +1,6 @@
 ﻿using LiveCharts;
 using LiveCharts.Wpf;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,22 +21,24 @@ namespace WindesMusic
         private CartesianChart History;
         private ScrollViewer Graphs;
         private List<Label> StatLabels = new List<Label>();
-        private double Width;
-        private double Height;
+        private LineSeries mySeries;
+        private Grid statGrid;
+        private new double Width;
+        private new double Height;
 
         public UserStatistics()
         {
             InitializeComponent();
 
-            Width = System.Windows.SystemParameters.PrimaryScreenWidth / 2;
-            Height = System.Windows.SystemParameters.PrimaryScreenHeight;
+            Width = SystemParameters.PrimaryScreenWidth / 2;
+            Height = SystemParameters.PrimaryScreenHeight;
 
             LoadUserStatistics();
+            GetGraphValues();
             this.SizeToContent = SizeToContent.WidthAndHeight;
 
-            //drawgraphs moet voor BuildScreens wanneer gegevens locaal wordten bewaart.
+            //drawgraphs moet voor BuildScreens wanneer gegevens locaal worden bewaard.
             BuildScreens();
-            DrawGraphs();
         }
 
         private void BuildScreens()
@@ -66,13 +69,25 @@ namespace WindesMusic
             };
             WindowStackPanel.Children.Add(WindowName);
 
+            statGrid = new Grid
+            {
+                //Width = Width * .95,
+                //Height = Height * .8,
+                //Margin = new Thickness(-Width * .975, Height * .2, Width * .025, Height * .025)
+                Margin = new Thickness(0, Height * .2, 0, Height * .025)
+            };
+            WindowStackPanel.Children.Add(statGrid);
+
+
             StatsScrollViewer = new ScrollViewer
             {
                 Width = Width * .95,
                 Height = Height * .8,
-                Margin = new Thickness(-Width * .975, Height * .2, Width * .025, Height * .025)
+                //Margin = new Thickness(-Width * .975, Height * .2, Width * .025, Height * .025),
+                Margin = new Thickness(-Width * .975, 0, Width * .025, 0),
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto
             };
-            WindowStackPanel.Children.Add(StatsScrollViewer);
+            statGrid.Children.Add(StatsScrollViewer);
 
             Statistics = new StackPanel();
             StatsScrollViewer.Content = Statistics;
@@ -89,67 +104,89 @@ namespace WindesMusic
             Graphs.Content = History;
 
 
-            foreach(Label label in StatLabels)
+            foreach (Label label in StatLabels)
             {
                 Statistics.Children.Add(label);
             }
-        }
-
-        public void DrawGraphs()
-        {
-            LineSeries mySeries = new LineSeries
-            {
-                Values = new ChartValues<int> { 12, 23, 55, 100 }
-            };
 
             History.Series.Add(mySeries);
         }
 
+        public void GetGraphValues()
+        {
+            mySeries = new LineSeries
+            {
+                Values = new ChartValues<int> { 12, 23, 55, 100 }
+            };
+        }
+
+
+        //SELECT COUNT(*), s.Name FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = 1 GROUP BY s.Name;
         protected void LoadUserStatistics()
         {
             List<string> result = db.GetSongStatistic();
 
-            for (int i = 0; i < result.Count; i+=2)
+            //song statistics
+            StatLabels.Add(new Label { Content = "Song", FontSize = 40, Foreground = new SolidColorBrush(Colors.White) });
+            for (int i = 0; i < result.Count; i += 2)
             {
                 Label songLabel = new Label
                 {
-                    Content = $"{result[i]} keer {result[i+1]} beluisterd.",
+                    Content = $"{result[i]} keer {result[i + 1]} beluisterd.",
                     FontSize = 30,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
                 StatLabels.Add(songLabel);
             }
-            //hoevaak alle nummers beluisterd door gebruiker.
-            //SELECT COUNT(*), s.Name FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = 1 GROUP BY s.Name;
 
-            //hoevaak alle artiesten beluisterd door gebruiker
-            //SELECT COUNT(*), s.Artist FROM History h LEFT JOIN Song s on h.SongID = s.SongID WHERE h.UserID = 1 GROUP BY s.Artist;
+            //genre statistics
+            result = db.GetGenreStatistic();
+            StatLabels.Add(new Label { Content = "Genre", FontSize = 40, Foreground = new SolidColorBrush(Colors.White) });
+            for (int i = 0; i < result.Count; i += 2)
+            {
+                Label songLabel = new Label
+                {
+                    Content = $"{result[i]} keer een nummer in genre: {result[i + 1]} beluisterd.",
+                    FontSize = 30,
+                    Foreground = new SolidColorBrush(Colors.White)
+                };
+                StatLabels.Add(songLabel);
+            }
 
-            //hoevaak alle genres beluisterd door gebruiker
-            //SELECT COUNT(*), s.Genre FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = 1 GROUP BY s.Genre;
+
+            //artist statistics
+            result = db.GetArtistStatistic();
+            StatLabels.Add(new Label { Content = "Artist", FontSize = 40, Foreground = new SolidColorBrush(Colors.White) });
+            for (int i = 0; i < result.Count; i += 2)
+            {
+                Label songLabel = new Label
+                {
+                    Content = $"{result[i]} keer een nummer van artiest: {result[i + 1]} beluisterd.",
+                    FontSize = 30,
+                    Foreground = new SolidColorBrush(Colors.White)
+                };
+                StatLabels.Add(songLabel);
+            }
+
+            List<int> periodResult = db.GetPeriodStatistic();
+            StatLabels.Add(new Label { Content = "Period", FontSize = 40, Foreground = new SolidColorBrush(Colors.White) });
+            for (int i = 0; i < periodResult.Count; i += 2)
+            {
+                Label songLabel = new Label
+                {
+                    Content = $"{periodResult[i + 1]} keer een nummer uit jaar: {periodResult[i]} beluisterd.",
+                    FontSize = 30,
+                    Foreground = new SolidColorBrush(Colors.White)
+                };
+                StatLabels.Add(songLabel);
+            }
+
 
             //hoevaak alle nummers in een periode beluisterd door gebruiker.
             //SELECT COUNT(*), s.Year FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = 1 GROUP BY s.Year;
 
             //user = db.GetUserData(Properties.Settings.Default.UserID);
 
-            //playlistSongs.rerender += (playlist) => { playlistSongs.playlistToUse = playlist; playlistSongs.reinitialize(playlist, this, user); };
-            //queuePage.rerender += (queuePg) => { queuePage = queuePg; queuePage.InitialiseQueuePage(); };
-            //Thickness thickness = new Thickness(15, 0, 0, 5);
-            //foreach (var item in user.Playlists)
-            //{
-            //    var PlaylistButton = new Button
-            //    {
-            //        //Style = StaticResource MenuButton,
-            //        Name = $"_{item.PlaylistID}",
-            //        Content = $"{item.PlaylistName}",
-            //        FontSize = 23,
-            //        Margin = thickness
-            //    };
-            //    StaticResourceExtension menuButton = new StaticResourceExtension("MenuButton");
-            //    PlaylistButton.Style = (Style)FindResource("MenuButton");
-            //    PlaylistButton.Click += ButtonClickPlaylist;
-            //    PlaylistList.Children.Add(PlaylistButton);
         }
 
         private void ReturnClick(object sender, RoutedEventArgs e)
@@ -159,7 +196,7 @@ namespace WindesMusic
 
         private void WindowOnSizeChanged(object sender, SizeChangedEventArgs args)
         {
-            Width =  this.DesiredSize.Width;
+            Width = this.DesiredSize.Width / 2;
             Height = this.DesiredSize.Height;
             BuildScreens();
         }

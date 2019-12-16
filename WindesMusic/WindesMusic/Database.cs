@@ -77,7 +77,7 @@ namespace WindesMusic
             return results;
         }
 
-       // this function sends the login data to the database and returns a user object, empty if the data is wrong
+        // this function sends the login data to the database and returns a user object, empty if the data is wrong
         public User Login(string email, string password)
         {
             OpenConnection();
@@ -92,19 +92,19 @@ namespace WindesMusic
             _command.Parameters.Add(emailParam);
             _reader = _command.ExecuteReader();
 
-            
+
 
             if (_reader.Read())
             {
                 string hashPassword = (string)_reader["Password"];
-                string salt = (string) _reader["Salt"];
+                string salt = (string)_reader["Salt"];
 
-                HashAlgorithm algorithm = new SHA256Managed(); 
+                HashAlgorithm algorithm = new SHA256Managed();
                 //Convert password string to byte
                 byte[] passwordByte = Encoding.ASCII.GetBytes(password);
-            
+
                 //Convert salt string to byte
-                byte[] saltByte =Encoding.ASCII.GetBytes(salt);
+                byte[] saltByte = Encoding.ASCII.GetBytes(salt);
 
                 //Generate SHA256 Hash
                 byte[] plainTextWithSaltBytes =
@@ -117,9 +117,9 @@ namespace WindesMusic
                 {
                     plainTextWithSaltBytes[password.Length + i] = saltByte[i];
                 }
-                var sha256Data =  Encoding.ASCII.GetString(algorithm.ComputeHash(plainTextWithSaltBytes));
-                
-                
+                var sha256Data = Encoding.ASCII.GetString(algorithm.ComputeHash(plainTextWithSaltBytes));
+
+
                 if (hashPassword == sha256Data)
                 {
                     userResult.UserID = (int)_reader["UserID"];
@@ -162,11 +162,11 @@ namespace WindesMusic
             var nameParam = _command.CreateParameter();
             nameParam.ParameterName = "@name";
             nameParam.Value = name;
-            
-            HashAlgorithm algorithm = new SHA256Managed(); 
+
+            HashAlgorithm algorithm = new SHA256Managed();
             //Convert password string to byte
-            byte[] passwordByte =Encoding.ASCII.GetBytes(password);
-            
+            byte[] passwordByte = Encoding.ASCII.GetBytes(password);
+
             //Convert salt string to byte
             byte[] saltByte = Encoding.ASCII.GetBytes(salt);
 
@@ -181,7 +181,7 @@ namespace WindesMusic
             {
                 plainTextWithSaltBytes[password.Length + i] = saltByte[i];
             }
-            var sha256Data =  algorithm.ComputeHash(plainTextWithSaltBytes);
+            var sha256Data = algorithm.ComputeHash(plainTextWithSaltBytes);
 
             var passwordParam = _command.CreateParameter();
             passwordParam.ParameterName = "@password";
@@ -826,7 +826,7 @@ namespace WindesMusic
             var UserID = _command.CreateParameter();
             UserID.ParameterName = "@UserID";
             UserID.Value = GetUserData(Properties.Settings.Default.UserID).UserID;
-            
+
 
             OpenConnection();
             _command.Parameters.Clear();
@@ -841,9 +841,9 @@ namespace WindesMusic
             {
                 try
                 {
-                    result.Add(_reader["Count"].ToString()) ;
+                    result.Add(_reader["Count"].ToString());
                     i++;
-                    result.Add( (string)_reader["Name"]);
+                    result.Add((string)_reader["Name"]);
                 }
                 catch (Exception e) { Console.WriteLine(e); }
             }
@@ -851,7 +851,123 @@ namespace WindesMusic
 
             return result;
         }
-      
+
+        //SELECT COUNT(*), s.Genre FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = 1 GROUP BY s.Genre;
+        public List<string> GetGenreStatistic()
+        {
+            var UserID = _command.CreateParameter();
+            UserID.ParameterName = "@UserID";
+            UserID.Value = GetUserData(Properties.Settings.Default.UserID).UserID;
+
+
+            OpenConnection();
+            _command.Parameters.Clear();
+            List<string> result = new List<string>();
+
+            _command.CommandText = "SELECT COUNT(*) Count, s.Genre Genre FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = @UserID GROUP BY s.Genre;";
+            _command.Parameters.Add(UserID);
+            _reader = _command.ExecuteReader();
+
+
+            for (int i = 0; _reader.Read(); i++)
+            {
+                try
+                {
+                    result.Add(_reader["Count"].ToString());
+                    i++;
+                    result.Add((string)_reader["Genre"]);
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            _connection.Close();
+
+            return result;
+        }
+
+        //SELECT COUNT(*), s.Artist FROM History h LEFT JOIN Song s on h.SongID = s.SongID WHERE h.UserID = 1 GROUP BY s.Artist;
+        public List<string> GetArtistStatistic()
+        {
+            var UserID = _command.CreateParameter();
+            UserID.ParameterName = "@UserID";
+            UserID.Value = GetUserData(Properties.Settings.Default.UserID).UserID;
+
+
+            OpenConnection();
+            _command.Parameters.Clear();
+            List<string> result = new List<string>();
+
+            _command.CommandText = "SELECT COUNT(*) Count, s.Artist Artist FROM History h LEFT JOIN Song s on h.SongID = s.SongID WHERE h.UserID = @UserID GROUP BY s.Artist;";
+            _command.Parameters.Add(UserID);
+            _reader = _command.ExecuteReader();
+
+
+            for (int i = 0; _reader.Read(); i++)
+            {
+                try
+                {
+                    result.Add(_reader["Count"].ToString());
+                    i++;
+                    result.Add((string)_reader["Artist"]);
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            _connection.Close();
+
+            return result;
+        }
+
+        //SELECT COUNT(*), s.Year FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = 1 GROUP BY s.Year;
+        public List<int> GetPeriodStatistic()
+        {
+            var UserID = _command.CreateParameter();
+            UserID.ParameterName = "@UserID";
+            UserID.Value = GetUserData(Properties.Settings.Default.UserID).UserID;
+
+
+            OpenConnection();
+            _command.Parameters.Clear();
+
+
+            _command.CommandText = "SELECT COUNT(*) Count, s.Year Year FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = @UserID GROUP BY s.Year";
+            _command.Parameters.Add(UserID);
+            _reader = _command.ExecuteReader();
+
+            List<int> dbResult = new List<int> { };
+            for (int i = 0; _reader.Read(); i++)
+            {
+                try
+                {
+                    dbResult.Add((int)_reader["Count"]);
+                    i++;
+                    dbResult.Add((int)_reader["Year"]);
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            _connection.Close();
+
+            List<int> result = new List<int>();
+            for (int i = 0; i < dbResult.Count; i += 2)
+            {
+                int year = dbResult[i + 1];
+                int value = dbResult[i];
+
+                if (result.Contains(year))
+                {
+                    int temp = result.IndexOf(year);
+                    int tempValue = result[temp + 1];
+                    result.RemoveAt(temp + 1);
+                    result.RemoveAt(temp);
+
+                    value += tempValue;
+                }
+                result.Add(year);
+                result.Add(value);
+            }
+
+            return result;
+        }
+
+
         public List<Song> GetRecommendedAdsForPlaylist(string mostCommonGenre, string secondMostCommonGenre, int playlistID)
         {
             OpenConnection();
@@ -921,7 +1037,7 @@ namespace WindesMusic
 
             OpenConnection();
             // _command.Parameters.Clear();
-            if(ad)
+            if (ad)
             {
                 _command.CommandText = "UPDATE AdvertisedSong SET TimesClicked = TimesClicked + 1 WHERE SongID=@SongID";
                 if (_command.ExecuteNonQuery() > 0)
