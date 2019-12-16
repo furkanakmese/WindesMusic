@@ -396,6 +396,8 @@ namespace WindesMusic
             MenuItem PlaylistItem = new MenuItem();
             PlaylistItem.Name = $"Playlists";
             PlaylistItem.Header = "Add to Playlist";
+            PlaylistItem.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
+            PlaylistItem.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
 
             foreach (Playlist pl in Playlists)
             {
@@ -404,6 +406,8 @@ namespace WindesMusic
                 OnePlaylistItem.Tag = song;
                 OnePlaylistItem.Header = $"{pl.PlaylistName}";
                 OnePlaylistItem.Click += AddToPlaylistClick;
+                OnePlaylistItem.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
+                OnePlaylistItem.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
                 PlaylistItem.Items.Add(OnePlaylistItem);
             }
 
