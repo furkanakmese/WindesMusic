@@ -56,10 +56,7 @@ namespace WindesMusic
             _PlaylistName = playlistToUse.PlaylistName;
             _PlaylistID = playlistToUse.PlaylistID;
             user = BaseUser;
-            if (SongsInPlaylist == null)
-            {
-                SongsInPlaylist = playlistToUse.SongPlaylist;
-            }
+            SongsInPlaylist = playlistToUse.SongPlaylist;
             Thickness SongBlockThickness = new Thickness(5, 2, 0, 0);
             SolidColorBrush whiteText = new SolidColorBrush(System.Windows.Media.Colors.White);
             StackPanel sp = new StackPanel();
@@ -247,11 +244,7 @@ namespace WindesMusic
                 SongList.Children.Add(SongBlockAlbum);
                 SongList.Children.Add(SongBlockYear);
 
-                ContextMenu menu = new ContextMenu();
-                menu.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
-                menu.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
-
-                SongList.ContextMenu = null;
+                SongList.MouseRightButtonDown -= SongContextMenuOpening;
                 SongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
             }
 
@@ -352,7 +345,7 @@ namespace WindesMusic
                 menu.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
 
                 RecommendedSongList.ContextMenu = null;
-                RecommendedSongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
+                RecommendedSongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuFromRecommended);
             }
             
         }
@@ -395,12 +388,16 @@ namespace WindesMusic
             int top1 = (int)Math.Round(top);
             int amount = top1 / 28;
             ContextMenu menu = new ContextMenu();
+            menu.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
+            menu.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
             Song song = SongsInPlaylist.ElementAt(amount);
             int CorrectSongID = SongsInPlaylist.ElementAt(amount).SongID;
 
             MenuItem PlaylistItem = new MenuItem();
             PlaylistItem.Name = $"Playlists";
             PlaylistItem.Header = "Add to Playlist";
+            PlaylistItem.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
+            PlaylistItem.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
 
             foreach (Playlist pl in Playlists)
             {
@@ -409,6 +406,8 @@ namespace WindesMusic
                 OnePlaylistItem.Tag = song;
                 OnePlaylistItem.Header = $"{pl.PlaylistName}";
                 OnePlaylistItem.Click += AddToPlaylistClick;
+                OnePlaylistItem.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
+                OnePlaylistItem.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
                 PlaylistItem.Items.Add(OnePlaylistItem);
             }
 
