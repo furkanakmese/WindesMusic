@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -56,8 +57,9 @@ namespace WindesMusic
                 this.Close();
             };
 
+            TextInfo info = new CultureInfo("en-US", false).TextInfo;
             inputSearch.KeyDown += (object sender, KeyEventArgs e) => {
-                if (e.Key == Key.Enter) Main.Content = new SearchResults(inputSearch.Text, user, this);
+                if (e.Key == Key.Enter) Main.Content = new SearchResults(info.ToTitleCase(inputSearch.Text), user, this);
             };
             btnPlay.Click += (object sender, RoutedEventArgs e) => audioPlayer.OnButtonPlayClick(sender, e);
             btnMute.Click += (object sender, RoutedEventArgs e) => audioPlayer.Mute();

@@ -1150,7 +1150,7 @@ namespace WindesMusic
             catch (Exception)
             {
                 _connection.Close();
-                return "Not enough credits to submit advertisement";
+                return "Not enough credits to donate..";
             }
         }
     }
