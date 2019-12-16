@@ -213,9 +213,9 @@ namespace WindesMusic
             var pos = e.GetPosition(DailySongList);
             double top = pos.Y;
             int top1 = (int)Math.Round(top);
-            int amount = top1 / 25;
+            int amount = top1 / 28;
             ContextMenu menu = new ContextMenu();
-            int CorrectSongID = SongsInPlaylist.ElementAt(amount).SongID;
+            Song correctSong = SongsInPlaylist.ElementAt(amount);
 
             MenuItem PlaylistItem = new MenuItem();
             PlaylistItem.Name = $"Playlists";
@@ -225,14 +225,15 @@ namespace WindesMusic
             {
                 MenuItem OnePlaylistItem = new MenuItem();
                 OnePlaylistItem.Name = $"Playlist_{pl.PlaylistID}";
-                OnePlaylistItem.Tag = $"{CorrectSongID}";
+                OnePlaylistItem.Tag = correctSong;
                 OnePlaylistItem.Header = $"{pl.PlaylistName}";
                 OnePlaylistItem.Click += AddToPlaylistClick;
                 PlaylistItem.Items.Add(OnePlaylistItem);
             }
 
             MenuItem QueueItem = new MenuItem();
-            QueueItem.Name = $"Queue_{CorrectSongID}";
+            QueueItem.Name = $"Queue_{correctSong.SongID}";
+            QueueItem.Tag = correctSong;
             QueueItem.Header = "Add to Queue";
             QueueItem.Click += AddToQueueClick;
 
@@ -245,17 +246,15 @@ namespace WindesMusic
         {
             MenuItem SongItem = sender as MenuItem;
             int PlaylistID = Convert.ToInt32(SongItem.Name.Substring(9));
-            int SongID = Convert.ToInt32(SongItem.Tag);
+            Song song = (Song)SongItem.Tag;
             Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == PlaylistID).FirstOrDefault();
-            relevantPlaylist.AddSongToPlaylist(SongID);
-
-
+            relevantPlaylist.AddSongToPlaylist(song);
         }
         private void AddToQueueClick(object sender, RoutedEventArgs e)
         {
             var SongItem = sender as MenuItem;
-            int SongID = Convert.ToInt32(SongItem.Name.Substring(6));
-            MusicQueue.AddSongToQueue(db.getSong(SongID));
+            Song song = (Song)SongItem.Tag;
+            MusicQueue.AddSongToQueue(song);
         }
 
 
@@ -270,15 +269,18 @@ namespace WindesMusic
             //Adds the song the the users play history
             db.AddSongToHistory(user.UserID, Int32.Parse(SongID), 10);
 
-            mainWindow.audioPlayer.PlayChosenSong(db.getSong(Int32.Parse(SongID)));
+            Song songObject = (Song)_ButtonSong.Tag;
+            mainWindow.audioPlayer.PlayChosenSong(songObject);
         }
 
         private void PlayPlaylist(object sender, RoutedEventArgs e)
         {
             MusicQueue.SongQueue.Clear();
-            Playlist playlist = new Playlist(_PlaylistID);
-            playlist.SongPlaylist = db.GetSongsInPlaylist(_PlaylistID);
-            MusicQueue.SongQueue = playlist.CreateQueueFromPlaylist();
+            MusicQueue.AddPlaylistToQueue(playlist);
+            if (MusicQueue.IsShuffle == true)
+            {
+                MusicQueue.ShuffleSongs();
+            }
             mainWindow.audioPlayer.PlayChosenSong();
         }
     }

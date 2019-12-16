@@ -31,6 +31,14 @@ namespace WindesMusic
             }
         }
 
+        public static void AddPlaylistToQueue(Playlist playlist)
+        {
+            foreach (Song song in playlist.SongPlaylist)
+            {
+                SongQueue.Enqueue(song);
+            }
+        }
+
         public static void AddSongToPreviousQueue(Song song)
         {
             PreviousSongs.Push(song);
