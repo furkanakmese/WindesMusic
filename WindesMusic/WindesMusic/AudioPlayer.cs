@@ -17,7 +17,7 @@ namespace WindesMusic
         {
             outputDevice = new WaveOutEvent();
             mainWindow = main;
-            //outputDevice.PlaybackStopped += OnPlaybackStopped;
+            outputDevice.PlaybackStopped += OnPlaybackStopped;
         }
 
 
@@ -99,7 +99,6 @@ namespace WindesMusic
         //start, and pause and resume button.
         public void OnButtonPlayClick(object sender, EventArgs args)
         {
-            Console.WriteLine("test");
             if (!isPlaying)
             {
                 // if (audioFile == null)
@@ -135,7 +134,7 @@ namespace WindesMusic
             {
                 MusicQueue.AddSongToPreviousQueue(_CurrentSong);
             }
-            
+
         }
 
         public void OnButtonNextClick()
@@ -145,6 +144,8 @@ namespace WindesMusic
             DisposeOfSong();
             audioFile = null;
             isPlaying = false;
+            mainWindow.Song.Content = "";
+            mainWindow.Artist.Content = "";
             if (_CurrentSong != null)
             {
                 MusicQueue.AddSongToPreviousQueue(_CurrentSong);
@@ -175,7 +176,17 @@ namespace WindesMusic
         //stop function, disposes of AudiofileReader.
         public void OnPlaybackStopped(object sender, StoppedEventArgs args)
         {
-            OnButtonStopClick();
+            if(this.CurrentPlaceInSongPercentage() == 100)
+            {
+                outputDevice?.Pause();
+                outputDevice?.Stop();
+                MusicQueue.AddSongToPreviousQueue(_CurrentSong);
+                PlayChosenSong();
+            }
+            if(_CurrentSong == null)
+            {
+
+            }
         }
 
         //recieves change in slider value and calculates new position in song.
