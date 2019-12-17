@@ -101,11 +101,12 @@ namespace WindesMusic
         {
             if (!isPlaying)
             {
-                // if (audioFile == null)
-                // {
-                    // audioFile = new AudioFileReader("Feint2.mp3");
-                    // outputDevice.Init(audioFile);
-                // }
+                //for unittesting.
+                //if (audioFile == null)
+                //{
+                //    audioFile = new AudioFileReader("67.mp3");
+                //    outputDevice.Init(audioFile);
+                //}
                 try
                 {
                     outputDevice.Play();
