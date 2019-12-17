@@ -86,17 +86,19 @@ namespace UnitTestWindesMusic
             Database db = new Database();
             User user = new User();
             user = db.GetUserData(1);
+            List<Playlist> playlists = user.Playlists;
+            Playlist playlist1 = playlists[1];
 
             //Act
-            //Change playlistname of playlist with the id 6
-            db.ChangePlaylistName(6, "Test Playlist Name");
+            //Change playlistname of playlist
+            db.ChangePlaylistName(playlist1, "Great songs");
 
             //Assert
             //Check if the name has been changed
             user = db.GetUserData(1);
-            Playlist playlist = user.Playlists.Where(i => i.PlaylistID == 2).FirstOrDefault();
+            Playlist playlist = user.Playlists.Where(i => i.PlaylistID == playlist1.PlaylistID).FirstOrDefault();
             string PlaylistName = playlist.PlaylistName;
-            Assert.IsTrue(PlaylistName == "Test Playlist Name");
+            Assert.IsTrue(PlaylistName == "Great songs");
         }
     }
 }
