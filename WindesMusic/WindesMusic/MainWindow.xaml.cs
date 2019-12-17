@@ -195,6 +195,20 @@ namespace WindesMusic
             }
         }
 
+        private void RepeatButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (MusicQueue.IsRepeat == false)
+            {
+                btnRepeat.Background = new SolidColorBrush(System.Windows.Media.Colors.DarkOrange);
+                MusicQueue.IsRepeat = true;
+            }
+            else
+            {
+                btnRepeat.Background = new SolidColorBrush(System.Windows.Media.Colors.LightGray);
+                MusicQueue.IsRepeat = false;
+            }
+        }
+
         private void NewPlaylistButtonClick(object sender, RoutedEventArgs e)
         {
             NewPlaylistWindow NewPlaylist = new NewPlaylistWindow();
