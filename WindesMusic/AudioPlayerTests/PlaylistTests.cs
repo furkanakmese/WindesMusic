@@ -91,7 +91,7 @@ namespace UnitTestWindesMusic
 
             //Act
             //Change playlistname of playlist
-            db.ChangePlaylistName(playlist1, "Great songs");
+            db.RenamePlaylist(playlist1, "Great songs");
 
             //Assert
             //Check if the name has been changed
