@@ -64,24 +64,49 @@ namespace WindesMusic
 
                     if (artistMatched)
                     {
-                        Rectangle image = new Rectangle();
-                        image.Width = 100;
-                        image.Height = 100;
-                        image.HorizontalAlignment = HorizontalAlignment.Left;
-                        image.Fill = new SolidColorBrush(System.Windows.Media.Colors.ForestGreen);
+                        if (input == "Metallica")
+                        {
+                            Image image = new Image();
+                            image.Width = 100;
+                            image.Height = 100;
+                            image.HorizontalAlignment = HorizontalAlignment.Left;
+                            image.Stretch = Stretch.UniformToFill;
+                            image.Source = new BitmapImage(new Uri(@"https://upload.wikimedia.org/wikipedia/commons/0/07/Metallica_at_The_O2_Arena_London_2008.jpg"));
 
-                        TextBlock label = new TextBlock();
-                        label.Text = input;
-                        label.FontSize = 15;
-                        label.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
-                        label.HorizontalAlignment = HorizontalAlignment.Left;
+                            TextBlock label = new TextBlock();
+                            label.Text = input;
+                            label.FontSize = 15;
+                            label.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
+                            label.HorizontalAlignment = HorizontalAlignment.Left;
 
-                        image.Margin = new Thickness(10, 5, 0, 0);
-                        label.Margin = new Thickness(10, 5, 0, 0);
-                        stackResults.Children.Add(image);
-                        stackResults.Children.Add(label);
-                        SearchScroller.Margin = new Thickness(-10, 200, 0, 0);
-                        SearchScroller.Height = 400;
+                            image.Margin = new Thickness(10, 5, 0, 0);
+                            label.Margin = new Thickness(10, 5, 0, 0);
+                            stackResults.Children.Add(image);
+                            stackResults.Children.Add(label);
+                            SearchScroller.Margin = new Thickness(-10, 200, 0, 0);
+                            SearchScroller.Height = 400;
+                        }
+                        else
+                        {
+                            Rectangle image = new Rectangle();
+                            image.Width = 100;
+                            image.Height = 100;
+                            image.HorizontalAlignment = HorizontalAlignment.Left;
+                            image.Fill = new SolidColorBrush(System.Windows.Media.Colors.ForestGreen);
+
+                            TextBlock label = new TextBlock();
+                            label.Text = input;
+                            label.FontSize = 15;
+                            label.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
+                            label.HorizontalAlignment = HorizontalAlignment.Left;
+
+                            image.Margin = new Thickness(10, 5, 0, 0);
+                            label.Margin = new Thickness(10, 5, 0, 0);
+                            stackResults.Children.Add(image);
+                            stackResults.Children.Add(label);
+                            SearchScroller.Margin = new Thickness(-10, 200, 0, 0);
+                            SearchScroller.Height = 400;
+                        }
                     }
                     else
                     {

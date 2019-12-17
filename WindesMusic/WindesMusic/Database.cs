@@ -1,3 +1,4 @@
+using LiveCharts.Defaults;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -77,7 +78,7 @@ namespace WindesMusic
             return results;
         }
 
-       // this function sends the login data to the database and returns a user object, empty if the data is wrong
+        // this function sends the login data to the database and returns a user object, empty if the data is wrong
         public User Login(string email, string password)
         {
             OpenConnection();
@@ -92,19 +93,19 @@ namespace WindesMusic
             _command.Parameters.Add(emailParam);
             _reader = _command.ExecuteReader();
 
-            
+
 
             if (_reader.Read())
             {
                 string hashPassword = (string)_reader["Password"];
-                string salt = (string) _reader["Salt"];
+                string salt = (string)_reader["Salt"];
 
-                HashAlgorithm algorithm = new SHA256Managed(); 
+                HashAlgorithm algorithm = new SHA256Managed();
                 //Convert password string to byte
                 byte[] passwordByte = Encoding.ASCII.GetBytes(password);
-            
+
                 //Convert salt string to byte
-                byte[] saltByte =Encoding.ASCII.GetBytes(salt);
+                byte[] saltByte = Encoding.ASCII.GetBytes(salt);
 
                 //Generate SHA256 Hash
                 byte[] plainTextWithSaltBytes =
@@ -117,9 +118,9 @@ namespace WindesMusic
                 {
                     plainTextWithSaltBytes[password.Length + i] = saltByte[i];
                 }
-                var sha256Data =  Encoding.ASCII.GetString(algorithm.ComputeHash(plainTextWithSaltBytes));
-                
-                
+                var sha256Data = Encoding.ASCII.GetString(algorithm.ComputeHash(plainTextWithSaltBytes));
+
+
                 if (hashPassword == sha256Data)
                 {
                     userResult.UserID = (int)_reader["UserID"];
@@ -162,11 +163,11 @@ namespace WindesMusic
             var nameParam = _command.CreateParameter();
             nameParam.ParameterName = "@name";
             nameParam.Value = name;
-            
-            HashAlgorithm algorithm = new SHA256Managed(); 
+
+            HashAlgorithm algorithm = new SHA256Managed();
             //Convert password string to byte
-            byte[] passwordByte =Encoding.ASCII.GetBytes(password);
-            
+            byte[] passwordByte = Encoding.ASCII.GetBytes(password);
+
             //Convert salt string to byte
             byte[] saltByte = Encoding.ASCII.GetBytes(salt);
 
@@ -181,7 +182,7 @@ namespace WindesMusic
             {
                 plainTextWithSaltBytes[password.Length + i] = saltByte[i];
             }
-            var sha256Data =  algorithm.ComputeHash(plainTextWithSaltBytes);
+            var sha256Data = algorithm.ComputeHash(plainTextWithSaltBytes);
 
             var passwordParam = _command.CreateParameter();
             passwordParam.ParameterName = "@password";
@@ -336,17 +337,11 @@ namespace WindesMusic
             List<Song> listResult = new List<Song>();
             if (secondMostCommonGenre == "")
             {
-                _command.CommandText = "SELECT * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID " +
-                    "WHERE Subgenre = @mostCommonGenre " +
-                    "AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) " +
-                    "ORDER BY NewID()";
+                _command.CommandText = "SELECT * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID WHERE Subgenre = @mostCommonGenre AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) ORDER BY NewID()";
             }
             else
             {
-                _command.CommandText = "SELECT * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID " +
-                    "WHERE Subgenre IN(@mostCommonGenre, @secondMostCommonGenre) " +
-                    "AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) " +
-                    "ORDER BY NewID()";
+                _command.CommandText = "SELECT * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID WHERE Subgenre IN(@mostCommonGenre, @secondMostCommonGenre) AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) ORDER BY NewID()";
             }
 
             var mostCommonGenreParam = _command.CreateParameter();
@@ -372,7 +367,7 @@ namespace WindesMusic
                 searchResult.SongID = (int)_reader["SongID"];
                 searchResult.SongName = (string)_reader["Name"];
                 searchResult.Artist = (string)_reader["Artist"];
-                searchResult.Album = (string)_reader["Name"];
+                searchResult.Album = (string)_reader["AlbumName"];
                 searchResult.Year = (int)_reader["Year"];
                 searchResult.Genre = (string)_reader["Genre"];
                 searchResult.Subgenre = (string)_reader["SubGenre"];
@@ -401,26 +396,6 @@ namespace WindesMusic
             _command.Parameters.Add(criteriaParamUserID);
 
             _command.ExecuteNonQuery();
-        }
-
-        public void ChangePlaylistName(int PlaylistID, string Name)
-        {
-            OpenConnection();
-            _command.Parameters.Clear();
-            _command.CommandText = "UPDATE Playlist SET Name=@Name WHERE PlaylistID = @PlaylistID";
-
-            var criteriaParamName = _command.CreateParameter();
-            criteriaParamName.ParameterName = "@Name";
-            criteriaParamName.Value = Name;
-            _command.Parameters.Add(criteriaParamName);
-
-            var criteriaParamPlaylistID = _command.CreateParameter();
-            criteriaParamPlaylistID.ParameterName = "@PlaylistID";
-            criteriaParamPlaylistID.Value = PlaylistID;
-            _command.Parameters.Add(criteriaParamPlaylistID);
-
-            _command.ExecuteNonQuery();
-            _connection.Close();
         }
 
         public void DeletePlaylist(int PlaylistID)
@@ -484,28 +459,24 @@ namespace WindesMusic
             _connection.Close();
         }
 
-
-        public string GetNameFromPlaylist(int PlaylistID)
+        public void RenamePlaylist(Playlist pl, string input)
         {
-            string Result = "";
             OpenConnection();
             _command.Parameters.Clear();
-            _command.CommandText = "SELECT PlaylistName FROM Playlist WHERE PlaylistID = @PlaylistID";
+            _command.CommandText = "UPDATE Playlist SET PlaylistName = @Input WHERE PlaylistID = @PlaylistID";
+
+            var criteriaParamInput = _command.CreateParameter();
+            criteriaParamInput.ParameterName = "@Input";
+            criteriaParamInput.Value = input;
+            _command.Parameters.Add(criteriaParamInput);
 
             var criteriaParamPlaylistID = _command.CreateParameter();
             criteriaParamPlaylistID.ParameterName = "@PlaylistID";
-            criteriaParamPlaylistID.Value = PlaylistID;
+            criteriaParamPlaylistID.Value = pl.PlaylistID;
             _command.Parameters.Add(criteriaParamPlaylistID);
 
-            _reader = _command.ExecuteReader();
-
-            while (_reader.Read())
-            {
-                Result = (string)_reader["PlaylistName"];
-            }
-
+            _command.ExecuteNonQuery();
             _connection.Close();
-            return Result;
         }
 
         public bool RequestArtistStatus()
@@ -593,7 +564,6 @@ namespace WindesMusic
             split = currentDate.ToString().Split(' ');
             string dayMonthYearCurrent = split[0];
 
-            //Checks if a playlist has been created today
             if (dayMonthYearFromDb != dayMonthYearCurrent)
             {
                 _command.Parameters.Clear();
@@ -650,7 +620,7 @@ namespace WindesMusic
         {
             OpenConnection();
             _command.Parameters.Clear();
-            _command.CommandText = "SELECT * FROM Song WHERE SongID IN (SELECT SongID FROM GeneratedPlaylistToSong WHERE PlaylistID=@PlaylistID)";
+            _command.CommandText = "SELECT * FROM Song LEFT JOIN Album ON Song.AlbumID = Album.AlbumID WHERE SongID IN (SELECT SongID FROM GeneratedPlaylistToSong WHERE PlaylistID=@PlaylistID)";
 
             var playlistIDParam = _command.CreateParameter();
             playlistIDParam.ParameterName = "@PlaylistID";
@@ -665,7 +635,7 @@ namespace WindesMusic
                 searchResult.SongID = (int)_reader["SongID"];
                 searchResult.SongName = (string)_reader["Name"];
                 searchResult.Artist = (string)_reader["Artist"];
-                searchResult.Album = (string)_reader["AlbumID"].ToString();
+                searchResult.Album = (string)_reader["AlbumName"];
                 searchResult.Year = (int)_reader["Year"];
                 searchResult.Genre = (string)_reader["Genre"];
                 searchResult.Subgenre = (string)_reader["SubGenre"];
@@ -675,7 +645,6 @@ namespace WindesMusic
             return listResult;
         }
 
-        //Returns a playlist with the created ID and Name
         public Playlist GetHistoryPlaylist(int userID, string name)
         {
             OpenConnection();
@@ -707,9 +676,9 @@ namespace WindesMusic
         {
             OpenConnection();
             _command.Parameters.Clear();
-            _command.CommandText = "SELECT Song.SongID, Song.Name, Song.Artist, Song.AlbumID, Song.Year, Song.Genre, Song.SubGenre " +
-                "FROM Song LEFT JOIN History ON Song.SongID=History.SongID WHERE History.UserID=@ID " +
-                "GROUP BY Song.SongID, Song.Name, Song.Artist, Song.AlbumID, Song.Year, Song.Genre, Song.SubGenre";
+            _command.CommandText = "SELECT Song.SongID, Song.Name, Song.Artist, Album.AlbumName, Song.Year, Song.Genre, Song.SubGenre " +
+                "FROM Song LEFT JOIN History ON Song.SongID=History.SongID LEFT JOIN Album ON Song.AlbumID = Album.AlbumID WHERE History.UserID=@ID " +
+                "GROUP BY Song.SongID, Song.Name, Song.Artist, Album.AlbumName, Song.Year, Song.Genre, Song.SubGenre";
 
             var idParam = _command.CreateParameter();
             idParam.ParameterName = "@ID";
@@ -724,7 +693,7 @@ namespace WindesMusic
                 searchResult.SongID = (int)_reader["SongID"];
                 searchResult.SongName = (string)_reader["Name"];
                 searchResult.Artist = (string)_reader["Artist"];
-                searchResult.Album = (string)_reader["AlbumID"].ToString();
+                searchResult.Album = (string)_reader["AlbumName"];
                 searchResult.Year = (int)_reader["Year"];
                 searchResult.Genre = (string)_reader["Genre"];
                 searchResult.Subgenre = (string)_reader["SubGenre"];
@@ -732,32 +701,6 @@ namespace WindesMusic
             }
             _connection.Close();
             return listResult;
-        }
-
-        public Song getSong(int songID)
-        {
-            OpenConnection();
-            _command.Parameters.Clear();
-            _command.CommandText = "SELECT * FROM Song  WHERE SongID=@ID";
-
-            var idParam = _command.CreateParameter();
-            idParam.ParameterName = "@ID";
-            idParam.Value = songID;
-            _command.Parameters.Add(idParam); ;
-
-            _reader = _command.ExecuteReader();
-            Song searchResult = new Song();
-            while (_reader.Read())
-            {
-                searchResult.SongID = (int)_reader["SongID"];
-                searchResult.SongName = (string)_reader["Name"];
-                searchResult.Artist = (string)_reader["Artist"];
-                searchResult.Album = (string)_reader["AlbumName"];
-                searchResult.Year = (int)_reader["Year"];
-                searchResult.Genre = (string)_reader["Genre"];
-            }
-            _connection.Close();
-            return searchResult;
         }
 
         public string SubmitSongForAdvertising(int songId, int userId)
@@ -815,13 +758,13 @@ namespace WindesMusic
             var UserID = _command.CreateParameter();
             UserID.ParameterName = "@UserID";
             UserID.Value = GetUserData(Properties.Settings.Default.UserID).UserID;
-            
+
 
             OpenConnection();
             _command.Parameters.Clear();
             List<string> result = new List<string>();
 
-            _command.CommandText = "SELECT COUNT(*) Count, s.Name Name FROM History h LEFT JOIN Song s on h.SongID = s.SongID WHERE h.UserID = @UserID GROUP BY s.Name;";
+            _command.CommandText = "SELECT COUNT(*) Count, s.Name Name FROM History h LEFT JOIN Song s on h.SongID = s.SongID WHERE h.UserID = @UserID GROUP BY s.Name ORDER BY Count desc;";
             _command.Parameters.Add(UserID);
             _reader = _command.ExecuteReader();
 
@@ -830,9 +773,9 @@ namespace WindesMusic
             {
                 try
                 {
-                    result.Add(_reader["Count"].ToString()) ;
+                    result.Add(_reader["Count"].ToString());
                     i++;
-                    result.Add( (string)_reader["Name"]);
+                    result.Add((string)_reader["Name"]);
                 }
                 catch (Exception e) { Console.WriteLine(e); }
             }
@@ -840,7 +783,163 @@ namespace WindesMusic
 
             return result;
         }
-      
+
+        //SELECT COUNT(*), s.Genre FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = 1 GROUP BY s.Genre;
+        public List<string> GetGenreStatistic()
+        {
+            var UserID = _command.CreateParameter();
+            UserID.ParameterName = "@UserID";
+            UserID.Value = GetUserData(Properties.Settings.Default.UserID).UserID;
+
+
+            OpenConnection();
+            _command.Parameters.Clear();
+            List<string> result = new List<string>();
+
+            _command.CommandText = "SELECT COUNT(*) Count, s.Genre Genre FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = @UserID GROUP BY s.Genre ORDER BY Count desc;";
+            _command.Parameters.Add(UserID);
+            _reader = _command.ExecuteReader();
+
+
+            for (int i = 0; _reader.Read(); i++)
+            {
+                try
+                {
+                    result.Add(_reader["Count"].ToString());
+                    i++;
+                    result.Add((string)_reader["Genre"]);
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            _connection.Close();
+
+            return result;
+        }
+
+        //SELECT COUNT(*), s.Artist FROM History h LEFT JOIN Song s on h.SongID = s.SongID WHERE h.UserID = 1 GROUP BY s.Artist;
+        public List<string> GetArtistStatistic()
+        {
+            var UserID = _command.CreateParameter();
+            UserID.ParameterName = "@UserID";
+            UserID.Value = GetUserData(Properties.Settings.Default.UserID).UserID;
+
+
+            OpenConnection();
+            _command.Parameters.Clear();
+            List<string> result = new List<string>();
+
+            _command.CommandText = "SELECT COUNT(*) Count, s.Artist Artist FROM History h LEFT JOIN Song s on h.SongID = s.SongID WHERE h.UserID = @UserID GROUP BY s.Artist ORDER BY Count desc;";
+            _command.Parameters.Add(UserID);
+            _reader = _command.ExecuteReader();
+
+
+            for (int i = 0; _reader.Read(); i++)
+            {
+                try
+                {
+                    result.Add(_reader["Count"].ToString());
+                    i++;
+                    result.Add((string)_reader["Artist"]);
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            _connection.Close();
+
+            return result;
+        }
+
+        //SELECT COUNT(*), s.Year FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = 1 GROUP BY s.Year;
+        public List<int> GetPeriodStatistic()
+        {
+            var UserID = _command.CreateParameter();
+            UserID.ParameterName = "@UserID";
+            UserID.Value = GetUserData(Properties.Settings.Default.UserID).UserID;
+
+
+            OpenConnection();
+            _command.Parameters.Clear();
+
+
+            _command.CommandText = "SELECT COUNT(*) Count, s.Year Year FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = @UserID GROUP BY s.Year ORDER BY Count desc";
+            _command.Parameters.Add(UserID);
+            _reader = _command.ExecuteReader();
+
+            List<int> dbResult = new List<int> { };
+            for (int i = 0; _reader.Read(); i++)
+            {
+                try
+                {
+                    dbResult.Add((int)_reader["Count"]);
+                    i++;
+                    dbResult.Add((int)_reader["Year"]);
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+            }
+            _connection.Close();
+
+            List<int> result = new List<int>();
+            for (int i = 0; i < dbResult.Count; i += 2)
+            {
+                int year = dbResult[i + 1];
+                int value = dbResult[i];
+
+                if (result.Contains(year))
+                {
+                    int temp = result.IndexOf(year);
+                    int tempValue = result[temp + 1];
+                    result.RemoveAt(temp + 1);
+                    result.RemoveAt(temp);
+
+                    value += tempValue;
+                }
+                result.Add(year);
+                result.Add(value);
+            }
+
+            return result;
+        }
+
+        public List<DateTimePoint> getSongsListened()
+        {
+            var UserID = _command.CreateParameter();
+            UserID.ParameterName = "@UserID";
+            UserID.Value = GetUserData(Properties.Settings.Default.UserID).UserID;
+
+
+            OpenConnection();
+            _command.Parameters.Clear();
+            List<DateTimePoint> result = new List<DateTimePoint>();
+
+            _command.CommandText = "SELECT COUNT(*) Count, CONVERT(VARCHAR(10), [DateTime], 103) Dates FROM History WHERE UserID = @UserID and CONVERT(VARCHAR(10), [DateTime], 120) > (SELECT DATEADD(week, DATEDIFF(week,0,GETDATE())-1,-1) BeginningOfLastWeek) GROUP BY CONVERT(VARCHAR(10), [DateTime], 103) order by CONVERT(VARCHAR(10), [DateTime], 103) asc;";
+            _command.Parameters.Add(UserID);
+            _reader = _command.ExecuteReader();
+
+            DateTimePoint dateTimePoint;
+            DateTime dateTime;
+            for (int i = 0; _reader.Read(); i++)
+            {
+                try
+                {
+                    // 11/12/2019
+                    dateTimePoint = new DateTimePoint();
+                    int year = int.Parse(((string)_reader["Dates"]).Substring(6, 4));
+                    int month = int.Parse(((string)_reader["Dates"]).Substring(3, 2));
+                    int day = int.Parse(((string)_reader["Dates"]).Substring(0, 2));
+
+                    dateTime = new DateTime(year, month, day);
+                    dateTimePoint.DateTime = dateTime;
+                    dateTimePoint.Value = (int)_reader["Count"];
+                    result.Add(dateTimePoint);
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+                i++;
+            }
+            _connection.Close();
+
+            return result;
+        }
+
+
         public List<Song> GetRecommendedAdsForPlaylist(string mostCommonGenre, string secondMostCommonGenre, int playlistID)
         {
             OpenConnection();
@@ -910,7 +1009,7 @@ namespace WindesMusic
 
             OpenConnection();
             // _command.Parameters.Clear();
-            if(ad)
+            if (ad)
             {
                 _command.CommandText = "UPDATE AdvertisedSong SET TimesClicked = TimesClicked + 1 WHERE SongID=@SongID";
                 if (_command.ExecuteNonQuery() > 0)
@@ -1023,7 +1122,7 @@ namespace WindesMusic
             catch (Exception)
             {
                 _connection.Close();
-                return "Not enough credits to submit advertisement";
+                return "Not enough credits to donate..";
             }
         }
     }

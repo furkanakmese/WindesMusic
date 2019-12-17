@@ -91,7 +91,7 @@
                     </Border>
 
                     <Border BorderThickness="0" HorizontalAlignment="Center" Grid.Column="4">
-                        <Button BorderThickness="0" Padding="0" x:Name="btnRepeat" Cursor="Hand" Background="DimGray">
+                        <Button BorderThickness="0" Padding="0" x:Name="btnRepeat" Cursor="Hand" Background="DimGray" Click="RepeatButtonClick">
                             <materialDesign:PackIcon Name="PackIconRepeat" Kind="RepeatOff">
                                 <materialDesign:PackIcon.LayoutTransform>
                                     <ScaleTransform ScaleX="2" ScaleY="2"/>

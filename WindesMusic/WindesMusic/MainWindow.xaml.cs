@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -27,17 +28,18 @@ namespace WindesMusic
     {
         public AudioPlayer audioPlayer;
         private DispatcherTimer dispatcherTimer;
-        private User user;
+        public User user;
         private Database db = new Database();
         private Account account;
-        private PlaylistSongsPage playlistSongs = new PlaylistSongsPage();
+        public PlaylistSongsPage playlistSongs = new PlaylistSongsPage();
         private QueuePage queuePage;
         private double sliderVolume;
 
         public MainWindow()
         {
             InitializeComponent();
-            account = new Account(this);
+            Playlists playlists = new Playlists(this);
+            account = new Account();
             sliderVolume = sldVolume.Value;
             audioPlayer = new AudioPlayer(this);
             queuePage = new QueuePage(this);
@@ -49,7 +51,6 @@ namespace WindesMusic
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             dispatcherTimer.Start();
 
-            Playlists playlists = new Playlists();
             Main.Content = playlists;
             account.logout += () => {
                 LoginWindow login = new LoginWindow();
@@ -57,8 +58,9 @@ namespace WindesMusic
                 this.Close();
             };
 
+            TextInfo info = new CultureInfo("en-US", false).TextInfo;
             inputSearch.KeyDown += (object sender, KeyEventArgs e) => {
-                if (e.Key == Key.Enter) Main.Content = new SearchResults(inputSearch.Text, user, this);
+                if (e.Key == Key.Enter) Main.Content = new SearchResults(info.ToTitleCase(inputSearch.Text), user, this);
             };
             //btnPlay.Click += (object sender, RoutedEventArgs e) => audioPlayer.OnButtonPlayClick(sender, e);
             //btnMute.Click += (object sender, RoutedEventArgs e) => audioPlayer.Mute();
@@ -80,7 +82,7 @@ namespace WindesMusic
                 audioPlayer.SetVolume(value);
             };
             //btnAccount.Click += (object sender, RoutedEventArgs e) => Main.Content = account;
-            btnPlaylists.Click += (object sender, RoutedEventArgs e) => Main.Content = new Playlists();
+            btnPlaylists.Click += (object sender, RoutedEventArgs e) => Main.Content = new Playlists(this);
         }
         
         private void PlaceInSongSliderDragStarted (object sender, DragStartedEventArgs e) => dispatcherTimer.Stop();
@@ -141,6 +143,31 @@ namespace WindesMusic
             MainGrid.Effect = new BlurEffect{ Radius = 0 };
         }
 
+        public void RerenderPlaylists()
+        {
+            PlaylistList.Children.Clear();
+            user = db.GetUserData(Properties.Settings.Default.UserID);
+
+            playlistSongs.rerender += (playlist) => { playlistSongs.playlistToUse = playlist; playlistSongs.reinitialize(playlist, this, user); };
+            queuePage.rerender += (queuePg) => { queuePage = queuePg; queuePage.InitialiseQueuePage(); };
+            Thickness thickness = new Thickness(15, 0, 0, 5);
+            foreach (var item in user.Playlists)
+            {
+                var PlaylistButton = new Button
+                {
+                    //Style = StaticResource MenuButton,
+                    Name = $"_{item.PlaylistID}",
+                    Content = $"{item.PlaylistName}",
+                    FontSize = 23,
+                    Margin = thickness
+                };
+                StaticResourceExtension menuButton = new StaticResourceExtension("MenuButton");
+                PlaylistButton.Style = (Style)FindResource("MenuButton");
+                PlaylistButton.Click += ButtonClickPlaylist;
+                PlaylistList.Children.Add(PlaylistButton);
+            }
+        }
+
         private void ButtonClickPlaylist(object sender, RoutedEventArgs e)
         {
             Button _ButtonPlaylist = sender as Button;
@@ -166,7 +193,7 @@ namespace WindesMusic
                 }
                 else
                 {
-                    Playlists playlists = new Playlists();
+                    Playlists playlists = new Playlists(this);
                     Main.Content = playlists;
                 }
             }
@@ -220,7 +247,19 @@ namespace WindesMusic
                 PackIconVolume.Kind = MaterialDesignThemes.Wpf.PackIconKind.VolumeHigh;
                 sldVolume.Value = sliderVolume;
             }
-            
+    
+        private void RepeatButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (MusicQueue.IsRepeat == false)
+            {
+                btnRepeat.Background = new SolidColorBrush(System.Windows.Media.Colors.DarkOrange);
+                MusicQueue.IsRepeat = true;
+            }
+            else
+            {
+                btnRepeat.Background = new SolidColorBrush(System.Windows.Media.Colors.LightGray);
+                MusicQueue.IsRepeat = false;
+            }
         }
 
         private void NewPlaylistButtonClick(object sender, RoutedEventArgs e)

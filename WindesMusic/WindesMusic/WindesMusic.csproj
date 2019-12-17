@@ -98,9 +98,6 @@
     <Compile Include="Playlists.xaml.cs">
       <DependentUpon>Playlists.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PlaylistsWindow.xaml.cs">
-      <DependentUpon>PlaylistsWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="AudioPlayer.cs" />
     <Compile Include="QueuePage.xaml.cs">
       <DependentUpon>QueuePage.xaml</DependentUpon>
@@ -157,10 +154,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PlaylistSongsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="PlaylistsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
