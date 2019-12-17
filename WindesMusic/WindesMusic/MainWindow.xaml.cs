@@ -233,8 +233,8 @@ namespace WindesMusic
         private void MuteButtonClick(object sender, RoutedEventArgs e)
         {
             audioPlayer.Mute();
-            
-            if(PackIconVolume.Kind == MaterialDesignThemes.Wpf.PackIconKind.VolumeHigh ||
+
+            if (PackIconVolume.Kind == MaterialDesignThemes.Wpf.PackIconKind.VolumeHigh ||
                PackIconVolume.Kind == MaterialDesignThemes.Wpf.PackIconKind.VolumeMedium ||
                PackIconVolume.Kind == MaterialDesignThemes.Wpf.PackIconKind.VolumeLow)
             {
@@ -247,6 +247,7 @@ namespace WindesMusic
                 PackIconVolume.Kind = MaterialDesignThemes.Wpf.PackIconKind.VolumeHigh;
                 sldVolume.Value = sliderVolume;
             }
+        }
     
         private void RepeatButtonClick(object sender, RoutedEventArgs e)
         {

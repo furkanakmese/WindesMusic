@@ -9,7 +9,6 @@
         ResizeMode="NoResize"
         Title="" Height="250" Width="400"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize"
         Background="DarkGray">
     <Grid>
         <Label x:Name="TextTop" Content="Create a new playlist"  HorizontalContentAlignment="Center" HorizontalAlignment="Center" Height="47" Margin="20" VerticalAlignment="Top" Width="400"  FontSize="30" FontFamily="Arial"/>
