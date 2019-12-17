@@ -23,7 +23,7 @@ namespace UnitTestWindesMusic
         public void TestRegisterEmailAlreadyExists()
         {
             Database db = new Database();
-            User resultUser = db.Register("test", "test@test.com", "test123");
+            User resultUser = db.Register("test", "test@test.com", "test123", "testSalt");
             Assert.AreEqual(resultUser, new User());
         }
 

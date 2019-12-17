@@ -11,7 +11,7 @@ namespace UnitTestWindesMusic
         public void TestAudioStartPlayingAndPauses()
         {
             //Play song for 3 seconds.
-            AudioPlayer audioPlayer = new AudioPlayer();
+            AudioPlayer audioPlayer = new AudioPlayer(new MainWindow());
             audioPlayer.OnButtonPlayClick(this, new System.EventArgs());
             Thread.Sleep(3000);
 
@@ -29,7 +29,7 @@ namespace UnitTestWindesMusic
         public void TestAudioPlaysAfterPause()
         {
             //play song for 3 seconds.
-            AudioPlayer audioPlayer = new AudioPlayer();
+            AudioPlayer audioPlayer = new AudioPlayer(new MainWindow());
             audioPlayer.OnButtonPlayClick(this, new System.EventArgs());
             Thread.Sleep(3000);
 
@@ -47,7 +47,7 @@ namespace UnitTestWindesMusic
         public void TestAudioStopsPlayingByButton()
         {
             //play song for 3 seconds.
-            AudioPlayer audioPlayer = new AudioPlayer();
+            AudioPlayer audioPlayer = new AudioPlayer(new MainWindow());
             audioPlayer.OnButtonPlayClick(this, new System.EventArgs());
             Thread.Sleep(3000);
 
@@ -61,7 +61,7 @@ namespace UnitTestWindesMusic
         public void TestAudioStopsPlayingAtEndOfSong()
         {
             //play song for 1 second.
-            AudioPlayer audioPlayer = new AudioPlayer();
+            AudioPlayer audioPlayer = new AudioPlayer(new MainWindow());
             audioPlayer.OnButtonPlayClick(this, new System.EventArgs());
             Thread.Sleep(1000);
 
@@ -75,7 +75,7 @@ namespace UnitTestWindesMusic
         public void TestSliderValueToRightPlaceInSong()
         {
             //play song.
-            AudioPlayer audioPlayer = new AudioPlayer();
+            AudioPlayer audioPlayer = new AudioPlayer(new MainWindow());
             audioPlayer.OnButtonPlayClick(this, new System.EventArgs());
 
             //pause song so an accurate place in song can be measured.
