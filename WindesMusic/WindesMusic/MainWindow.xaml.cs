@@ -13,6 +13,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -32,14 +33,14 @@ namespace WindesMusic
         private Account account;
         public PlaylistSongsPage playlistSongs = new PlaylistSongsPage();
         private QueuePage queuePage;
-
+        private double sliderVolume;
 
         public MainWindow()
         {
             InitializeComponent();
             Playlists playlists = new Playlists(this);
             account = new Account();
-
+            sliderVolume = sldVolume.Value;
             audioPlayer = new AudioPlayer(this);
             queuePage = new QueuePage(this);
             //  DispatcherTimer setup
@@ -61,10 +62,24 @@ namespace WindesMusic
             inputSearch.KeyDown += (object sender, KeyEventArgs e) => {
                 if (e.Key == Key.Enter) Main.Content = new SearchResults(info.ToTitleCase(inputSearch.Text), user, this);
             };
-            btnPlay.Click += (object sender, RoutedEventArgs e) => audioPlayer.OnButtonPlayClick(sender, e);
-            btnMute.Click += (object sender, RoutedEventArgs e) => audioPlayer.Mute();
+            //btnPlay.Click += (object sender, RoutedEventArgs e) => audioPlayer.OnButtonPlayClick(sender, e);
+            //btnMute.Click += (object sender, RoutedEventArgs e) => audioPlayer.Mute();
             sldVolume.ValueChanged += (object sender, RoutedPropertyChangedEventArgs<double> e) => {
-                audioPlayer.SetVolume((float)e.NewValue / 100);
+                float value = (float)e.NewValue / 100;
+                if(value >= .75)
+                {
+                    PackIconVolume.Kind = MaterialDesignThemes.Wpf.PackIconKind.VolumeHigh;
+                }else if(value >= .25 && value < .75)
+                {
+                    PackIconVolume.Kind = MaterialDesignThemes.Wpf.PackIconKind.VolumeMedium;
+                }else if(value > 0 && value < .25)
+                {
+                    PackIconVolume.Kind = MaterialDesignThemes.Wpf.PackIconKind.VolumeLow;
+                }else if(value == 0)
+                {
+                    PackIconVolume.Kind = MaterialDesignThemes.Wpf.PackIconKind.VolumeOff;
+                }
+                audioPlayer.SetVolume(value);
             };
             //btnAccount.Click += (object sender, RoutedEventArgs e) => Main.Content = account;
             btnPlaylists.Click += (object sender, RoutedEventArgs e) => Main.Content = new Playlists(this);
@@ -124,6 +139,8 @@ namespace WindesMusic
                 PlaylistButton.Click += ButtonClickPlaylist;
                 PlaylistList.Children.Add(PlaylistButton);
             }
+
+            MainGrid.Effect = new BlurEffect{ Radius = 0 };
         }
 
         public void RerenderPlaylists()
@@ -182,21 +199,55 @@ namespace WindesMusic
             }
         }
 
+        private void PlayButtonClick(object sender, RoutedEventArgs e)
+        {
+            audioPlayer.OnButtonPlayClick(sender, e);
+            if(PackIconPlay.Kind == MaterialDesignThemes.Wpf.PackIconKind.Play)
+            {
+                PackIconPlay.Kind = MaterialDesignThemes.Wpf.PackIconKind.Pause;
+            }
+            else
+            {
+                PackIconPlay.Kind = MaterialDesignThemes.Wpf.PackIconKind.Play;
+            }
+            
+        }
+
         private void ShuffleButtonClick(object sender, RoutedEventArgs e)
         {
             if (MusicQueue.IsShuffle == false)
             {
                 btnShuffle.Background = new SolidColorBrush(System.Windows.Media.Colors.DarkOrange);
+                PackIconShuffle.Kind = MaterialDesignThemes.Wpf.PackIconKind.ShuffleVariant;
                 MusicQueue.ShuffleSongs();
                 MusicQueue.IsShuffle = true;
             }
             else
             {
-                btnShuffle.Background = new SolidColorBrush(System.Windows.Media.Colors.LightGray);
+                btnShuffle.Background = new SolidColorBrush(System.Windows.Media.Colors.DimGray);
+                PackIconShuffle.Kind = MaterialDesignThemes.Wpf.PackIconKind.ShuffleDisabled;
                 MusicQueue.IsShuffle = false;
             }
         }
 
+        private void MuteButtonClick(object sender, RoutedEventArgs e)
+        {
+            audioPlayer.Mute();
+            
+            if(PackIconVolume.Kind == MaterialDesignThemes.Wpf.PackIconKind.VolumeHigh ||
+               PackIconVolume.Kind == MaterialDesignThemes.Wpf.PackIconKind.VolumeMedium ||
+               PackIconVolume.Kind == MaterialDesignThemes.Wpf.PackIconKind.VolumeLow)
+            {
+                PackIconVolume.Kind = MaterialDesignThemes.Wpf.PackIconKind.VolumeOff;
+                sliderVolume = sldVolume.Value;
+                sldVolume.Value = 0;
+            }
+            else
+            {
+                PackIconVolume.Kind = MaterialDesignThemes.Wpf.PackIconKind.VolumeHigh;
+                sldVolume.Value = sliderVolume;
+            }
+    
         private void RepeatButtonClick(object sender, RoutedEventArgs e)
         {
             if (MusicQueue.IsRepeat == false)
@@ -215,7 +266,9 @@ namespace WindesMusic
         {
             NewPlaylistWindow NewPlaylist = new NewPlaylistWindow();
             NewPlaylist.Show();
-            NewPlaylist.Closed += (object sender2, EventArgs e2) => OnContentRendered(e);
+            
+            MainGrid.Effect = new BlurEffect { Radius = 10 };
+            NewPlaylist.Closed += (object sender2, EventArgs e2) => OnContentRendered(e); 
         }
         private void HistoryPlaylistButtonClick(object sender, RoutedEventArgs e)
         {
@@ -230,6 +283,14 @@ namespace WindesMusic
         private void DailyPlaylistButtonClick(object sender, RoutedEventArgs e)
         {
             Main.Content = new DailyPlaylistPage(user, this);
+        }
+
+        private void Btn_MouseEnter(object sender, MouseEventArgs e)
+        {
+            DropShadowEffect shadow = new DropShadowEffect { BlurRadius = 2, Opacity = .5 };
+            Console.WriteLine(e.Source.GetHashCode());
+            
+            
         }
     }
 }

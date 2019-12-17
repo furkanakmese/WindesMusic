@@ -5,17 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WindesMusic"
         mc:Ignorable="d"
-        Title="LoginWindow" Height="800" Width="1400"
+        Title="LoginWindow" Height="600" Width="500"
         FontFamily="Arial"
         Background="{DynamicResource MainColor}"
         WindowStartupLocation="CenterScreen">
 
     <Grid x:Name="Login">
-        <Label Content="Windes Music"  HorizontalContentAlignment="Center" HorizontalAlignment="Center" Height="47" Margin="300,49,289.333,0" VerticalAlignment="Top" Width="300"  FontSize="40" FontFamily="Arial" Foreground="White"/>
-        <TextBox Name="InputEmail" Tag="Email" HorizontalAlignment="Center" BorderThickness="0,0,0,1" Height="25" Margin="150" TextWrapping="Wrap"  VerticalAlignment="Top" Width="200" FontSize="15"/>
-        <PasswordBox Name="InputPassword" HorizontalAlignment="Center" Margin="0,-350,0,0" VerticalAlignment="Center" Width="200" Height="25"/>
-        <Button Name="LoginBtn" Click="LoginBtn_Click" Content="Log in" HorizontalAlignment="Center" Margin="0,280,0,0" VerticalAlignment="Top" Width="150" Height="30" FontSize="20"/>
-        <TextBlock Name="lblMessage" HorizontalAlignment="Center" Margin="0,250,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" FontSize="15"/>
-        <Button Content="No account? register" HorizontalAlignment="Center" Margin="0,340,0,0" VerticalAlignment="Top" Width="200" Click="Button_Click" FontSize="20"/>
+        <StackPanel Orientation="Vertical">
+            <Label Content="Windes Music"  HorizontalContentAlignment="Center" HorizontalAlignment="Center" Height="47"  Width="300"  FontSize="40" FontFamily="Arial" Foreground="White" Margin="0,100,0,0"/>
+            <TextBox Name="InputEmail" Tag="Email" HorizontalAlignment="Center" BorderThickness="0,0,0,1" Height="30" TextWrapping="Wrap"  Width="200" FontSize="15" Margin="0,50,0,0" Foreground="White"/>
+            <PasswordBox Name="InputPassword" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" Height="30" Margin="0,25,0,0" Foreground="White"/>
+            <TextBlock Name="lblMessage" HorizontalAlignment="Center" Foreground="White" TextWrapping="Wrap" FontSize="15" Margin="0,25,0,0"/>
+            <Button Name="LoginBtn" Click="LoginBtn_Click" Content="Log in" HorizontalAlignment="Center" Width="200" Height="30" FontSize="20" Margin="0,5,0,0"/>
+            <TextBlock HorizontalAlignment="Center" Cursor="Hand" Text="No account? Click here." FontSize="15" Foreground="White" PreviewMouseDown="Button_Click" Margin="0,5,0,0"/>
+        </StackPanel>
+        
     </Grid>
 </Window>
