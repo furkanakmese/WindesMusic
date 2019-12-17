@@ -21,11 +21,12 @@ namespace UnitTestWindesMusic
             User user = new User();
             user = db.GetUserData(1);
             Playlist playlist = user.Playlists.Where(i => i.PlaylistID == 2).FirstOrDefault();
+            Song song = playlist.SongPlaylist[1];
             int AmountOfSongs = playlist.SongPlaylist.Count();
 
             //Act
             //Add the song to the playlist and refresh the playlist
-            playlist.AddSongToPlaylist(1);
+            playlist.AddSongToPlaylist(song);
             playlist.RefreshPlaylist();
 
             //Assert
@@ -43,17 +44,18 @@ namespace UnitTestWindesMusic
             User user = new User();
             user = db.GetUserData(1);
             Playlist playlist = user.Playlists.Where(i => i.PlaylistID == 2).FirstOrDefault();
+            Song song = playlist.SongPlaylist[1];
 
             //Act
             //Add the song to the playlist and refresh the playlist
-            playlist.AddSongToPlaylist(4);
+            playlist.AddSongToPlaylist(song);
             playlist.RefreshPlaylist();
 
             //Assert
             //Check if the amount of songs has increased by one
-            Song song = new Song();
-            song = playlist.SongPlaylist.Last();
-            Assert.IsTrue(song.SongID == 4);
+            Song song1 = new Song();
+            song1 = playlist.SongPlaylist.Last();
+            Assert.IsTrue(song.SongID == song1.SongID);
         }
 
         [TestMethod]

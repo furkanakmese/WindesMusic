@@ -16,11 +16,14 @@ namespace UnitTestWindesMusic
         {
             //Arrange
             //Create int to see how many songs were in the queue
+            Database db = new Database();
             int AmountOfSongs = MusicQueue.SongQueue.Count();
+            List<Song> songs = db.GetSongsInPlaylist(1);
+            Song song = songs[1];
 
             //Act
             //Add song with id 1 to the queue
-            MusicQueue.AddSongToQueue(1);
+            MusicQueue.AddSongToQueue(song);
 
             //Assert
             //Check if amount of songs is 1 more than earlier
@@ -33,16 +36,19 @@ namespace UnitTestWindesMusic
         {
             //Arrange
             //Empty queue and add song with id 5 to the queue
+            Database db = new Database();
             MusicQueue.SongQueue.Clear();
-            MusicQueue.AddSongToQueue(5);
+            List<Song> songs = db.GetSongsInPlaylist(1);
+            Song song = songs[1];
+            MusicQueue.AddSongToQueue(song);
 
             //Act
             //Get Song from Queue
-            int SongID = MusicQueue.SongQueue.Peek();
+            Song song1 = MusicQueue.SongQueue.Peek();
 
             //Assert
             //Check if the SongIDs match
-            Assert.IsTrue(SongID == 5);
+            Assert.IsTrue(song.SongID == song1.SongID);
         }
 
         [TestMethod]
@@ -50,10 +56,15 @@ namespace UnitTestWindesMusic
         {
             //Arrange
             //Empty queue and add songs with id 5, 3 and 2 to the queue
+            Database db = new Database();
             MusicQueue.SongQueue.Clear();
-            MusicQueue.AddSongToQueue(5);
-            MusicQueue.AddSongToQueue(3);
-            MusicQueue.AddSongToQueue(2);
+            List<Song> songs = db.GetSongsInPlaylist(1);
+            Song song1 = songs[1];
+            Song song2 = songs[2];
+            Song song3 = songs[3];
+            MusicQueue.AddSongToQueue(song1);
+            MusicQueue.AddSongToQueue(song2);
+            MusicQueue.AddSongToQueue(song3);
             int AmountOfSongs = MusicQueue.SongQueue.Count();
 
             //Act
@@ -70,17 +81,20 @@ namespace UnitTestWindesMusic
         public void TestGetCorrectSongFromQueue()
         {
             //Arrange
-            //Empty queue and add song with id 3 to the queue
+            //Empty queue and add song to the queue
+            Database db = new Database();
             MusicQueue.SongQueue.Clear();
-            MusicQueue.AddSongToQueue(3);
+            List<Song> songs = db.GetSongsInPlaylist(1);
+            Song song1 = songs[1];
+            MusicQueue.AddSongToQueue(song1);
 
             //Act
             //Get Song from Queue
-            int SongID = MusicQueue.GetSongFromQueue();
+            Song song = MusicQueue.GetSongFromQueue();
 
             //Assert
             //Check if the SongIDs match
-            Assert.IsTrue(SongID == 3);
+            Assert.IsTrue(song1.SongID == song.SongID);
         }
 
         [TestMethod]
@@ -88,11 +102,14 @@ namespace UnitTestWindesMusic
         {
             //Arrange
             //Create int to see how many songs were in the queue
+            Database db = new Database();
+            List<Song> songs = db.GetSongsInPlaylist(1);
+            Song song = songs[1];
             int AmountOfSongs = MusicQueue.PreviousSongs.Count();
 
             //Act
             //Add song with id 1 to the queue
-            MusicQueue.AddSongToPreviousQueue(1);
+            MusicQueue.AddSongToPreviousQueue(song);
 
             //Assert
             //Check if amount of songs is 1 more than earlier
@@ -105,16 +122,19 @@ namespace UnitTestWindesMusic
         {
             //Arrange
             //Empty queue and add song with id 5 to the queue
+            Database db = new Database();
+            List<Song> songs = db.GetSongsInPlaylist(1);
+            Song song = songs[1];
             MusicQueue.PreviousSongs.Clear();
-            MusicQueue.AddSongToPreviousQueue(5);
+            MusicQueue.AddSongToPreviousQueue(song);
 
             //Act
             //Get Song from Queue
-            int SongID = MusicQueue.PreviousSongs.Peek();
+            Song Song1 = MusicQueue.PreviousSongs.Peek();
 
             //Assert
             //Check if the SongIDs match
-            Assert.IsTrue(SongID == 5);
+            Assert.IsTrue(song.SongID == Song1.SongID);
         }
 
         [TestMethod]
@@ -122,10 +142,15 @@ namespace UnitTestWindesMusic
         {
             //Arrange
             //Empty queue and add songs with id 5, 3 and 2 to the queue
+            Database db = new Database();
             MusicQueue.PreviousSongs.Clear();
-            MusicQueue.AddSongToPreviousQueue(5);
-            MusicQueue.AddSongToPreviousQueue(3);
-            MusicQueue.AddSongToPreviousQueue(2);
+            List<Song> songs = db.GetSongsInPlaylist(1);
+            Song song1 = songs[1];
+            Song song2 = songs[2];
+            Song song3 = songs[3];
+            MusicQueue.AddSongToPreviousQueue(song1);
+            MusicQueue.AddSongToPreviousQueue(song2);
+            MusicQueue.AddSongToPreviousQueue(song3);
             int AmountOfSongs = MusicQueue.PreviousSongs.Count();
 
             //Act
@@ -143,16 +168,19 @@ namespace UnitTestWindesMusic
         {
             //Arrange
             //Empty queue and add song with id 3 to the queue
+            Database db = new Database();
+            List<Song> songs = db.GetSongsInPlaylist(1);
+            Song song1 = songs[1];
             MusicQueue.PreviousSongs.Clear();
-            MusicQueue.AddSongToPreviousQueue(3);
+            MusicQueue.AddSongToPreviousQueue(song1);
 
             //Act
             //Get Song from Queue
-            int SongID = MusicQueue.PreviousSongs.Pop();
+            Song song = MusicQueue.PreviousSongs.Pop();
 
             //Assert
             //Check if the SongIDs match
-            Assert.IsTrue(SongID == 3);
+            Assert.IsTrue(song1.SongID == song.SongID);
         }
     }
 }
