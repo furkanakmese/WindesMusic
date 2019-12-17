@@ -64,6 +64,7 @@ namespace WindesMusic
             SolidColorBrush whiteText = new SolidColorBrush(System.Windows.Media.Colors.White);
             StackPanel sp = new StackPanel();
             sp.Orientation = Orientation.Horizontal;
+            
             var PlaylistBlock = new TextBlock
             {
                 Text = $"{playlistToUse.PlaylistName}",
@@ -76,12 +77,17 @@ namespace WindesMusic
                 Name = $"_{_PlaylistID}",
                 Content = "Play",
                 FontSize = 30,
-                Margin = new Thickness(30, 10, 0, 5)
+                Margin = new Thickness(0, 10, 25, 0),
+                Padding = new Thickness(5),
+                BorderThickness = new Thickness(0),
+                Height = 50,
+                Width = 100
             };
             PlayPlaylistButton.Click += PlayPlaylist;
 
-            sp.Children.Add(PlaylistBlock);
             sp.Children.Add(PlayPlaylistButton);
+            sp.Children.Add(PlaylistBlock);
+
             PlaylistName.Children.Add(sp);
 
             OrderList.RowDefinitions.Add(new RowDefinition());
@@ -154,13 +160,19 @@ namespace WindesMusic
                 RowDefinitionCollection RowNames = SongList.RowDefinitions;
                 Array RowArray = RowNames.ToArray();
 
+                SolidColorBrush btnTextColor = new SolidColorBrush();
+                btnTextColor.Color = Color.FromRgb(0,0,0);
+
                 // Add the play button to the Songlist grid
                 var PlayButton = new Button
                 {
                     Name = $"__{playlistSong.SongID}",
                     Content = "Play",
                     Margin = new Thickness(5, 0, 0, 5),
+                    Padding = new Thickness(5),
+                    BorderThickness = new Thickness(0),
                     FontSize = 15,
+                    
                     Tag = playlistSong
                 };
                 Grid.SetRow(PlayButton, i);
@@ -252,6 +264,8 @@ namespace WindesMusic
                     Name = $"__{playlistSong.SongID}",
                     Content = "Play",
                     Margin = new Thickness(5, 0, 0, 5),
+                    Padding = new Thickness(5),
+                    BorderThickness = new Thickness(0),
                     FontSize = 15,
                     Tag = playlistSong
                 };

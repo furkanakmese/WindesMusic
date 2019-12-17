@@ -48,19 +48,24 @@ namespace WindesMusic
                 Text = $"{playlist.PlaylistName}",
                 FontSize = 25,
                 Foreground = whiteText,
-                Margin = new Thickness(0, 10, 0, 5)
+                Margin = new Thickness(0, 10, 0, 5),
             };
             var PlayPlaylistButton = new Button
             {
                 Name = $"_{_PlaylistID}",
                 Content = "Play",
                 FontSize = 30,
-                Margin = new Thickness(30, 10, 0, 5)
+                Margin = new Thickness(0, 10, 25, 0),
+                Padding = new Thickness(5),
+                BorderThickness = new Thickness(0),
+                Height = 50,
+                Width = 100
             };
             PlayPlaylistButton.Click += PlayPlaylist;
 
-            sp.Children.Add(PlaylistBlock);
             sp.Children.Add(PlayPlaylistButton);
+            sp.Children.Add(PlaylistBlock);
+            
             DailyPlaylistName.Children.Add(sp);
 
             OrderList.RowDefinitions.Add(new RowDefinition());
@@ -135,6 +140,8 @@ namespace WindesMusic
                     Name = $"__{playlistSong.SongID}",
                     Content = "Play",
                     Margin = new Thickness(5, 0, 0, 5),
+                    Padding = new Thickness(5),
+                    BorderThickness = new Thickness(0),
                     FontSize = 15,
                     Tag = playlistSong
                 };

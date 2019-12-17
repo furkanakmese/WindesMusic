@@ -336,11 +336,17 @@ namespace WindesMusic
             List<Song> listResult = new List<Song>();
             if (secondMostCommonGenre == "")
             {
-                _command.CommandText = "SELECT * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID WHERE Subgenre = @mostCommonGenre AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) ORDER BY NewID()";
+                _command.CommandText = "SELECT * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID " +
+                    "WHERE Subgenre = @mostCommonGenre " +
+                    "AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) " +
+                    "ORDER BY NewID()";
             }
             else
             {
-                _command.CommandText = "SELECT * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID WHERE Subgenre IN(@mostCommonGenre, @secondMostCommonGenre) AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) ORDER BY NewID()";
+                _command.CommandText = "SELECT * FROM Song s LEFT JOIN Album a ON s.AlbumID = a.AlbumID " +
+                    "WHERE Subgenre IN(@mostCommonGenre, @secondMostCommonGenre) " +
+                    "AND SongID NOT IN (SELECT SongID FROM PlayListToSong WHERE PlaylistID = @playlistID) " +
+                    "ORDER BY NewID()";
             }
 
             var mostCommonGenreParam = _command.CreateParameter();
@@ -587,6 +593,7 @@ namespace WindesMusic
             split = currentDate.ToString().Split(' ');
             string dayMonthYearCurrent = split[0];
 
+            //Checks if a playlist has been created today
             if (dayMonthYearFromDb != dayMonthYearCurrent)
             {
                 _command.Parameters.Clear();
@@ -668,6 +675,7 @@ namespace WindesMusic
             return listResult;
         }
 
+        //Returns a playlist with the created ID and Name
         public Playlist GetHistoryPlaylist(int userID, string name)
         {
             OpenConnection();
