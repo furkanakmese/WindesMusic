@@ -27,7 +27,7 @@ namespace WindesMusic
     {
         public AudioPlayer audioPlayer;
         private DispatcherTimer dispatcherTimer;
-        private User user;
+        public User user;
         private Database db = new Database();
         private Account account;
         private PlaylistSongsPage playlistSongs = new PlaylistSongsPage();
