@@ -172,7 +172,7 @@ namespace WindesMusic
             {
                 Label songLabel = new Label
                 {
-                    Content = $"{result[i]} keer {result[i + 1]} beluisterd.",
+                    Content = $"{result[i]} times listened to {result[i + 1]}.",
                     FontSize = 30,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
@@ -186,7 +186,7 @@ namespace WindesMusic
             {
                 Label songLabel = new Label
                 {
-                    Content = $"{result[i]} keer een nummer in genre: {result[i + 1]} beluisterd.",
+                    Content = $"{result[i]} times listened to song in genre: {result[i + 1]}.",
                     FontSize = 30,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
@@ -201,7 +201,7 @@ namespace WindesMusic
             {
                 Label songLabel = new Label
                 {
-                    Content = $"{result[i]} keer een nummer van artiest: {result[i + 1]} beluisterd.",
+                    Content = $"{result[i]} times listened to artist: {result[i + 1]}.",
                     FontSize = 30,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
@@ -214,7 +214,7 @@ namespace WindesMusic
             {
                 Label songLabel = new Label
                 {
-                    Content = $"{periodResult[i + 1]} keer een nummer uit jaar: {periodResult[i]} beluisterd.",
+                    Content = $"{periodResult[i + 1]} times listened to song from: {periodResult[i]}.",
                     FontSize = 30,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
