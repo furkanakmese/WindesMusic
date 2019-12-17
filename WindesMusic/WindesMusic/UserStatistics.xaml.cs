@@ -173,7 +173,7 @@ namespace WindesMusic
                 Label songLabel = new Label
                 {
                     Content = $"{result[i]} times listened to {result[i + 1]}.",
-                    FontSize = 30,
+                    FontSize = 20,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
                 StatLabels.Add(songLabel);
@@ -187,7 +187,7 @@ namespace WindesMusic
                 Label songLabel = new Label
                 {
                     Content = $"{result[i]} times listened to song in genre: {result[i + 1]}.",
-                    FontSize = 30,
+                    FontSize = 20,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
                 StatLabels.Add(songLabel);
@@ -202,7 +202,7 @@ namespace WindesMusic
                 Label songLabel = new Label
                 {
                     Content = $"{result[i]} times listened to artist: {result[i + 1]}.",
-                    FontSize = 30,
+                    FontSize = 20,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
                 StatLabels.Add(songLabel);
@@ -215,7 +215,7 @@ namespace WindesMusic
                 Label songLabel = new Label
                 {
                     Content = $"{periodResult[i + 1]} times listened to song from: {periodResult[i]}.",
-                    FontSize = 30,
+                    FontSize = 20,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
                 StatLabels.Add(songLabel);
