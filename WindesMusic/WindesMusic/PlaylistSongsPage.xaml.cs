@@ -370,15 +370,10 @@ namespace WindesMusic
         }
         private void OnLabelClick(object sender, EventArgs args)
         {
-            Playlist newPlaylist = new Playlist();
-            newPlaylist.PlaylistID = playlistToUse.PlaylistID;
-            newPlaylist.PlaylistName = playlistToUse.PlaylistName;
-            newPlaylist.Recommender = playlistToUse.Recommender;
-            Console.WriteLine(_orderBy);
             orderBy = _orderBy;
             if (rerender != null)
             {
-                rerender(newPlaylist);
+                rerender(playlistToUse);
             }
         }
 
