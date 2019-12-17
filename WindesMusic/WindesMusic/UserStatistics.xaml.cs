@@ -1,6 +1,6 @@
 ﻿using LiveCharts;
+using LiveCharts.Defaults;
 using LiveCharts.Wpf;
-using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,8 +19,8 @@ namespace WindesMusic
         private ScrollViewer StatsScrollViewer;
         private StackPanel Statistics;
         private CartesianChart History;
-        private ScrollViewer Graphs;
         private List<Label> StatLabels = new List<Label>();
+        private List<DateTimePoint> graphPoints = new List<DateTimePoint>();
         private LineSeries mySeries;
         private Grid statGrid;
         private new double Width;
@@ -74,7 +74,7 @@ namespace WindesMusic
                 //Width = Width * .95,
                 //Height = Height * .8,
                 //Margin = new Thickness(-Width * .975, Height * .2, Width * .025, Height * .025)
-                Margin = new Thickness(0, Height * .2, 0, Height * .025)
+                Margin = new Thickness(0, Height * .2, 0, Height * .025 + 30)
             };
             WindowStackPanel.Children.Add(statGrid);
 
@@ -92,16 +92,16 @@ namespace WindesMusic
             Statistics = new StackPanel();
             StatsScrollViewer.Content = Statistics;
 
-            Graphs = new ScrollViewer
+            
+
+            History = new CartesianChart
             {
+                DataContext = this,
                 Width = Width * .95,
-                Height = Height * .95,
+                Height = Height * .80,
                 Margin = new Thickness(Width * .025, Height * .025, Width * .025, Height * .025)
             };
-            WindowStackPanel.Children.Add(Graphs);
-
-            History = new CartesianChart();
-            Graphs.Content = History;
+            WindowStackPanel.Children.Add(History);
 
 
             foreach (Label label in StatLabels)
@@ -109,14 +109,24 @@ namespace WindesMusic
                 Statistics.Children.Add(label);
             }
 
+            History.Series.Clear();
             History.Series.Add(mySeries);
         }
 
         public void GetGraphValues()
         {
+            graphPoints = db.getSongsListened();
+            ChartValues<DateTimePoint> dateTimePoints = new ChartValues<DateTimePoint>();
+
+            foreach (DateTimePoint dateTimePoint in graphPoints)
+            {
+                dateTimePoints.Add(dateTimePoint);
+            }
+
             mySeries = new LineSeries
             {
-                Values = new ChartValues<int> { 12, 23, 55, 100 }
+                Values = dateTimePoints,
+                Fill = Brushes.Transparent
             };
         }
 
@@ -181,11 +191,6 @@ namespace WindesMusic
                 StatLabels.Add(songLabel);
             }
 
-
-            //hoevaak alle nummers in een periode beluisterd door gebruiker.
-            //SELECT COUNT(*), s.Year FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = 1 GROUP BY s.Year;
-
-            //user = db.GetUserData(Properties.Settings.Default.UserID);
 
         }
 

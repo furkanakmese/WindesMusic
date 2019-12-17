@@ -1,3 +1,4 @@
+using LiveCharts.Defaults;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -894,6 +895,46 @@ namespace WindesMusic
                 result.Add(year);
                 result.Add(value);
             }
+
+            return result;
+        }
+
+        public List<DateTimePoint> getSongsListened()
+        {
+            var UserID = _command.CreateParameter();
+            UserID.ParameterName = "@UserID";
+            UserID.Value = GetUserData(Properties.Settings.Default.UserID).UserID;
+
+
+            OpenConnection();
+            _command.Parameters.Clear();
+            List<DateTimePoint> result = new List<DateTimePoint>();
+
+            _command.CommandText = "SELECT COUNT(*) Count, CONVERT(VARCHAR(10), [DateTime], 103) Dates FROM History WHERE UserID = @UserID GROUP BY CONVERT(VARCHAR(10), [DateTime], 103);";
+            _command.Parameters.Add(UserID);
+            _reader = _command.ExecuteReader();
+
+            DateTimePoint dateTimePoint;
+            DateTime dateTime;
+            for (int i = 0; _reader.Read(); i++)
+            {
+                try
+                {
+                    // 11/12/2019
+                    dateTimePoint = new DateTimePoint();
+                    int year = int.Parse(((string)_reader["Dates"]).Substring(6, 4));
+                    int month = int.Parse(((string)_reader["Dates"]).Substring(3, 2));
+                    int day = int.Parse(((string)_reader["Dates"]).Substring(0, 2));
+
+                    dateTime = new DateTime(year, month, day);
+                    dateTimePoint.DateTime = dateTime;
+                    dateTimePoint.Value = (int)_reader["Count"];
+                    result.Add(dateTimePoint);
+                }
+                catch (Exception e) { Console.WriteLine(e); }
+                i++;
+            }
+            _connection.Close();
 
             return result;
         }
