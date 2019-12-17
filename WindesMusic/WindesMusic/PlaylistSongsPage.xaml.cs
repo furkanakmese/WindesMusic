@@ -94,7 +94,7 @@ namespace WindesMusic
                 Name = $"_{_PlaylistID}",
                 Content = "Play",
                 FontSize = 30,
-                Margin = new Thickness(0, 10, 25, 0),
+                Margin = new Thickness(10, 10, 25, 0),
                 Padding = new Thickness(5),
                 BorderThickness = new Thickness(0),
                 Height = 50,
@@ -121,8 +121,8 @@ namespace WindesMusic
             };
             RenamePlaylistButton.Click += RenamePlaylist;
 
-            sp.Children.Add(PlaylistBlock);
             sp.Children.Add(PlayPlaylistButton);
+            sp.Children.Add(PlaylistBlock);
             sp1.Children.Add(RenamePlaylistButton);
             sp1.Children.Add(DeletePlaylistButton);
             DeletePlaylist.Children.Add(sp1);
