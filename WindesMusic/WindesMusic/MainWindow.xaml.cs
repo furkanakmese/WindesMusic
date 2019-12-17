@@ -30,14 +30,14 @@ namespace WindesMusic
         public User user;
         private Database db = new Database();
         private Account account;
-        private PlaylistSongsPage playlistSongs = new PlaylistSongsPage();
+        public PlaylistSongsPage playlistSongs = new PlaylistSongsPage();
         private QueuePage queuePage;
 
 
         public MainWindow()
         {
             InitializeComponent();
-            Playlists playlists = new Playlists();
+            Playlists playlists = new Playlists(this);
             account = new Account();
 
             audioPlayer = new AudioPlayer(this);
@@ -67,7 +67,7 @@ namespace WindesMusic
                 audioPlayer.SetVolume((float)e.NewValue / 100);
             };
             //btnAccount.Click += (object sender, RoutedEventArgs e) => Main.Content = account;
-            btnPlaylists.Click += (object sender, RoutedEventArgs e) => Main.Content = new Playlists();
+            btnPlaylists.Click += (object sender, RoutedEventArgs e) => Main.Content = new Playlists(this);
         }
         
         private void PlaceInSongSliderDragStarted (object sender, DragStartedEventArgs e) => dispatcherTimer.Stop();
@@ -176,7 +176,7 @@ namespace WindesMusic
                 }
                 else
                 {
-                    Playlists playlists = new Playlists();
+                    Playlists playlists = new Playlists(this);
                     Main.Content = playlists;
                 }
             }
