@@ -1,10 +1,12 @@
 ﻿using LiveCharts;
 using LiveCharts.Defaults;
 using LiveCharts.Wpf;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Separator = LiveCharts.Wpf.Separator;
 
 namespace WindesMusic
 {
@@ -23,6 +25,9 @@ namespace WindesMusic
         private List<DateTimePoint> graphPoints = new List<DateTimePoint>();
         private LineSeries mySeries;
         private Grid statGrid;
+        private ColumnSeries ColumnSeries;
+        private ChartValues<int> dateTimePoints;
+        private List<string> Dates;
         private new double Width;
         private new double Height;
 
@@ -92,7 +97,16 @@ namespace WindesMusic
             Statistics = new StackPanel();
             StatsScrollViewer.Content = Statistics;
 
-            
+
+            ColumnSeries = new ColumnSeries
+            {
+                Values = dateTimePoints,
+                DataContext = this,
+                Width = Width * .95,
+                Height = Height * .80,
+                Margin = new Thickness(Width * .025, Height * .025, Width * .025, Height * .025)
+            };
+
 
             History = new CartesianChart
             {
@@ -101,6 +115,23 @@ namespace WindesMusic
                 Height = Height * .80,
                 Margin = new Thickness(Width * .025, Height * .025, Width * .025, Height * .025)
             };
+
+            History.AxisX.Add(new Axis
+            {
+                Labels = Dates
+            });
+
+            History.AxisY.Add(new Axis
+            {
+                Separator = new Separator
+                {
+                    Step = 1
+                }
+            });
+
+
+            History.Series.Clear();
+            History.Series.Add(ColumnSeries);
             WindowStackPanel.Children.Add(History);
 
 
@@ -108,19 +139,18 @@ namespace WindesMusic
             {
                 Statistics.Children.Add(label);
             }
-
-            History.Series.Clear();
-            History.Series.Add(mySeries);
         }
 
         public void GetGraphValues()
         {
             graphPoints = db.getSongsListened();
-            ChartValues<DateTimePoint> dateTimePoints = new ChartValues<DateTimePoint>();
+            dateTimePoints = new ChartValues<int>();
+            Dates = new List<string>();
 
             foreach (DateTimePoint dateTimePoint in graphPoints)
             {
-                dateTimePoints.Add(dateTimePoint);
+                dateTimePoints.Add((int)dateTimePoint.Value);
+                Dates.Add(dateTimePoint.DateTime.ToString().Substring(0,10));
             }
 
             mySeries = new LineSeries
@@ -142,7 +172,7 @@ namespace WindesMusic
             {
                 Label songLabel = new Label
                 {
-                    Content = $"{result[i]} keer {result[i + 1]} beluisterd.",
+                    Content = $"{result[i]} times listened to {result[i + 1]}.",
                     FontSize = 30,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
@@ -156,7 +186,7 @@ namespace WindesMusic
             {
                 Label songLabel = new Label
                 {
-                    Content = $"{result[i]} keer een nummer in genre: {result[i + 1]} beluisterd.",
+                    Content = $"{result[i]} times listened to song in genre: {result[i + 1]}.",
                     FontSize = 30,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
@@ -171,7 +201,7 @@ namespace WindesMusic
             {
                 Label songLabel = new Label
                 {
-                    Content = $"{result[i]} keer een nummer van artiest: {result[i + 1]} beluisterd.",
+                    Content = $"{result[i]} times listened to artist: {result[i + 1]}.",
                     FontSize = 30,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
@@ -184,7 +214,7 @@ namespace WindesMusic
             {
                 Label songLabel = new Label
                 {
-                    Content = $"{periodResult[i + 1]} keer een nummer uit jaar: {periodResult[i]} beluisterd.",
+                    Content = $"{periodResult[i + 1]} times listened to song from: {periodResult[i]}.",
                     FontSize = 30,
                     Foreground = new SolidColorBrush(Colors.White)
                 };

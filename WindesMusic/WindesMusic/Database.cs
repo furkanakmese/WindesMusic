@@ -764,7 +764,7 @@ namespace WindesMusic
             _command.Parameters.Clear();
             List<string> result = new List<string>();
 
-            _command.CommandText = "SELECT COUNT(*) Count, s.Name Name FROM History h LEFT JOIN Song s on h.SongID = s.SongID WHERE h.UserID = @UserID GROUP BY s.Name;";
+            _command.CommandText = "SELECT COUNT(*) Count, s.Name Name FROM History h LEFT JOIN Song s on h.SongID = s.SongID WHERE h.UserID = @UserID GROUP BY s.Name ORDER BY Count desc;";
             _command.Parameters.Add(UserID);
             _reader = _command.ExecuteReader();
 
@@ -796,7 +796,7 @@ namespace WindesMusic
             _command.Parameters.Clear();
             List<string> result = new List<string>();
 
-            _command.CommandText = "SELECT COUNT(*) Count, s.Genre Genre FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = @UserID GROUP BY s.Genre;";
+            _command.CommandText = "SELECT COUNT(*) Count, s.Genre Genre FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = @UserID GROUP BY s.Genre ORDER BY Count desc;";
             _command.Parameters.Add(UserID);
             _reader = _command.ExecuteReader();
 
@@ -828,7 +828,7 @@ namespace WindesMusic
             _command.Parameters.Clear();
             List<string> result = new List<string>();
 
-            _command.CommandText = "SELECT COUNT(*) Count, s.Artist Artist FROM History h LEFT JOIN Song s on h.SongID = s.SongID WHERE h.UserID = @UserID GROUP BY s.Artist;";
+            _command.CommandText = "SELECT COUNT(*) Count, s.Artist Artist FROM History h LEFT JOIN Song s on h.SongID = s.SongID WHERE h.UserID = @UserID GROUP BY s.Artist ORDER BY Count desc;";
             _command.Parameters.Add(UserID);
             _reader = _command.ExecuteReader();
 
@@ -860,7 +860,7 @@ namespace WindesMusic
             _command.Parameters.Clear();
 
 
-            _command.CommandText = "SELECT COUNT(*) Count, s.Year Year FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = @UserID GROUP BY s.Year";
+            _command.CommandText = "SELECT COUNT(*) Count, s.Year Year FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = @UserID GROUP BY s.Year ORDER BY Count desc";
             _command.Parameters.Add(UserID);
             _reader = _command.ExecuteReader();
 
@@ -910,7 +910,7 @@ namespace WindesMusic
             _command.Parameters.Clear();
             List<DateTimePoint> result = new List<DateTimePoint>();
 
-            _command.CommandText = "SELECT COUNT(*) Count, CONVERT(VARCHAR(10), [DateTime], 103) Dates FROM History WHERE UserID = @UserID GROUP BY CONVERT(VARCHAR(10), [DateTime], 103);";
+            _command.CommandText = "SELECT COUNT(*) Count, CONVERT(VARCHAR(10), [DateTime], 103) Dates FROM History WHERE UserID = @UserID and CONVERT(VARCHAR(10), [DateTime], 120) > (SELECT DATEADD(week, DATEDIFF(week,0,GETDATE())-1,-1) BeginningOfLastWeek) GROUP BY CONVERT(VARCHAR(10), [DateTime], 103) order by CONVERT(VARCHAR(10), [DateTime], 103) asc;";
             _command.Parameters.Add(UserID);
             _reader = _command.ExecuteReader();
 
