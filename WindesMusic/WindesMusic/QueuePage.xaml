@@ -11,7 +11,8 @@
       Margin="0,0,0,25">
 
     <Grid x:Name="QueuePageMainGrid">
-        <Label x:Name="PlaylistSongs" Content="Queue" FontSize="25" Foreground="White" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,20,0,0"/>
+        <Label x:Name="PlaylistSongs" Content="Queue" FontSize="25" Foreground="White" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="-100,20,0,0"/>
+        <Button x:Name="QueueToPlaylist" Content="Add songs to playlist" Click="AddQueueToPlaylist" FontSize="15" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,30,120,0"/>
         <ScrollViewer Height="375" Margin="0,75,0,0">
             <Grid x:Name="QueueList" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,-35,0">
                 <Grid.ColumnDefinitions>
