@@ -12,6 +12,7 @@ namespace WindesMusic
         public static Queue<Song> RecommendedSongQueue = new Queue<Song>();
         public static Stack<Song> PreviousSongs = new Stack<Song>();
         public static bool IsShuffle = false;
+        public static bool IsRepeat = false;
 
         public static void AddSongToQueue(Song song)
         {

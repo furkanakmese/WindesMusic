@@ -149,6 +149,13 @@ namespace WindesMusic
             if (_CurrentSong != null)
             {
                 MusicQueue.AddSongToPreviousQueue(_CurrentSong);
+                if(MusicQueue.IsRepeat == true)
+                {
+                    MusicQueue.SongQueue.Clear();
+                    MusicQueue.RecommendedSongQueue.Clear();
+                    MusicQueue.AddSongToQueue(_CurrentSong);
+                    this.PlayChosenSong();
+                }
             }
             if (MusicQueue.SongQueue.Count != 0 && audioFile == null)
             {
