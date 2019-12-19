@@ -121,10 +121,9 @@ namespace WindesMusic
             };
         }
 
-        protected void LoadSongs()
+        public void GetArtistSongs(userdID)
         {
-            db.getArtistSongs(userID);
-
+            
         }
 
         //SELECT COUNT(*), s.Name FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = 1 GROUP BY s.Name;

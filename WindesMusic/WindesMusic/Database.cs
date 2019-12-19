@@ -239,7 +239,7 @@ namespace WindesMusic
             if (userResult.IsArtist == true)
             {
                 OpenConnection();
-                _command.CommandText = "SELECT * FROM Song s LEFT JOIN Users ON Users.UserID=Song.UserID WHERE Users.UserID=@id LEFT JOIN Album a on s.AlbumID = a.AlbumID";
+                _command.CommandText = "SELECT * FROM Song s LEFT JOIN Users ON Users.UserID=s.UserID LEFT JOIN Album a on s.AlbumID = a.AlbumID WHERE Users.UserID=@id";
                 _reader = _command.ExecuteReader();
 
                 while (_reader.Read())
@@ -1153,5 +1153,32 @@ namespace WindesMusic
                 return "Not enough credits to submit advertisement";
             }
         }
+
+        public Song getArtistSong(int userID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "SELECT * FROM Song  WHERE UserID=@ID";
+
+            var idParam = _command.CreateParameter();
+            idParam.ParameterName = "@ID";
+            idParam.Value = userID;
+            _command.Parameters.Add(idParam); ;
+
+            _reader = _command.ExecuteReader();
+            Song searchResult = new Song();
+            while (_reader.Read())
+            {
+                searchResult.SongID = (int)_reader["SongID"];
+                searchResult.SongName = (string)_reader["Name"];
+                searchResult.Artist = (string)_reader["Artist"];
+                searchResult.Album = (string)_reader["AlbumName"];
+                searchResult.Year = (int)_reader["Year"];
+                searchResult.Genre = (string)_reader["Genre"];
+            }
+            _connection.Close();
+            return searchResult;
+        }
+
     }
 }
