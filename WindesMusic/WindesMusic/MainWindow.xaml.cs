@@ -247,7 +247,6 @@ namespace WindesMusic
                 PackIconVolume.Kind = MaterialDesignThemes.Wpf.PackIconKind.VolumeHigh;
                 sldVolume.Value = sliderVolume;
             }
-
         }
         private void RepeatButtonClick(object sender, RoutedEventArgs e)
         {

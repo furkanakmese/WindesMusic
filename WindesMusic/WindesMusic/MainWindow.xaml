@@ -128,6 +128,6 @@
             </StackPanel>
 
         </DockPanel>
-        <Frame NavigationUIVisibility="Hidden" x:Name="Main" Margin="253,102,-0.4,76.4" BorderThickness="0"></Frame>
+        <Frame NavigationUIVisibility="Hidden" x:Name="Main" Margin="253,102,-0.4,101.4" BorderThickness="0"></Frame>
     </Grid>
 </Window>
