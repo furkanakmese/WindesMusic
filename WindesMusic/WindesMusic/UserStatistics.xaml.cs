@@ -89,7 +89,7 @@ namespace WindesMusic
                 Width = Width * .95,
                 Height = Height * .8,
                 //Margin = new Thickness(-Width * .975, Height * .2, Width * .025, Height * .025),
-                Margin = new Thickness(-Width * .975, 0, Width * .025, 0),
+                Margin = new Thickness(-Width * .975, 0, Width * .025, 50),
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Auto
             };
             statGrid.Children.Add(StatsScrollViewer);

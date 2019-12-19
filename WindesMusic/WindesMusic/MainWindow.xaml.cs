@@ -105,12 +105,14 @@ namespace WindesMusic
         private void PreviousButtonClick(object sender, RoutedEventArgs e)
         {
             audioPlayer.OnButtonPreviousClick();
+            PackIconPlay.Kind = MaterialDesignThemes.Wpf.PackIconKind.Play;
         }
 
         private void NextButtonClick(object sender, RoutedEventArgs e)
         {
             audioPlayer.OnButtonNextClick();
             queuePage.RerenderQueuePage();
+            PackIconPlay.Kind = MaterialDesignThemes.Wpf.PackIconKind.Play;
 
         }
 
@@ -195,14 +197,14 @@ namespace WindesMusic
                 {
                     Playlists playlists = new Playlists(this);
                     Main.Content = playlists;
-                }
+                } 
             }
         }
 
         private void PlayButtonClick(object sender, RoutedEventArgs e)
         {
             audioPlayer.OnButtonPlayClick(sender, e);
-            if(PackIconPlay.Kind == MaterialDesignThemes.Wpf.PackIconKind.Play)
+            if(PackIconPlay.Kind == MaterialDesignThemes.Wpf.PackIconKind.Play && audioPlayer._CurrentSong != null)
             {
                 PackIconPlay.Kind = MaterialDesignThemes.Wpf.PackIconKind.Pause;
             }
@@ -252,12 +254,14 @@ namespace WindesMusic
         {
             if (MusicQueue.IsRepeat == false)
             {
+                PackIconRepeat.Kind = MaterialDesignThemes.Wpf.PackIconKind.Repeat;
                 btnRepeat.Background = new SolidColorBrush(System.Windows.Media.Colors.DarkOrange);
                 MusicQueue.IsRepeat = true;
             }
             else
             {
-                btnRepeat.Background = new SolidColorBrush(System.Windows.Media.Colors.LightGray);
+                btnRepeat.Background = new SolidColorBrush(System.Windows.Media.Colors.DimGray);
+                PackIconRepeat.Kind = MaterialDesignThemes.Wpf.PackIconKind.RepeatOff;
                 MusicQueue.IsRepeat = false;
             }
         }

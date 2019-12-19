@@ -14,9 +14,9 @@
         <ScrollViewer x:Name="SearchScroller" Height="467" Padding="12" Margin="-10,100,0,0">
             <Grid x:Name="SearchList" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="300"/>
-                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="65"/>
+                    <ColumnDefinition Width="400"/>
+                    <ColumnDefinition Width="250"/>
                     <ColumnDefinition Width="500"/>
                     <ColumnDefinition Width="50"/>
                 </Grid.ColumnDefinitions>
