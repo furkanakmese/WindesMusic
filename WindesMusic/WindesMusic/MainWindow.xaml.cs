@@ -248,7 +248,6 @@ namespace WindesMusic
                 sldVolume.Value = sliderVolume;
             }
         }
-    
         private void RepeatButtonClick(object sender, RoutedEventArgs e)
         {
             if (MusicQueue.IsRepeat == false)

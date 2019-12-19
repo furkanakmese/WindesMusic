@@ -240,25 +240,30 @@ namespace WindesMusic
             if (userResult.IsArtist == true)
             {
                 OpenConnection();
-                _command.CommandText = "SELECT * FROM Song s LEFT JOIN Users ON Users.UserID=Song.UserID WHERE Users.UserID=@id LEFT JOIN Album a on s.AlbumID = a.AlbumID";
-                _reader = _command.ExecuteReader();
-
-                while (_reader.Read())
+                _command.CommandText = "SELECT * FROM Song s LEFT JOIN Users ON Users.Name=Song.Artist LEFT JOIN Album a on s.AlbumID = a.AlbumID WHERE Users.UserID=@id";
+                try
                 {
-                    try
+                    _reader = _command.ExecuteReader();
+
+                    while (_reader.Read())
                     {
-                        Song song = new Song();
-                        song.SongID = (int)_reader["SongID"];
-                        song.SongName = (string)_reader["Name"];
-                        song.Artist = (string)_reader["Artist"];
-                        song.Album = (string)_reader["AlbumName"];
-                        song.Genre = (string)_reader["Genre"];
-                        song.Subgenre = (string)_reader["SubGenre"];
-                        song.UserID = (int)_reader["UserID"];
-                        userResult.Songs.Add(song);
+                        try
+                        {
+                            Song song = new Song();
+                            song.SongID = (int)_reader["SongID"];
+                            song.SongName = (string)_reader["Name"];
+                            song.Artist = (string)_reader["Artist"];
+                            song.Album = (string)_reader["AlbumName"];
+                            song.Genre = (string)_reader["Genre"];
+                            song.Subgenre = (string)_reader["SubGenre"];
+                            song.UserID = (int)_reader["UserID"];
+                            userResult.Songs.Add(song);
+                        }
+                        catch (Exception e) { Console.WriteLine(e); }
                     }
-                    catch (Exception e) { Console.WriteLine(e); }
                 }
+                catch(Exception e) { Console.WriteLine(e); }
+
                 _connection.Close();
             }
 
