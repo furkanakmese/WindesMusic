@@ -11,7 +11,7 @@ namespace WindesMusic
         private MainWindow mainWindow;
         private bool isPlaying = false;
         private float volume = 1;
-        private Song _CurrentSong;
+        public Song _CurrentSong;
 
         public AudioPlayer(MainWindow main)
         {
@@ -184,7 +184,7 @@ namespace WindesMusic
         //stop function, disposes of AudiofileReader.
         public void OnPlaybackStopped(object sender, StoppedEventArgs args)
         {
-            if(this.CurrentPlaceInSongPercentage() == 100)
+            if(this.CurrentPlaceInSongPercentage() >= 99)
             {
                 outputDevice?.Pause();
                 outputDevice?.Stop();

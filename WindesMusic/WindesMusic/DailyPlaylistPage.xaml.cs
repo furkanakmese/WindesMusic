@@ -220,7 +220,7 @@ namespace WindesMusic
             var pos = e.GetPosition(DailySongList);
             double top = pos.Y;
             int top1 = (int)Math.Round(top);
-            int amount = top1 / 28;
+            int amount = top1 / 38;
             ContextMenu menu = new ContextMenu();
             Song correctSong = SongsInPlaylist.ElementAt(amount);
 

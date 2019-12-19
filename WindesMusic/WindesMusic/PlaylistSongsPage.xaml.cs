@@ -394,7 +394,7 @@ namespace WindesMusic
             var pos = e.GetPosition(SongList);
             double top = pos.Y;
             int top1 = (int)Math.Round(top);
-            int amount = top1 / 28;
+            int amount = top1 / 38;
             ContextMenu menu = new ContextMenu();
             menu.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
             menu.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
@@ -443,7 +443,7 @@ namespace WindesMusic
             var pos = e.GetPosition(RecommendedSongList);
             double top = pos.Y;
             int top1 = (int)Math.Round(top);
-            int amount = top1 / 28;
+            int amount = top1 / 38;
             ContextMenu menu = new ContextMenu();
             Song song = RecommendedSongs.ElementAt(amount);
             int CorrectSongID = RecommendedSongs.ElementAt(amount).SongID;
