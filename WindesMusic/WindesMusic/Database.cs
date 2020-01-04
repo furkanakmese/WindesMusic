@@ -924,7 +924,7 @@ namespace WindesMusic
             _command.Parameters.Clear();
             List<DateTimePoint> result = new List<DateTimePoint>();
 
-            _command.CommandText = "SELECT COUNT(*) Count, CONVERT(VARCHAR(10), [DateTime], 103) Dates FROM History WHERE UserID = @UserID and CONVERT(VARCHAR(10), [DateTime], 120) > (SELECT DATEADD(week, DATEDIFF(week,0,GETDATE())-1,-1) BeginningOfLastWeek) GROUP BY CONVERT(VARCHAR(10), [DateTime], 103) order by CONVERT(VARCHAR(10), [DateTime], 103) asc;";
+            _command.CommandText = "SELECT COUNT(*) Count, CONVERT(VARCHAR(10), [DateTime], 103) Dates FROM History WHERE UserID = @UserID and [DateTime] BETWEEN DATEADD(DAY,-8,GETDATE()) AND GETDATE() GROUP BY CONVERT(VARCHAR(10), [DateTime], 103) order by CONVERT(VARCHAR(10), [DateTime], 103) asc;";
             _command.Parameters.Add(UserID);
             _reader = _command.ExecuteReader();
 

@@ -3,6 +3,7 @@ using LiveCharts.Defaults;
 using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -23,7 +24,6 @@ namespace WindesMusic
         private CartesianChart History;
         private List<Label> StatLabels = new List<Label>();
         private List<DateTimePoint> graphPoints = new List<DateTimePoint>();
-        private LineSeries mySeries;
         private Grid statGrid;
         private ColumnSeries ColumnSeries;
         private ChartValues<int> dateTimePoints;
@@ -143,21 +143,48 @@ namespace WindesMusic
 
         public void GetGraphValues()
         {
-            graphPoints = db.getSongsListened();
+            List<DateTimePoint> dbResult = db.getSongsListened();
             dateTimePoints = new ChartValues<int>();
             Dates = new List<string>();
+            DateTime today = DateTime.Today;
+
+            //add missing dates with new dates with value = 0
+            bool isMissing;
+            for(int i = 7; i >= 0; i--)
+            {
+                isMissing = true;
+                foreach(DateTimePoint dateTimePoint in dbResult)
+                {
+                    if (dateTimePoint.DateTime.Date == today.Date.AddDays(-i))
+                    {
+                        isMissing = false;
+                        break;
+                    }
+                }
+                if(isMissing)
+                {
+                    dbResult.Add(new DateTimePoint(today.AddDays(-i), 0));
+                }
+                
+            }
+
+            for(int i = 7; i >= 0; i--)
+            {
+                foreach(DateTimePoint dateTimePoint in dbResult)
+                {
+                    if(dateTimePoint.DateTime.Date == today.Date.AddDays(-i))
+                    {
+                        graphPoints.Add(dateTimePoint);
+                    }
+                }
+            }
+
 
             foreach (DateTimePoint dateTimePoint in graphPoints)
             {
                 dateTimePoints.Add((int)dateTimePoint.Value);
-                Dates.Add(dateTimePoint.DateTime.ToString().Substring(0,10));
+                Dates.Add(dateTimePoint.DateTime.ToString("d", CultureInfo.CreateSpecificCulture("nl-NL")));
             }
-
-            mySeries = new LineSeries
-            {
-                Values = dateTimePoints,
-                Fill = Brushes.Transparent
-            };
         }
 
 
