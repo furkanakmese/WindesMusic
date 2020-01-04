@@ -240,6 +240,7 @@ namespace WindesMusic
             if (userResult.IsArtist == true)
             {
                 OpenConnection();
+
                 _command.CommandText = "SELECT * FROM Song s LEFT JOIN Users ON Users.Name=Song.Artist LEFT JOIN Album a on s.AlbumID = a.AlbumID WHERE Users.UserID=@id";
                 try
                 {
@@ -247,6 +248,7 @@ namespace WindesMusic
 
                     while (_reader.Read())
                     {
+
                         try
                         {
                             Song song = new Song();
@@ -260,6 +262,7 @@ namespace WindesMusic
                             userResult.Songs.Add(song);
                         }
                         catch (Exception e) { Console.WriteLine(e); }
+
                     }
                 }
                 catch(Exception e) { Console.WriteLine(e); }
@@ -294,7 +297,7 @@ namespace WindesMusic
                 searchResult.SongID = (int)_reader["SongID"];
                 searchResult.SongName = (string)_reader["Name"];
                 searchResult.Artist = (string)_reader["Artist"];
-                searchResult.Album = (string)_reader["AlbumName"];
+                //searchResult.Album = (string)_reader["AlbumName"];
                 searchResult.Year = (int)_reader["Year"];
                 listResult.Add(searchResult);
             }
@@ -323,7 +326,7 @@ namespace WindesMusic
                 searchResult.SongID = (int)_reader["SongID"];
                 searchResult.SongName = (string)_reader["Name"];
                 searchResult.Artist = (string)_reader["Artist"];
-                searchResult.Album = (string)_reader["AlbumName"];
+                ////searchResult.Album = (string)_reader["AlbumName"];
                 searchResult.Year = (int)_reader["Year"];
                 searchResult.Genre = (string)_reader["Genre"];
                 searchResult.Subgenre = (string)_reader["Subgenre"];
@@ -372,7 +375,9 @@ namespace WindesMusic
                 searchResult.SongID = (int)_reader["SongID"];
                 searchResult.SongName = (string)_reader["Name"];
                 searchResult.Artist = (string)_reader["Artist"];
+
                 searchResult.Album = (string)_reader["AlbumName"];
+
                 searchResult.Year = (int)_reader["Year"];
                 searchResult.Genre = (string)_reader["Genre"];
                 searchResult.Subgenre = (string)_reader["SubGenre"];
@@ -640,7 +645,9 @@ namespace WindesMusic
                 searchResult.SongID = (int)_reader["SongID"];
                 searchResult.SongName = (string)_reader["Name"];
                 searchResult.Artist = (string)_reader["Artist"];
+
                 searchResult.Album = (string)_reader["AlbumName"];
+
                 searchResult.Year = (int)_reader["Year"];
                 searchResult.Genre = (string)_reader["Genre"];
                 searchResult.Subgenre = (string)_reader["SubGenre"];
@@ -698,6 +705,7 @@ namespace WindesMusic
                 searchResult.SongID = (int)_reader["SongID"];
                 searchResult.SongName = (string)_reader["Name"];
                 searchResult.Artist = (string)_reader["Artist"];
+
                 searchResult.Album = (string)_reader["AlbumName"];
                 searchResult.Year = (int)_reader["Year"];
                 searchResult.Genre = (string)_reader["Genre"];
@@ -758,7 +766,7 @@ namespace WindesMusic
         }
 
 
-        public List<string> GetSongStatistic()
+        public List<string> GetUserSongStatistic()
         {
             var UserID = _command.CreateParameter();
             UserID.ParameterName = "@UserID";
@@ -768,6 +776,7 @@ namespace WindesMusic
             OpenConnection();
             _command.Parameters.Clear();
             List<string> result = new List<string>();
+
 
             _command.CommandText = "SELECT COUNT(*) Count, s.Name Name FROM History h LEFT JOIN Song s on h.SongID = s.SongID WHERE h.UserID = @UserID GROUP BY s.Name ORDER BY Count desc;";
             _command.Parameters.Add(UserID);
@@ -981,7 +990,7 @@ namespace WindesMusic
                 searchResult.SongID = (int)_reader["SongID"];
                 searchResult.SongName = (string)_reader["Name"];
                 searchResult.Artist = (string)_reader["Artist"];
-                searchResult.Album = (string)_reader["AlbumName"];
+                //searchResult.Album = (string)_reader["AlbumName"];
                 searchResult.Year = (int)_reader["Year"];
                 searchResult.Genre = (string)_reader["Genre"];
                 searchResult.Subgenre = (string)_reader["SubGenre"];
@@ -1130,5 +1139,133 @@ namespace WindesMusic
                 return "Not enough credits to donate..";
             }
         }
+
+        public List<Song> GetArtistSong(int userID)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "SELECT s.SongID, s.[Name], s.Artist, s.[Year], s.Genre, s.SubGenre FROM Song s  WHERE UserID=@ID";
+
+            var idParam = _command.CreateParameter();
+            idParam.ParameterName = "@ID";
+            idParam.Value = userID;
+            _command.Parameters.Add(idParam);
+
+            _reader = _command.ExecuteReader();
+            List<Song> listResult = new List<Song>();
+            while (_reader.Read())
+            {
+                Song searchResult = new Song();
+                searchResult.SongID = (int)_reader["SongID"];
+                searchResult.SongName = (string)_reader["Name"];
+                searchResult.Artist = (string)_reader["Artist"];
+                searchResult.Year = (int)_reader["Year"];
+                searchResult.Genre = (string)_reader["Genre"];
+                searchResult.Subgenre = (string)_reader["SubGenre"];
+                listResult.Add(searchResult);
+            }
+            _connection.Close();
+            return listResult;
+        }
+
+        public History GetArtistSongData(string selectedSong)
+        {
+            OpenConnection();
+            _command.Parameters.Clear();
+            _command.CommandText = "SELECT " +
+                                       "h.SongID, " +
+                                       "s.[Name], " +
+                                       "totalListens.Listened AS TotalTimesListened, " +
+                                       "CONVERT (int, APPROX_COUNT_DISTINCT(h.UserID)) AS UniqueListeners, " +
+                                       "CONVERT (int, totalListens.TotalTime) AS TotalTime, " +
+                                       "CONVERT (int, advertisement.aTotalAdvertisedListens) AS TotalAdvertisedListens, " +
+                                       "SUM(listenHistory.qListenedDaySeven)/totalListens.Listened AS ListenedDaySeven, " +
+                                       "SUM(listenHistory.qListenedDaySix)/totalListens.Listened AS ListenedDaySix, " +
+                                       "SUM(listenHistory.qListenedDayFive)/totalListens.Listened AS ListenedDayFive, " +
+                                       "SUM(listenHistory.qListenedDayFour)/totalListens.Listened AS ListenedDayFour, " +
+                                       "SUM(listenHistory.qListenedDayThree)/totalListens.Listened AS ListenedDayThree, " +
+                                       "SUM(listenHistory.qListenedDayTwo)/totalListens.Listened AS ListenedDayTwo, " +
+                                       "SUM(listenHistory.qListenedDayOne)/totalListens.Listened AS ListenedDayOne, " +
+                                       "SUM(listenHistory.qListenedMonth)/totalListens.Listened AS ListenedMonth, " +
+                                       "SUM(listenHistory.qListenedHalfMonth)/totalListens.Listened AS ListenedHalfMonth, " +
+                                       "SUM(listenHistory.qListenedWeek)/totalListens.Listened AS ListenedWeek " +
+                                   "FROM " +
+                                       "History h " +
+                                       "LEFT JOIN Song s ON h.SongID = s.SongID, " +
+                                       "( " +
+                                           "SELECT " +
+                                               "CASE WHEN h.[DateTime] BETWEEN CONVERT (int, GETDATE()) - 7 AND CONVERT (int, GETDATE()) - 6 THEN 1 ELSE 0 END AS qListenedDaySeven, " +
+                                               "CASE WHEN h.[DateTime] BETWEEN CONVERT (int, GETDATE()) - 6 AND CONVERT (int, GETDATE()) - 5 THEN 1 ELSE 0 END AS qListenedDaySix, " +
+                                               "CASE WHEN h.[DateTime] BETWEEN CONVERT (int, GETDATE()) - 5 AND CONVERT (int, GETDATE()) - 4 THEN 1 ELSE 0 END AS qListenedDayFive, " +
+                                               "CASE WHEN h.[DateTime] BETWEEN CONVERT (int, GETDATE()) - 4 AND CONVERT (int, GETDATE()) - 3 THEN 1 ELSE 0 END AS qListenedDayFour, " +
+                                               "CASE WHEN h.[DateTime] BETWEEN CONVERT (int, GETDATE()) - 3 AND CONVERT (int, GETDATE()) - 2 THEN 1 ELSE 0 END AS qListenedDayThree, " +
+                                               "CASE WHEN h.[DateTime] BETWEEN CONVERT (int, GETDATE()) - 2 AND CONVERT (int, GETDATE()) - 1 THEN 1 ELSE 0 END AS qListenedDayTwo, " +
+                                               "CASE WHEN CONVERT(DATETIME, FLOOR(CONVERT(FLOAT, h.[DateTime]))) = CONVERT(DATETIME, FLOOR(CONVERT(FLOAT, GETDATE()))) THEN 1 ELSE 0 END AS qListenedDayOne, " +
+                                               "CASE WHEN h.[DateTime] BETWEEN CONVERT (int, GETDATE()) - 30 AND CONVERT (int, GETDATE()) THEN 1 ELSE 0 END AS qListenedMonth, " +
+                                               "CASE WHEN h.[DateTime] BETWEEN CONVERT (int, GETDATE()) - 14 AND CONVERT (int, GETDATE()) THEN 1 ELSE 0 END AS qListenedHalfMonth, " +
+                                               "CASE WHEN h.[DateTime] BETWEEN CONVERT (int, GETDATE()) - 7 AND CONVERT (int, GETDATE()) THEN 1 ELSE 0 END AS qListenedWeek " +
+                                           "FROM " +
+                                               "History h " +
+                                               "LEFT JOIN Song s ON h.SongID = s.SongID " +
+                                           "WHERE " +
+                                                "s.[Name] = @songName " +
+                                       ") AS listenHistory, " +
+                                       "( " +
+                                           "SELECT " +
+                                               "COUNT(*) AS Listened, " +
+                                               "SUM(h.TimeListened) AS TotalTime " +
+                                           "FROM " +
+                                               "History h " +
+                                               "LEFT JOIN Song s ON h.SongID = s.SongID " +
+                                           "WHERE " +
+                                               "s.[Name] = @songName " +
+                                       ") AS totalListens, " +
+                                       "( " +
+                                           "SELECT " +
+                                               "COUNT(*) AS aTotalAdvertisedListens " +
+                                           "FROM " +
+                                               "AdvertisedSong a " +
+                                               "LEFT JOIN Song s ON s.SongID = a.SongID " +
+                                           "WHERE " +
+                                               "s.[Name] = @songName " +
+                                       ") AS advertisement " +
+                                   "WHERE " +
+                                       "s.[Name] = @songName " +
+                                   "GROUP BY " +
+                                       "h.SongID, " +
+                                       "s.[Name], " +
+                                       "totalListens.Listened, " +
+                                       "advertisement.aTotalAdvertisedListens, " +
+                                       "totalListens.TotalTime ";
+
+            var songName = _command.CreateParameter();  
+            songName.ParameterName = "@songName";
+            songName.Value = selectedSong;
+            _command.Parameters.Add(songName);
+            _reader = _command.ExecuteReader();
+            History searchResult = new History();
+            while (_reader.Read())
+            {
+                searchResult.SongID = (int)_reader["SongID"];
+                searchResult.SongName = (string)_reader["Name"];
+                searchResult.TotalTimesListened = (int)_reader["TotalTimesListened"];
+                searchResult.UniqueListeners = (int)_reader["UniqueListeners"];
+                searchResult.TotalTimeListened = (int)_reader["TotalTime"];
+                searchResult.TotalPaidListened = (int)_reader["TotalAdvertisedListens"];
+                searchResult.ListenedDaySeven = (int)_reader["ListenedDaySeven"];
+                searchResult.ListenedDaySix = (int)_reader["ListenedDaySix"];
+                searchResult.ListenedDayFive = (int)_reader["ListenedDayFive"];
+                searchResult.ListenedDayFour = (int)_reader["ListenedDayFour"];
+                searchResult.ListenedDayThree = (int)_reader["ListenedDayThree"];
+                searchResult.ListenedDayTwo = (int)_reader["ListenedDayTwo"];
+                searchResult.ListenedDayOne = (int)_reader["ListenedDayOne"];
+                searchResult.ListenedMonth = (int)_reader["ListenedMonth"];
+                searchResult.ListenedHalfMonth = (int)_reader["ListenedHalfMonth"];
+                searchResult.ListenedWeek = (int)_reader["ListenedWeek"];
+            }
+            _connection.Close();
+            return searchResult;
+        }
+
     }
 }

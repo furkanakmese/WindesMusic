@@ -41,7 +41,13 @@ namespace WindesMusic
         {
             UserStatistics userStatistics = new UserStatistics();
             userStatistics.Show();
+        } 
+        private void btnArtistStatisticsClick(object sender, RoutedEventArgs e)
+        {
+            ArtistStatistics artistStatistics = new ArtistStatistics();
+            artistStatistics.Show();
         }
+        
 
         private void btnLogout_Click(object sender, RoutedEventArgs e)
         {
@@ -83,6 +89,11 @@ namespace WindesMusic
             {
                 lblMessage.Text = "Please select an amount";
             }
+        }
+
+        private void boxSongs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }
