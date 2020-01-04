@@ -3,34 +3,28 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:WindesMusic"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1400"
         FontFamily="Arial"
-        Background="{DynamicResource MainColor}"
-        ResizeMode="NoResize"
+        WindowState="Maximized"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
         >
 
     <Grid x:Name="MainGrid">
         <Frame x:Name="MainFrame" Margin="150,50,-0.4,76" NavigationUIVisibility="Hidden"/>
         <DockPanel LastChildFill="False">
             <StackPanel DockPanel.Dock="Top" Height="100" Background="DarkGray" Margin="246,0,-0.333,0" Orientation="Horizontal">
-                <TextBox Name="inputSearch" Margin="10,0,0,0" Style="{StaticResource placeHolder}" Background="DarkGray" FontSize="50" Tag="Search.." Width="616" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionBrush="#FFFFCB05"/>
+                <TextBox Name="inputSearch" Margin="10,17,0,17" Style="{StaticResource placeHolder}" Background="DarkGray" FontSize="50" Tag="Search.." SelectionBrush="#FFFFCB05" CaretBrush="Black" Width="1196"/>
             </StackPanel>
             <StackPanel DockPanel.Dock="Left" Width="249" Margin="0,-105,0,50" Background="DimGray" RenderTransformOrigin="0.5,0.5">
-                <StackPanel.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform Angle="-0.431"/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </StackPanel.RenderTransform>
-                <Image Source="Img/WindesheimLogoMetTekst.jpg" HorizontalAlignment="Left" Height="75" Margin="20,5,0,5"/>
+                <Image Source="Img/WindesheimLogoMetTekst.jpg" HorizontalAlignment="Left" Height="75" Margin="20,20,0,5"/>
                 <Button x:Name="btnAccount" Style="{StaticResource MenuButton}" Content="Account" Margin="25,25,0,5" Click="ButtonClickAccount"/>
                 <Button Style="{StaticResource MenuButton}" Content="History Playlist" Margin="25,0,0,5" Click="HistoryPlaylistButtonClick"/>
                 <Button Style="{StaticResource MenuButton}" Content="Daily Playlist" Margin="25,0,0,5" Click="DailyPlaylistButtonClick" />
-                <Button x:Name="btnPlaylists" Style="{StaticResource MenuButton}" Content="Playlists" Margin="25,20,0,5"/>
+                <Button x:Name="btnPlaylists" Style="{StaticResource MenuButton}" Content="Playlists" Margin="30,20,0,5"/>
                 <Separator Width="100" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                 <Button Style="{StaticResource MenuButton}" Click="NewPlaylistButtonClick" Content="+ Create Playlist" Margin="25,5,0,5"/>
                 <ScrollViewer HorizontalAlignment="Left" Height="370" Margin="10,10,0,0" VerticalAlignment="Top" Width="240">
@@ -42,40 +36,98 @@
             </StackPanel>
 
             <StackPanel DockPanel.Dock="Bottom" Height="100" Margin="-250.4,0,-0.4,0" Background="DarkGray">
-                <Slider x:Name="PlaceInSongSlider" HorizontalAlignment="Center" Width="850" Height="25" Margin="0,7.5,0,-2.5" Thumb.DragCompleted="PlaceInSongSliderDragCompleted" Thumb.DragStarted="PlaceInSongSliderDragStarted" Maximum="100"/>
-                <Grid>
+                <Slider x:Name="PlaceInSongSlider" HorizontalAlignment="Center" Width="850" Height="25" Margin="0,7.5,0,-2.5" Thumb.DragCompleted="PlaceInSongSliderDragCompleted" Thumb.DragStarted="PlaceInSongSliderDragStarted" Maximum="100" Foreground="DimGray"/>
+                <Grid Height="60" Margin="500,0,10.2,0">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="300" />
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="50" />
                         <ColumnDefinition Width="*" />
-
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Button Grid.Column="1" Content="Queue" FontSize ="15" Click="ButtonClickQueue"/>
-                    <Button x:Name="btnMute" Grid.Column="2" Content="Mute/Unmute" FontSize ="15"/>
-                    <Slider x:Name="sldVolume" HorizontalAlignment="Right" Maximum="100" Value="100" Width="100" Grid.Column="3"/>
-                </Grid>
-
-                <Grid Width="500">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="170" />
                     </Grid.ColumnDefinitions>
 
-                    <Button Grid.Column="0" x:Name="btnShuffle" Content="Shuffle" Click="ShuffleButtonClick" HorizontalAlignment="Left" FontSize="15"/>
-                    <Button Grid.Column="1" x:Name="btnPrevious" Content="Previous" Click="PreviousButtonClick" FontSize="15"/>
-                    <Button Grid.Column="2" x:Name="btnPlay" Content="Play/Pause" HorizontalAlignment="Center" Height="45" Margin="75,0,146.6,-0.2" VerticalAlignment="Top" FontSize="15"/>
-                    <Button Grid.Column="3" x:Name="btnNext" Content="Next" Click="NextButtonClick" FontSize="15"/>
-                    <Button Grid.Column="4" x:Name="btnRepeat" Content="Repeat" HorizontalAlignment="Right" FontSize="15"/>
+                    <Border BorderThickness="0" HorizontalAlignment="Center" Grid.Column="0">
+                        <Button BorderThickness="0" Padding="0" x:Name="btnShuffle" Click="ShuffleButtonClick" Cursor="Hand" Background="DimGray">
+                            <materialDesign:PackIcon Name="PackIconShuffle" Kind="ShuffleDisabled">
+                                <materialDesign:PackIcon.LayoutTransform>
+                                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                </materialDesign:PackIcon.LayoutTransform>
+                            </materialDesign:PackIcon>
+                        </Button>
+                    </Border>
+
+                    <Border BorderThickness="0" HorizontalAlignment="Center" Grid.Column="1">
+                        <Button BorderThickness="0" Padding="0" x:Name="btnPrevious" Click="PreviousButtonClick" Cursor="Hand" Background="DimGray">
+                            <materialDesign:PackIcon Kind="SkipPrevious">
+                                <materialDesign:PackIcon.LayoutTransform>
+                                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                </materialDesign:PackIcon.LayoutTransform>
+                            </materialDesign:PackIcon>
+                        </Button>
+                    </Border>
+
+                    <Border BorderThickness="0" CornerRadius="2" HorizontalAlignment="Center" Grid.Column="2">
+                        <Button BorderThickness="0" Padding="0" x:Name="btnPlay" Click="PlayButtonClick" Cursor="Hand" Height="Auto" Margin="0,5" Background="DimGray">
+                            <materialDesign:PackIcon Name="PackIconPlay" Kind="Play">
+                                <materialDesign:PackIcon.LayoutTransform>
+                                    <ScaleTransform ScaleX="3" ScaleY="2.5"/>
+                                </materialDesign:PackIcon.LayoutTransform>
+                            </materialDesign:PackIcon>
+                        </Button>
+                    </Border>
+
+                    <Border BorderThickness="0" HorizontalAlignment="Center" Grid.Column="3">
+                        <Button BorderThickness="0" Padding="0" x:Name="btnNext" Click="NextButtonClick" Cursor="Hand" Background="DimGray">
+                            <materialDesign:PackIcon Kind="SkipNext">
+                                <materialDesign:PackIcon.LayoutTransform>
+                                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                </materialDesign:PackIcon.LayoutTransform>
+                            </materialDesign:PackIcon>
+                        </Button>
+                    </Border>
+
+                    <Border BorderThickness="0" HorizontalAlignment="Center" Grid.Column="4">
+                        <Button BorderThickness="0" Padding="0" x:Name="btnRepeat" Cursor="Hand" Background="DimGray" Click="RepeatButtonClick">
+                            <materialDesign:PackIcon Name="PackIconRepeat" Kind="RepeatOff">
+                                <materialDesign:PackIcon.LayoutTransform>
+                                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                </materialDesign:PackIcon.LayoutTransform>
+                            </materialDesign:PackIcon>
+                        </Button>
+                    </Border>
+
+                    <Border BorderThickness="0" HorizontalAlignment="Right" Grid.Column="6">
+                        <Button BorderThickness="0" Padding="0" Click="ButtonClickQueue" Cursor="Hand" Background="DimGray">
+                            <materialDesign:PackIcon Kind="QueueMusic">
+                                <materialDesign:PackIcon.LayoutTransform>
+                                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                </materialDesign:PackIcon.LayoutTransform>
+                            </materialDesign:PackIcon>
+                        </Button>
+                    </Border>
+
+                    <Border BorderThickness="0" HorizontalAlignment="Right" Grid.Column="7">
+                        <Button BorderThickness="0" Padding="0" Click="MuteButtonClick" Cursor="Hand" Background="DimGray">
+                            <materialDesign:PackIcon Name="PackIconVolume" Kind="VolumeHigh">
+                                <materialDesign:PackIcon.LayoutTransform>
+                                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                </materialDesign:PackIcon.LayoutTransform>
+                            </materialDesign:PackIcon>
+                        </Button>
+                    </Border>
+
+                    <Slider x:Name="sldVolume" HorizontalAlignment="Right" Maximum="100" Value="100" Width="150" Grid.Column="8" Margin="0,20,0,0" Foreground="DimGray"/>
+
                 </Grid>
                 <Label x:Name="Song" HorizontalAlignment="Left" Content="" Margin="10,-85,140,0" FontSize="20"/>
                 <Label  x:Name="Artist" HorizontalAlignment="Left" Content="" Margin="10,-50,0,0" FontSize="20"/>
             </StackPanel>
 
         </DockPanel>
-        <Frame NavigationUIVisibility="Hidden" x:Name="Main" Margin="250,102,-90.4,76.4"/>
+        <Frame NavigationUIVisibility="Hidden" x:Name="Main" Margin="253,102,-0.4,101.4" BorderThickness="0"></Frame>
     </Grid>
 </Window>

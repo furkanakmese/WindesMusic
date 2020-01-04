@@ -25,10 +25,11 @@ namespace WindesMusic
         private string _orderBy;
         private int _PlaylistID;
         private string _PlaylistName;
-        List<Song> SongsInPlaylist;
+        public List<Song> SongsInPlaylist = new List<Song>();
         List<Song> RecommendedSongs = new List<Song>();
         List<Song> RecommendedAds = new List<Song>();
         MainWindow mainWindow;
+        string orderBy;
         User user;
 
         public delegate void OnRerender(Playlist playlist);
@@ -55,11 +56,26 @@ namespace WindesMusic
             user = BaseUser;
             _PlaylistName = playlistToUse.PlaylistName;
             _PlaylistID = playlistToUse.PlaylistID;
-            user = BaseUser;
-            if (SongsInPlaylist == null)
+            switch (orderBy)
             {
-                SongsInPlaylist = playlistToUse.SongPlaylist;
+                case "name":
+                    playlistToUse.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.SongName).ToList();
+                    break;
+                case "album":
+                    playlistToUse.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.Album).ToList();
+                    break;
+                case "year":
+                    playlistToUse.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.Year).ToList();
+                    break;
+                case "artist":
+                    playlistToUse.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.Artist).ToList();
+                    break;
+                default:
+                    playlistToUse.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.SongID).ToList();
+                    break;
             }
+            user = BaseUser;
+            SongsInPlaylist = playlist.SongPlaylist;
             Thickness SongBlockThickness = new Thickness(5, 2, 0, 0);
             SolidColorBrush whiteText = new SolidColorBrush(System.Windows.Media.Colors.White);
             StackPanel sp = new StackPanel();
@@ -78,10 +94,13 @@ namespace WindesMusic
                 Name = $"_{_PlaylistID}",
                 Content = "Play",
                 FontSize = 30,
-                Margin = new Thickness(30, 10, 0, 5)
+                Margin = new Thickness(10, 10, 25, 0),
+                Padding = new Thickness(5),
+                BorderThickness = new Thickness(0),
+                Height = 50,
+                Width = 100
             };
             PlayPlaylistButton.Click += PlayPlaylist;
-
             var DeletePlaylistButton = new Button
             {
                 Name = $"Delete_{_PlaylistID}",
@@ -102,8 +121,8 @@ namespace WindesMusic
             };
             RenamePlaylistButton.Click += RenamePlaylist;
 
-            sp.Children.Add(PlaylistBlock);
             sp.Children.Add(PlayPlaylistButton);
+            sp.Children.Add(PlaylistBlock);
             sp1.Children.Add(RenamePlaylistButton);
             sp1.Children.Add(DeletePlaylistButton);
             DeletePlaylist.Children.Add(sp1);
@@ -170,14 +189,17 @@ namespace WindesMusic
             OrderList.Children.Add(OrderYear);
 
             //Adds the necessary amount of rows for the playlist
-            for (int i = 0; i < playlistToUse.SongPlaylist.Count; i++)
+            for (int i = 0; i < SongsInPlaylist.Count; i++)
             {
-                Song playlistSong = playlistToUse.SongPlaylist[i];
+                Song playlistSong = SongsInPlaylist[i];
                 RowDefinition rowDef = new RowDefinition();
                 rowDef.Name = $"Row_{i}";
                 SongList.RowDefinitions.Add(rowDef);
                 RowDefinitionCollection RowNames = SongList.RowDefinitions;
                 Array RowArray = RowNames.ToArray();
+
+                SolidColorBrush btnTextColor = new SolidColorBrush();
+                btnTextColor.Color = Color.FromRgb(0,0,0);
 
                 // Add the play button to the Songlist grid
                 var PlayButton = new Button
@@ -185,7 +207,10 @@ namespace WindesMusic
                     Name = $"__{playlistSong.SongID}",
                     Content = "Play",
                     Margin = new Thickness(5, 0, 0, 5),
+                    Padding = new Thickness(5),
+                    BorderThickness = new Thickness(0),
                     FontSize = 15,
+                    
                     Tag = playlistSong
                 };
                 Grid.SetRow(PlayButton, i);
@@ -247,11 +272,7 @@ namespace WindesMusic
                 SongList.Children.Add(SongBlockAlbum);
                 SongList.Children.Add(SongBlockYear);
 
-                ContextMenu menu = new ContextMenu();
-                menu.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
-                menu.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
-
-                SongList.ContextMenu = null;
+                SongList.MouseRightButtonDown -= SongContextMenuOpening;
                 SongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
             }
 
@@ -277,6 +298,8 @@ namespace WindesMusic
                     Name = $"__{playlistSong.SongID}",
                     Content = "Play",
                     Margin = new Thickness(5, 0, 0, 5),
+                    Padding = new Thickness(5),
+                    BorderThickness = new Thickness(0),
                     FontSize = 15,
                     Tag = playlistSong
                 };
@@ -352,38 +375,16 @@ namespace WindesMusic
                 menu.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
 
                 RecommendedSongList.ContextMenu = null;
-                RecommendedSongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
+                RecommendedSongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuFromRecommended);
             }
             
         }
         private void OnLabelClick(object sender, EventArgs args)
         {
-            Playlist newPlaylist = new Playlist();
-            newPlaylist.PlaylistID = playlistToUse.PlaylistID;
-            newPlaylist.PlaylistName = playlistToUse.PlaylistName;
-            newPlaylist.Recommender = playlistToUse.Recommender;
-
-            switch (_orderBy)
-            {
-                case "name":
-                    newPlaylist.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.SongName).ToList();
-                    break;
-                case "album":
-                    newPlaylist.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.Album).ToList();
-                    break;
-                case "year":
-                    newPlaylist.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.Year).ToList();
-                    break;
-                case "artist":
-                    newPlaylist.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.Artist).ToList();
-                    break;
-                default:
-                    newPlaylist.SongPlaylist = playlistToUse.SongPlaylist.OrderBy(x => x.SongID).ToList();
-                    break;
-            }
+            orderBy = _orderBy;
             if (rerender != null)
             {
-                rerender(newPlaylist);
+                rerender(playlistToUse);
             }
         }
 
@@ -393,14 +394,18 @@ namespace WindesMusic
             var pos = e.GetPosition(SongList);
             double top = pos.Y;
             int top1 = (int)Math.Round(top);
-            int amount = top1 / 28;
+            int amount = top1 / 38;
             ContextMenu menu = new ContextMenu();
+            menu.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
+            menu.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
             Song song = SongsInPlaylist.ElementAt(amount);
             int CorrectSongID = SongsInPlaylist.ElementAt(amount).SongID;
 
             MenuItem PlaylistItem = new MenuItem();
             PlaylistItem.Name = $"Playlists";
             PlaylistItem.Header = "Add to Playlist";
+            PlaylistItem.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
+            PlaylistItem.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
 
             foreach (Playlist pl in Playlists)
             {
@@ -409,6 +414,8 @@ namespace WindesMusic
                 OnePlaylistItem.Tag = song;
                 OnePlaylistItem.Header = $"{pl.PlaylistName}";
                 OnePlaylistItem.Click += AddToPlaylistClick;
+                OnePlaylistItem.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
+                OnePlaylistItem.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
                 PlaylistItem.Items.Add(OnePlaylistItem);
             }
 
@@ -436,7 +443,7 @@ namespace WindesMusic
             var pos = e.GetPosition(RecommendedSongList);
             double top = pos.Y;
             int top1 = (int)Math.Round(top);
-            int amount = top1 / 28;
+            int amount = top1 / 38;
             ContextMenu menu = new ContextMenu();
             Song song = RecommendedSongs.ElementAt(amount);
             int CorrectSongID = RecommendedSongs.ElementAt(amount).SongID;

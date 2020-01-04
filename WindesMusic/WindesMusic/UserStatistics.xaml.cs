@@ -1,10 +1,12 @@
 ﻿using LiveCharts;
+using LiveCharts.Defaults;
 using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Separator = LiveCharts.Wpf.Separator;
 
 namespace WindesMusic
 {
@@ -19,10 +21,13 @@ namespace WindesMusic
         private ScrollViewer StatsScrollViewer;
         private StackPanel Statistics;
         private CartesianChart History;
-        private ScrollViewer Graphs;
         private List<Label> StatLabels = new List<Label>();
+        private List<DateTimePoint> graphPoints = new List<DateTimePoint>();
         private LineSeries mySeries;
         private Grid statGrid;
+        private ColumnSeries ColumnSeries;
+        private ChartValues<int> dateTimePoints;
+        private List<string> Dates;
         private new double Width;
         private new double Height;
 
@@ -74,7 +79,7 @@ namespace WindesMusic
                 //Width = Width * .95,
                 //Height = Height * .8,
                 //Margin = new Thickness(-Width * .975, Height * .2, Width * .025, Height * .025)
-                Margin = new Thickness(0, Height * .2, 0, Height * .025)
+                Margin = new Thickness(0, Height * .2, 0, Height * .025 + 30)
             };
             WindowStackPanel.Children.Add(statGrid);
 
@@ -84,7 +89,7 @@ namespace WindesMusic
                 Width = Width * .95,
                 Height = Height * .8,
                 //Margin = new Thickness(-Width * .975, Height * .2, Width * .025, Height * .025),
-                Margin = new Thickness(-Width * .975, 0, Width * .025, 0),
+                Margin = new Thickness(-Width * .975, 0, Width * .025, 50),
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Auto
             };
             statGrid.Children.Add(StatsScrollViewer);
@@ -92,31 +97,66 @@ namespace WindesMusic
             Statistics = new StackPanel();
             StatsScrollViewer.Content = Statistics;
 
-            Graphs = new ScrollViewer
+
+            ColumnSeries = new ColumnSeries
             {
+                Values = dateTimePoints,
+                DataContext = this,
                 Width = Width * .95,
-                Height = Height * .95,
+                Height = Height * .80,
                 Margin = new Thickness(Width * .025, Height * .025, Width * .025, Height * .025)
             };
-            WindowStackPanel.Children.Add(Graphs);
 
-            History = new CartesianChart();
-            Graphs.Content = History;
+
+            History = new CartesianChart
+            {
+                DataContext = this,
+                Width = Width * .95,
+                Height = Height * .80,
+                Margin = new Thickness(Width * .025, Height * .025, Width * .025, Height * .025)
+            };
+
+            History.AxisX.Add(new Axis
+            {
+                Labels = Dates
+            });
+
+            History.AxisY.Add(new Axis
+            {
+                Separator = new Separator
+                {
+                    Step = 1
+                }
+            });
+
+
+            History.Series.Clear();
+            History.Series.Add(ColumnSeries);
+            WindowStackPanel.Children.Add(History);
 
 
             foreach (Label label in StatLabels)
             {
                 Statistics.Children.Add(label);
             }
-
-            History.Series.Add(mySeries);
         }
 
         public void GetGraphValues()
         {
+            graphPoints = db.getSongsListened();
+            dateTimePoints = new ChartValues<int>();
+            Dates = new List<string>();
+
+            foreach (DateTimePoint dateTimePoint in graphPoints)
+            {
+                dateTimePoints.Add((int)dateTimePoint.Value);
+                Dates.Add(dateTimePoint.DateTime.ToString().Substring(0,10));
+            }
+
             mySeries = new LineSeries
             {
-                Values = new ChartValues<int> { 12, 23, 55, 100 }
+                Values = dateTimePoints,
+                Fill = Brushes.Transparent
             };
         }
 
@@ -132,8 +172,8 @@ namespace WindesMusic
             {
                 Label songLabel = new Label
                 {
-                    Content = $"{result[i]} keer {result[i + 1]} beluisterd.",
-                    FontSize = 30,
+                    Content = $"{result[i]} times listened to {result[i + 1]}.",
+                    FontSize = 20,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
                 StatLabels.Add(songLabel);
@@ -146,8 +186,8 @@ namespace WindesMusic
             {
                 Label songLabel = new Label
                 {
-                    Content = $"{result[i]} keer een nummer in genre: {result[i + 1]} beluisterd.",
-                    FontSize = 30,
+                    Content = $"{result[i]} times listened to song in genre: {result[i + 1]}.",
+                    FontSize = 20,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
                 StatLabels.Add(songLabel);
@@ -161,8 +201,8 @@ namespace WindesMusic
             {
                 Label songLabel = new Label
                 {
-                    Content = $"{result[i]} keer een nummer van artiest: {result[i + 1]} beluisterd.",
-                    FontSize = 30,
+                    Content = $"{result[i]} times listened to artist: {result[i + 1]}.",
+                    FontSize = 20,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
                 StatLabels.Add(songLabel);
@@ -174,18 +214,13 @@ namespace WindesMusic
             {
                 Label songLabel = new Label
                 {
-                    Content = $"{periodResult[i + 1]} keer een nummer uit jaar: {periodResult[i]} beluisterd.",
-                    FontSize = 30,
+                    Content = $"{periodResult[i + 1]} times listened to song from: {periodResult[i]}.",
+                    FontSize = 20,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
                 StatLabels.Add(songLabel);
             }
 
-
-            //hoevaak alle nummers in een periode beluisterd door gebruiker.
-            //SELECT COUNT(*), s.Year FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = 1 GROUP BY s.Year;
-
-            //user = db.GetUserData(Properties.Settings.Default.UserID);
 
         }
 

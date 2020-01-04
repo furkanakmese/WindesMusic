@@ -116,8 +116,7 @@ namespace WindesMusic
                 QueueList.Children.Add(SongBlockArtist);
                 QueueList.Children.Add(SongBlockAlbum);
                 QueueList.Children.Add(SongBlockYear);
-
-                //SongList.MouseRightButtonDown += new MouseButtonEventHandler(SongContextMenuOpening);
+                QueueToPlaylist.MouseLeftButtonUp += AddQueueToPlaylist;
             }
 
             }
@@ -128,6 +127,39 @@ namespace WindesMusic
             Button _ButtonSong = sender as Button;
             Song songObject = (Song)_ButtonSong.Tag;
             mainWindow.audioPlayer.PlayChosenSong(songObject);
+        }
+
+        
+        private void AddQueueToPlaylist(object sender, RoutedEventArgs e)
+        {
+            List<Playlist> Playlists = mainWindow.user.Playlists;
+            ContextMenu menu = new ContextMenu();
+            menu.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
+            menu.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
+
+            foreach (Playlist pl in Playlists)
+            {
+                MenuItem OnePlaylistItem = new MenuItem();
+                OnePlaylistItem.Name = $"Playlist_{pl.PlaylistID}";
+                OnePlaylistItem.Tag = pl;
+                OnePlaylistItem.Header = $"{pl.PlaylistName}";
+                OnePlaylistItem.Click += AddToPlaylistClick;
+                OnePlaylistItem.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
+                OnePlaylistItem.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
+                menu.Items.Add(OnePlaylistItem);
+            }
+            QueueToPlaylist.ContextMenu = menu;
+            QueueToPlaylist.ContextMenu.IsOpen = true;
+        }
+
+        private void AddToPlaylistClick(object sender, RoutedEventArgs e)
+        {
+            MenuItem PlaylistItem = sender as MenuItem;
+            Playlist playlist = (Playlist)PlaylistItem.Tag;
+            foreach(Song s in songs)
+            {
+                playlist.AddSongToPlaylist(s);
+            }
         }
 
         public void Initialise(object sender, RoutedEventArgs e)

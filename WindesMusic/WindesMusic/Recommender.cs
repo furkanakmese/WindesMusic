@@ -14,7 +14,7 @@ namespace WindesMusic
         {
             this.db = db;
         }
-        //Returns 5 random songs that are not in the playlist and with the most common genre
+        //Returns a requested amount random songs that are not in the playlist and with the most common genre
         public List<Song> GetRecommendedSongsForPlaylist(Playlist playlist, int amount)
         {
             //Groups songs per genre and orders them by count
@@ -44,7 +44,8 @@ namespace WindesMusic
             return db.GetRecommendedSongsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID, amount);
         }
 
-        //Returns a maximum of 10 previously listened to songs
+        //Returns a maximum of 10 previously listened to songs (HistoryPlaylist)
+        //Returns a maximum of 10 random songs based on the listeners history (DailyPlaylist)
         public Playlist getDailyPlaylist(int userID, string playlistName)
         {
             var generatedID = db.SaveGeneratedPlaylist(userID, playlistName);

@@ -11,13 +11,13 @@ namespace WindesMusic
         private MainWindow mainWindow;
         private bool isPlaying = false;
         private float volume = 1;
-        private Song _CurrentSong;
+        public Song _CurrentSong;
 
         public AudioPlayer(MainWindow main)
         {
             outputDevice = new WaveOutEvent();
             mainWindow = main;
-            //outputDevice.PlaybackStopped += OnPlaybackStopped;
+            outputDevice.PlaybackStopped += OnPlaybackStopped;
         }
 
 
@@ -99,14 +99,14 @@ namespace WindesMusic
         //start, and pause and resume button.
         public void OnButtonPlayClick(object sender, EventArgs args)
         {
-            Console.WriteLine("test");
             if (!isPlaying)
             {
-                // if (audioFile == null)
-                // {
-                    // audioFile = new AudioFileReader("Feint2.mp3");
-                    // outputDevice.Init(audioFile);
-                // }
+                //for unittesting.
+                //if (audioFile == null)
+                //{
+                //    audioFile = new AudioFileReader("67.mp3");
+                //    outputDevice.Init(audioFile);
+                //}
                 try
                 {
                     outputDevice.Play();
@@ -135,7 +135,7 @@ namespace WindesMusic
             {
                 MusicQueue.AddSongToPreviousQueue(_CurrentSong);
             }
-            
+
         }
 
         public void OnButtonNextClick()
@@ -145,9 +145,18 @@ namespace WindesMusic
             DisposeOfSong();
             audioFile = null;
             isPlaying = false;
+            mainWindow.Song.Content = "";
+            mainWindow.Artist.Content = "";
             if (_CurrentSong != null)
             {
                 MusicQueue.AddSongToPreviousQueue(_CurrentSong);
+                if(MusicQueue.IsRepeat == true)
+                {
+                    MusicQueue.SongQueue.Clear();
+                    MusicQueue.RecommendedSongQueue.Clear();
+                    MusicQueue.AddSongToQueue(_CurrentSong);
+                    this.PlayChosenSong();
+                }
             }
             if (MusicQueue.SongQueue.Count != 0 && audioFile == null)
             {
@@ -175,7 +184,17 @@ namespace WindesMusic
         //stop function, disposes of AudiofileReader.
         public void OnPlaybackStopped(object sender, StoppedEventArgs args)
         {
-            OnButtonStopClick();
+            if(this.CurrentPlaceInSongPercentage() >= 99)
+            {
+                outputDevice?.Pause();
+                outputDevice?.Stop();
+                MusicQueue.AddSongToPreviousQueue(_CurrentSong);
+                PlayChosenSong();
+            }
+            if(_CurrentSong == null)
+            {
+
+            }
         }
 
         //recieves change in slider value and calculates new position in song.
