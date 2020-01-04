@@ -1,209 +1,90 @@
-﻿using LiveCharts;
-using LiveCharts.Wpf;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
+using LiveCharts;
+using LiveCharts.Wpf;
+using WindesMusic.Properties;
 
 namespace WindesMusic
 {
-    /// <summary>
-    /// Interaction logic for UserStatistics.xaml
-    /// </summary>
     public partial class ArtistStatistics : Window
     {
-        private Database db = new Database();
-        private Button ReturnButton;
-        private Label WindowName;
-        private ScrollViewer StatsScrollViewer;
-        private StackPanel Statistics;
-        private CartesianChart History;
-        private ScrollViewer Graphs;
-        private List<Label> StatLabels = new List<Label>();
-        private LineSeries mySeries;
-        private Grid statGrid;
-        private new double Width;
-        private new double Height;
-        int userID = Properties.Settings.Default.UserID;
+        private readonly Database db = new Database();
+        private History history = new History();
+        public SeriesCollection SeriesCollection { get; set; }
+        public string[] Labels { get; set; }
+        public Func<double, string> YFormatter { get; set; }
 
         public ArtistStatistics()
         {
             InitializeComponent();
-
-            Width = SystemParameters.PrimaryScreenWidth / 2;
-            Height = SystemParameters.PrimaryScreenHeight;
-
-            LoadUserStatistics();
-            GetGraphValues();
-            this.SizeToContent = SizeToContent.WidthAndHeight;
-
-            //drawgraphs moet voor BuildScreens wanneer gegevens locaal worden bewaard.
-            BuildScreens();
-        }
-
-        private void BuildScreens()
-        {
-            WindowStackPanel.Children.Clear();
-            Statistics?.Children.Clear();
-
-            ReturnButton = new Button
-            {
-                Height = Height * .1,
-                Width = Width * .15,
-                Margin = new Thickness(Width * .025, Height * .025, Width * .025, Height * .8),
-                Content = "Return",
-                FontSize = 20
-            };
-            ReturnButton.Click += new RoutedEventHandler(ReturnClick);
-            WindowStackPanel.Children.Add(ReturnButton);
-
-            WindowName = new Label
-            {
-                Height = Height * .1,
-                Width = Width * .75,
-                Margin = new Thickness(Width * .025, Height * .025, Width * .025, Height * .8),
-                Content = "User statistics",
-                Foreground = new SolidColorBrush(Colors.White),
-                HorizontalContentAlignment = HorizontalAlignment.Center,
-                FontSize = 30
-            };
-            WindowStackPanel.Children.Add(WindowName);
-
-            statGrid = new Grid
-            {
-                //Width = Width * .95,
-                //Height = Height * .8,
-                //Margin = new Thickness(-Width * .975, Height * .2, Width * .025, Height * .025)
-                Margin = new Thickness(0, Height * .2, 0, Height * .025)
-            };
-            WindowStackPanel.Children.Add(statGrid);
-
-
-            StatsScrollViewer = new ScrollViewer
-            {
-                Width = Width * .95,
-                Height = Height * .8,
-                //Margin = new Thickness(-Width * .975, Height * .2, Width * .025, Height * .025),
-                Margin = new Thickness(-Width * .975, 0, Width * .025, 0),
-                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto
-            };
-            statGrid.Children.Add(StatsScrollViewer);
-
-            Statistics = new StackPanel();
-            StatsScrollViewer.Content = Statistics;
-
-            Graphs = new ScrollViewer
-            {
-                Width = Width * .95,
-                Height = Height * .95,
-                Margin = new Thickness(Width * .025, Height * .025, Width * .025, Height * .025)
-            };
-            WindowStackPanel.Children.Add(Graphs);
-
-            History = new CartesianChart();
-            Graphs.Content = History;
-
-
-            foreach (Label label in StatLabels)
-            {
-                Statistics.Children.Add(label);
-            }
-
-            History.Series.Add(mySeries);
-        }
-
-        public void GetGraphValues()
-        {
-            mySeries = new LineSeries
-            {
-                Values = new ChartValues<int> { 12, 23, 55, 100 }
-            };
-        }
-
-        public void GetArtistSongs(userdID)
-        {
-            
-        }
-
-        //SELECT COUNT(*), s.Name FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = 1 GROUP BY s.Name;
-        protected void LoadUserStatistics()
-        {
-            List<string> result = db.GetSongStatistic();
-
-            //song statistics
-            StatLabels.Add(new Label { Content = "Song", FontSize = 40, Foreground = new SolidColorBrush(Colors.White) });
-            for (int i = 0; i < result.Count; i += 2)
-            {
-                Label songLabel = new Label
-                {
-                    Content = $"{result[i]} keer {result[i + 1]} beluisterd.",
-                    FontSize = 30,
-                    Foreground = new SolidColorBrush(Colors.White)
-                };
-                StatLabels.Add(songLabel);
-            }
-
-            //genre statistics
-            result = db.GetGenreStatistic();
-            StatLabels.Add(new Label { Content = "Genre", FontSize = 40, Foreground = new SolidColorBrush(Colors.White) });
-            for (int i = 0; i < result.Count; i += 2)
-            {
-                Label songLabel = new Label
-                {
-                    Content = $"{result[i]} keer een nummer in genre: {result[i + 1]} beluisterd.",
-                    FontSize = 30,
-                    Foreground = new SolidColorBrush(Colors.White)
-                };
-                StatLabels.Add(songLabel);
-            }
-
-
-            //artist statistics
-            result = db.GetArtistStatistic();
-            StatLabels.Add(new Label { Content = "Artist", FontSize = 40, Foreground = new SolidColorBrush(Colors.White) });
-            for (int i = 0; i < result.Count; i += 2)
-            {
-                Label songLabel = new Label
-                {
-                    Content = $"{result[i]} keer een nummer van artiest: {result[i + 1]} beluisterd.",
-                    FontSize = 30,
-                    Foreground = new SolidColorBrush(Colors.White)
-                };
-                StatLabels.Add(songLabel);
-            }
-
-            List<int> periodResult = db.GetPeriodStatistic();
-            StatLabels.Add(new Label { Content = "Period", FontSize = 40, Foreground = new SolidColorBrush(Colors.White) });
-            for (int i = 0; i < periodResult.Count; i += 2)
-            {
-                Label songLabel = new Label
-                {
-                    Content = $"{periodResult[i + 1]} keer een nummer uit jaar: {periodResult[i]} beluisterd.",
-                    FontSize = 30,
-                    Foreground = new SolidColorBrush(Colors.White)
-                };
-                StatLabels.Add(songLabel);
-            }
-
-
-            //hoevaak alle nummers in een periode beluisterd door gebruiker.
-            //SELECT COUNT(*), s.Year FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = 1 GROUP BY s.Year;
-
-            //user = db.GetUserData(Properties.Settings.Default.UserID);
-
+            for (var i = 0; i < db.GetArtistSong(Settings.Default.UserID).Count; i++)
+                boxSongs.Items.Add(db.GetArtistSong(Settings.Default.UserID).ElementAtOrDefault(i)?.SongName);
         }
 
         private void ReturnClick(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
-        private void WindowOnSizeChanged(object sender, SizeChangedEventArgs args)
-        {
-            Width = this.DesiredSize.Width / 2;
-            Height = this.DesiredSize.Height;
-            BuildScreens();
+        private void ShowDataClick(object sender, RoutedEventArgs e)
+        { 
+             history = db.GetArtistSongData((string) boxSongs.SelectionBoxItem);
+            lblSongName.Text = "Nummer: " + history.SongName;
+            lblTotalTimesListened.Text = "Aantal keer beluisterd: " + history.TotalTimesListened;
+            lblUniqueListeners.Text = "Unieke luisteraars: " + history.UniqueListeners;
+            var totalTimeHour = history.TotalTimeListened / 60 / 60;
+            lblTotalTimeListened.Text = "Aantal uren beluisterd: " + totalTimeHour;
+            lblTotalPaidListened.Text = "Betaald beluisterd: " + history.TotalPaidListened;
+            lblListenedMonth.Text = "Afgelopen maand: " + history.ListenedMonth;
+            lblListenedHalfMonth.Text = "Afgelopen twee weken: " + history.ListenedHalfMonth;
+            lblListenedWeek.Text = "Afgelopen week: " + history.ListenedWeek;
+
+            var dayOne = Convert.ToDouble(history.ListenedDayOne);
+            var dayTwo = Convert.ToDouble(history.ListenedDayTwo);
+            var dayThree = Convert.ToDouble(history.ListenedDayThree);
+            var dayFour = Convert.ToDouble(history.ListenedDayFour);
+            var dayFive = Convert.ToDouble(history.ListenedDayFive);
+            var daySix = Convert.ToDouble(history.ListenedDaySix);
+            var daySeven = Convert.ToDouble(history.ListenedDaySeven);
+           
+
+            SeriesCollection = new SeriesCollection
+            {
+                new LineSeries
+                {
+                    Title = "Series 0",
+                    Values = new ChartValues<double>
+                    {dayOne,dayTwo,dayThree,dayFour,dayFive,daySix,daySeven },
+                    PointGeometry = DefaultGeometries.Circle,
+                    PointGeometrySize = 5
+                }
+            };
+            Labels = new[] {"Day one", "Day two", "Day three", "Day four", "Day Five", "Day Six", "Day Seven"};
+            YFormatter = value => value.ToString("C");
+
+            DataContext = this;
         }
+    }
+
+    public class History
+    {
+        public int SongID { get; set; }
+        public string SongName { get; set; }
+        public int UniqueListeners { get; set; }
+        public int TotalTimeListened { get; set; }
+        public int TotalTimesListened { get; set; }
+        public int ListenedDayOne { get; set; }
+        public int ListenedDayTwo { get; set; }
+        public int ListenedDayThree { get; set; }
+        public int ListenedDayFour { get; set; }
+        public int ListenedDayFive { get; set; }
+        public int ListenedDaySix { get; set; }
+        public int ListenedDaySeven { get; set; }
+        public int ListenedMonth { get; set; }
+        public int ListenedWeek { get; set; }
+        public int ListenedHalfMonth { get; set; }
+        public int TotalPaidListened { get; set; }
     }
 }

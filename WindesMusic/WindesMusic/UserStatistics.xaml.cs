@@ -124,7 +124,7 @@ namespace WindesMusic
         //SELECT COUNT(*), s.Name FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = 1 GROUP BY s.Name;
         protected void LoadUserStatistics()
         {
-            List<string> result = db.GetSongStatistic();
+            List<string> result = db.GetUserSongStatistic();
 
             //song statistics
             StatLabels.Add(new Label { Content = "Song", FontSize = 40, Foreground = new SolidColorBrush(Colors.White) });
