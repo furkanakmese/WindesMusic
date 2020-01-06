@@ -131,8 +131,8 @@ namespace WindesMusic
                 var PlaylistButton = new Button
                 {
                     //Style = StaticResource MenuButton,
-                    Name = $"_{item.PlaylistID}",
-                    Content = $"{item.PlaylistName}",
+                    Name = $"_{item.playlistID}",
+                    Content = $"{item.playlistName}",
                     FontSize = 23,
                     Margin = thickness
                 };
@@ -157,9 +157,8 @@ namespace WindesMusic
             {
                 var PlaylistButton = new Button
                 {
-                    //Style = StaticResource MenuButton,
-                    Name = $"_{item.PlaylistID}",
-                    Content = $"{item.PlaylistName}",
+                    Name = $"_{item.playlistID}",
+                    Content = $"{item.playlistName}",
                     FontSize = 23,
                     Margin = thickness
                 };
@@ -174,7 +173,7 @@ namespace WindesMusic
         {
             Button _ButtonPlaylist = sender as Button;
             int PlaylistId = Convert.ToInt32(_ButtonPlaylist.Name.Substring(1));
-            Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == PlaylistId).FirstOrDefault();
+            Playlist relevantPlaylist = user.Playlists.Where(i => i.playlistID == PlaylistId).FirstOrDefault();
             // playlistSongs = new PlaylistSongsPage();
             playlistSongs.reinitialize(relevantPlaylist, this, user);
             Main.Content = playlistSongs;
@@ -217,18 +216,18 @@ namespace WindesMusic
 
         private void ShuffleButtonClick(object sender, RoutedEventArgs e)
         {
-            if (MusicQueue.IsShuffle == false)
+            if (MusicQueue.isShuffle == false)
             {
                 btnShuffle.Background = new SolidColorBrush(System.Windows.Media.Colors.DarkOrange);
                 PackIconShuffle.Kind = MaterialDesignThemes.Wpf.PackIconKind.ShuffleVariant;
                 MusicQueue.ShuffleSongs();
-                MusicQueue.IsShuffle = true;
+                MusicQueue.isShuffle = true;
             }
             else
             {
                 btnShuffle.Background = new SolidColorBrush(System.Windows.Media.Colors.DimGray);
                 PackIconShuffle.Kind = MaterialDesignThemes.Wpf.PackIconKind.ShuffleDisabled;
-                MusicQueue.IsShuffle = false;
+                MusicQueue.isShuffle = false;
             }
         }
 
@@ -252,17 +251,17 @@ namespace WindesMusic
         }
         private void RepeatButtonClick(object sender, RoutedEventArgs e)
         {
-            if (MusicQueue.IsRepeat == false)
+            if (MusicQueue.isRepeat == false)
             {
                 PackIconRepeat.Kind = MaterialDesignThemes.Wpf.PackIconKind.Repeat;
                 btnRepeat.Background = new SolidColorBrush(System.Windows.Media.Colors.DarkOrange);
-                MusicQueue.IsRepeat = true;
+                MusicQueue.isRepeat = true;
             }
             else
             {
                 btnRepeat.Background = new SolidColorBrush(System.Windows.Media.Colors.DimGray);
                 PackIconRepeat.Kind = MaterialDesignThemes.Wpf.PackIconKind.RepeatOff;
-                MusicQueue.IsRepeat = false;
+                MusicQueue.isRepeat = false;
             }
         }
 

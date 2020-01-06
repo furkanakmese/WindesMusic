@@ -43,7 +43,7 @@ namespace WindesMusic
                 image.MouseLeftButtonDown += PlaylistClickRectangle;
 
                 TextBlock label = new TextBlock();
-                label.Text = item.PlaylistName;
+                label.Text = item.playlistName;
                 label.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
                 label.HorizontalAlignment = HorizontalAlignment.Left;
                 label.Tag = item;

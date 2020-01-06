@@ -18,7 +18,7 @@ namespace WindesMusic
         public List<Song> GetRecommendedSongsForPlaylist(Playlist playlist, int amount)
         {
             //Groups songs per genre and orders them by count
-            var q = from x in playlist.SongPlaylist
+            var q = from x in playlist.songPlaylist
                     group x by x.Subgenre into g
                     let count = g.Count()
                     orderby count descending
@@ -41,7 +41,7 @@ namespace WindesMusic
                 loopCount++;
             }
 
-            return db.GetRecommendedSongsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID, amount);
+            return db.GetRecommendedSongsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.playlistID, amount);
         }
 
         //Returns a maximum of 10 previously listened to songs (HistoryPlaylist)
@@ -56,10 +56,10 @@ namespace WindesMusic
             {
                 if(playlistName == "History Playlist")
                 {
-                    playlist.SongPlaylist = db.GetPlayHistory(userID);
+                    playlist.songPlaylist = db.GetPlayHistory(userID);
 
                     Random random = new Random();
-                    var randomizedList = from song in playlist.SongPlaylist
+                    var randomizedList = from song in playlist.songPlaylist
                                          orderby random.Next()
                                          select song;
 
@@ -73,30 +73,30 @@ namespace WindesMusic
                             loopCount++;
                         }
                     }
-                    playlist.SongPlaylist = history;
+                    playlist.songPlaylist = history;
 
                     db.SaveGeneratedPlaylistToSong(history, (int)generatedID);
                     return playlist;
                 }
                 else if(playlistName == "Daily Playlist")
                 {
-                    playlist.SongPlaylist = db.GetPlayHistory(userID);
-                    playlist.SongPlaylist = GetRecommendedSongsForPlaylist(playlist, 10);
-                    db.SaveGeneratedPlaylistToSong(playlist.SongPlaylist, (int)generatedID);
+                    playlist.songPlaylist = db.GetPlayHistory(userID);
+                    playlist.songPlaylist = GetRecommendedSongsForPlaylist(playlist, 10);
+                    db.SaveGeneratedPlaylistToSong(playlist.songPlaylist, (int)generatedID);
                     return playlist;
                 }
                 
             }
 
-            playlist.SongPlaylist = db.getGeneratedPlaylistSongs(playlist.PlaylistID);
+            playlist.songPlaylist = db.getGeneratedPlaylistSongs(playlist.playlistID);
             return playlist;
         }
 
         public List<Song> GetRecommendedAdsFromPlaylist(Playlist playlist)
         {
-            playlist.SongPlaylist = playlist.SongPlaylist.OrderBy(x => x.SongID).ToList();
+            playlist.songPlaylist = playlist.songPlaylist.OrderBy(x => x.SongID).ToList();
             //Groups songs per genre and orders them by count
-            var q = from x in playlist.SongPlaylist
+            var q = from x in playlist.songPlaylist
                     group x by x.Subgenre into g
                     let count = g.Count()
                     orderby count descending
@@ -118,7 +118,7 @@ namespace WindesMusic
                 }
                 loopCount++;
             }
-            return db.GetRecommendedAdsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.PlaylistID);
+            return db.GetRecommendedAdsForPlaylist(mostCommonGenre, secondMostCommonGenre, playlist.playlistID);
         }
     }
 }

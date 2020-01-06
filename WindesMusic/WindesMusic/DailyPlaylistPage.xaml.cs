@@ -34,10 +34,10 @@ namespace WindesMusic
             mainWindow = main;
             Recommender recommender = new Recommender(db);
             playlist = recommender.getDailyPlaylist(user.UserID, "Daily Playlist");
-            _PlaylistID = playlist.PlaylistID;
-            _PlaylistName = playlist.PlaylistName;
+            _PlaylistID = playlist.playlistID;
+            _PlaylistName = playlist.playlistName;
             Console.WriteLine(_PlaylistName);
-            SongsInPlaylist = playlist.SongPlaylist;
+            SongsInPlaylist = playlist.GetSongsInPlaylist();
             Thickness SongBlockThickness = new Thickness(5, 2, 0, 0);
             SolidColorBrush whiteText = new SolidColorBrush(System.Windows.Media.Colors.White);
             StackPanel sp = new StackPanel();
@@ -45,7 +45,7 @@ namespace WindesMusic
 
             var PlaylistBlock = new TextBlock
             {
-                Text = $"{playlist.PlaylistName}",
+                Text = $"{playlist.playlistName}",
                 FontSize = 25,
                 Foreground = whiteText,
                 Margin = new Thickness(0, 10, 0, 5),
@@ -125,9 +125,9 @@ namespace WindesMusic
             OrderList.Children.Add(OrderYear);
 
             //Adds the necessary amount of rows for the playlist
-            for (int i = 0; i < playlist.SongPlaylist.Count; i++)
+            for (int i = 0; i < playlist.songPlaylist.Count; i++)
             {
-                Song playlistSong = playlist.SongPlaylist[i];
+                Song playlistSong = playlist.songPlaylist[i];
                 RowDefinition rowDef = new RowDefinition();
                 rowDef.Name = $"Row_{i}";
                 DailySongList.RowDefinitions.Add(rowDef);
@@ -231,9 +231,9 @@ namespace WindesMusic
             foreach (Playlist pl in Playlists)
             {
                 MenuItem OnePlaylistItem = new MenuItem();
-                OnePlaylistItem.Name = $"Playlist_{pl.PlaylistID}";
+                OnePlaylistItem.Name = $"Playlist_{pl.playlistID}";
                 OnePlaylistItem.Tag = correctSong;
-                OnePlaylistItem.Header = $"{pl.PlaylistName}";
+                OnePlaylistItem.Header = $"{pl.playlistName}";
                 OnePlaylistItem.Click += AddToPlaylistClick;
                 PlaylistItem.Items.Add(OnePlaylistItem);
             }
@@ -254,7 +254,7 @@ namespace WindesMusic
             MenuItem SongItem = sender as MenuItem;
             int PlaylistID = Convert.ToInt32(SongItem.Name.Substring(9));
             Song song = (Song)SongItem.Tag;
-            Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == PlaylistID).FirstOrDefault();
+            Playlist relevantPlaylist = user.Playlists.Where(i => i.playlistID == PlaylistID).FirstOrDefault();
             relevantPlaylist.AddSongToPlaylist(song);
         }
         private void AddToQueueClick(object sender, RoutedEventArgs e)
@@ -282,9 +282,9 @@ namespace WindesMusic
 
         private void PlayPlaylist(object sender, RoutedEventArgs e)
         {
-            MusicQueue.SongQueue.Clear();
+            MusicQueue.songQueue.Clear();
             MusicQueue.AddPlaylistToQueue(playlist);
-            if (MusicQueue.IsShuffle == true)
+            if (MusicQueue.isShuffle == true)
             {
                 MusicQueue.ShuffleSongs();
             }
