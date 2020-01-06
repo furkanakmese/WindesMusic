@@ -41,6 +41,7 @@ namespace WindesMusic
 
             if (resultList.Count > 0)
             {
+                // trim search criteria
                 if (input.Trim() != "" && !input.Trim().Contains("_"))
                 {
                     // here it shows the search results, shown like the screen design in FO
@@ -62,8 +63,10 @@ namespace WindesMusic
                     tbArtists.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
                     stackResults.Children.Add(tbArtists);
 
+                    // display matched artist
                     if (artistMatched)
                     {
+                        // show hardcoded metallica picture
                         if (input == "Metallica")
                         {
                             Image image = new Image();
@@ -119,6 +122,7 @@ namespace WindesMusic
                         stackResults.Children.Add(tbNoArtistsFound);
                     }
 
+                    // show search results
                     for (int i = 0; i < resultList.Count; i++)
                     {
                         Song playlistSong = resultList[i];

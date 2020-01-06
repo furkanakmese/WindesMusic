@@ -59,6 +59,7 @@ namespace WindesMusic
             };
 
             TextInfo info = new CultureInfo("en-US", false).TextInfo;
+            // search function that can be used everywhere in app, on enter function
             inputSearch.KeyDown += (object sender, KeyEventArgs e) => {
                 if (e.Key == Key.Enter) Main.Content = new SearchResults(info.ToTitleCase(inputSearch.Text), user, this);
             };
@@ -150,6 +151,7 @@ namespace WindesMusic
             PlaylistList.Children.Clear();
             user = db.GetUserData(Properties.Settings.Default.UserID);
 
+            // this function rerenders the page based on a fired event
             playlistSongs.rerender += (playlist) => { playlistSongs.playlistToUse = playlist; playlistSongs.reinitialize(playlist, this, user); };
             queuePage.rerender += (queuePg) => { queuePage = queuePg; queuePage.InitialiseQueuePage(); };
             Thickness thickness = new Thickness(15, 0, 0, 5);

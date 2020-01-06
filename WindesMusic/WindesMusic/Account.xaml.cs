@@ -19,6 +19,7 @@ namespace WindesMusic
         {
             InitializeComponent();
 
+            // show buttons based on user status
             user = db.GetUserData(Properties.Settings.Default.UserID);
             lblName.Text = (user.IsArtist == true ? "Artist: " : "User: ") + user.Name;
             btnRequestArtistStatus.Visibility = user.IsArtist == true ? Visibility.Hidden : Visibility.Visible;
@@ -27,6 +28,7 @@ namespace WindesMusic
             btnSubmit.Visibility = user.IsArtist == true ? Visibility.Visible : Visibility.Hidden;
             boxSongs.Visibility = user.IsArtist == true ? Visibility.Visible : Visibility.Hidden;
 
+            // fill box with users
             foreach (var item in user.Songs)
             {
                 boxSongs.Items.Add(item.SongName);
@@ -51,6 +53,7 @@ namespace WindesMusic
 
         private void btnLogout_Click(object sender, RoutedEventArgs e)
         {
+            // logout function
             Properties.Settings.Default.UserID = 0;
             Properties.Settings.Default.Save();
             if (logout != null)
@@ -82,6 +85,7 @@ namespace WindesMusic
         {
             try
             {
+                // get credits and call donate db function
                 string result = db.DonateCredits(user.UserID, boxArtists.Text, Convert.ToInt32(inputCredits.Text));
                 lblMessage.Text = result;
             }

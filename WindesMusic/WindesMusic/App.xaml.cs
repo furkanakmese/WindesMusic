@@ -15,6 +15,7 @@ namespace WindesMusic
     {
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            // set initial screen based on previous login
             if (WindesMusic.Properties.Settings.Default.UserID == 0)
             {
                 LoginWindow login = new LoginWindow();
