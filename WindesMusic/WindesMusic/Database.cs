@@ -228,8 +228,8 @@ namespace WindesMusic
                 userResult.IsArtist = Convert.ToBoolean(_reader["IsArtist"]);
                 try
                 {
-                    playlistResult.PlaylistID = (int)_reader["PlaylistID"];
-                    playlistResult.PlaylistName = (string)_reader["PlaylistName"];
+                    playlistResult.playlistID = (int)_reader["PlaylistID"];
+                    playlistResult.playlistName = (string)_reader["PlaylistName"];
                     userResult.Playlists.Add(playlistResult);
                 }
                 catch (Exception e) { Console.WriteLine(e); }
@@ -272,7 +272,7 @@ namespace WindesMusic
 
             foreach (Playlist playlist in userResult.Playlists)
             {
-                playlist.SongPlaylist = GetSongsInPlaylist(playlist.PlaylistID);
+                playlist.songPlaylist = GetSongsInPlaylist(playlist.playlistID);
             }
             return userResult;
         }
@@ -482,7 +482,7 @@ namespace WindesMusic
 
             var criteriaParamPlaylistID = _command.CreateParameter();
             criteriaParamPlaylistID.ParameterName = "@PlaylistID";
-            criteriaParamPlaylistID.Value = pl.PlaylistID;
+            criteriaParamPlaylistID.Value = pl.playlistID;
             _command.Parameters.Add(criteriaParamPlaylistID);
 
             _command.ExecuteNonQuery();
@@ -677,8 +677,8 @@ namespace WindesMusic
             Playlist playlist = new Playlist();
             while (_reader.Read())
             {
-                playlist.PlaylistID = (int)_reader[0];
-                playlist.PlaylistName = (string)_reader[1];
+                playlist.playlistID = (int)_reader[0];
+                playlist.playlistName = (string)_reader[1];
             }
             _connection.Close();
             return playlist;

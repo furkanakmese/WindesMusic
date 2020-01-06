@@ -46,9 +46,9 @@ namespace WindesMusic
         }
         public void PlayChosenSong()
         {
-            if (MusicQueue.SongQueue.Count != 0)
+            if (MusicQueue.songQueue.Count != 0)
             {
-                Song song = MusicQueue.SongQueue.Dequeue();
+                Song song = MusicQueue.songQueue.Dequeue();
                 StringBuilder fileName = new StringBuilder();
                 fileName.Append(song.SongID);
                 fileName.Append(".mp3");
@@ -69,9 +69,9 @@ namespace WindesMusic
                 {
                     Console.WriteLine("File not found");
                 }
-            }else if(MusicQueue.RecommendedSongQueue.Count != 0)
+            }else if(MusicQueue.recommendedSongQueue.Count != 0)
             {
-                Song song = MusicQueue.RecommendedSongQueue.Dequeue();
+                Song song = MusicQueue.recommendedSongQueue.Dequeue();
                 StringBuilder fileName = new StringBuilder();
                 fileName.Append(song.SongID);
                 fileName.Append(".mp3");
@@ -150,19 +150,19 @@ namespace WindesMusic
             if (_CurrentSong != null)
             {
                 MusicQueue.AddSongToPreviousQueue(_CurrentSong);
-                if(MusicQueue.IsRepeat == true)
+                if(MusicQueue.isRepeat == true)
                 {
-                    MusicQueue.SongQueue.Clear();
-                    MusicQueue.RecommendedSongQueue.Clear();
+                    MusicQueue.songQueue.Clear();
+                    MusicQueue.recommendedSongQueue.Clear();
                     MusicQueue.AddSongToQueue(_CurrentSong);
                     this.PlayChosenSong();
                 }
             }
-            if (MusicQueue.SongQueue.Count != 0 && audioFile == null)
+            if (MusicQueue.songQueue.Count != 0 && audioFile == null)
             {
                 this.PlayChosenSong();
                 
-            }else if(MusicQueue.RecommendedSongQueue.Count != 0 && audioFile == null)
+            }else if(MusicQueue.recommendedSongQueue.Count != 0 && audioFile == null)
             {
                 this.PlayChosenSong();
             }
@@ -175,9 +175,9 @@ namespace WindesMusic
             audioFile = null;
             isPlaying = false;
             
-            if (MusicQueue.PreviousSongs.Count != 0 && audioFile == null)
+            if (MusicQueue.previousSongs.Count != 0 && audioFile == null)
             {
-                this.PlayChosenSong(MusicQueue.PreviousSongs.Pop());
+                this.PlayChosenSong(MusicQueue.previousSongs.Pop());
             }
         }
 

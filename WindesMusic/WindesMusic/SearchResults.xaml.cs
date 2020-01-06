@@ -230,7 +230,7 @@ namespace WindesMusic
             Song song = (Song)SongItem.Tag;
             int PlaylistID = Convert.ToInt32(SongItem.Name.Substring(9));
             int SongID = song.SongID;
-            Playlist relevantPlaylist = user.Playlists.Where(i => i.PlaylistID == PlaylistID).FirstOrDefault();
+            Playlist relevantPlaylist = user.Playlists.Where(i => i.playlistID == PlaylistID).FirstOrDefault();
             relevantPlaylist.AddSongToPlaylist(SongID);
 
 
@@ -260,9 +260,9 @@ namespace WindesMusic
             foreach (Playlist pl in Playlists)
             {
                 MenuItem OnePlaylistItem = new MenuItem();
-                OnePlaylistItem.Name = $"Playlist_{pl.PlaylistID}";
+                OnePlaylistItem.Name = $"Playlist_{pl.playlistID}";
                 OnePlaylistItem.Tag = song;
-                OnePlaylistItem.Header = $"{pl.PlaylistName}";
+                OnePlaylistItem.Header = $"{pl.playlistName}";
                 OnePlaylistItem.Click += AddToPlaylistClick;
                 PlaylistItem.Items.Add(OnePlaylistItem);
             }

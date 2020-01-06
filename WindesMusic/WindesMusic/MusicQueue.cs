@@ -8,85 +8,63 @@ namespace WindesMusic
 {
     public static class MusicQueue
     {
-        public static Queue<Song> SongQueue = new Queue<Song>();
-        public static Queue<Song> RecommendedSongQueue = new Queue<Song>();
-        public static Stack<Song> PreviousSongs = new Stack<Song>();
-        public static bool IsShuffle = false;
-        public static bool IsRepeat = false;
+        public static Queue<Song> songQueue = new Queue<Song>();
+        public static Queue<Song> recommendedSongQueue = new Queue<Song>();
+        public static Stack<Song> previousSongs = new Stack<Song>();
+        public static bool isShuffle = false;
+        public static bool isRepeat = false;
 
         public static void AddSongToQueue(Song song)
         {
-            SongQueue.Enqueue(song);
+            songQueue.Enqueue(song);
         }
 
         public static void AddPlaylistToQueue(Playlist playlist, List<Song> RecommendedSongs)
         {
-            foreach (Song song in playlist.SongPlaylist)
+            //Adds all songs in the playlist to the queue
+            foreach (Song song in playlist.songPlaylist)
             {
-                SongQueue.Enqueue(song);
+                songQueue.Enqueue(song);
             }
-            RecommendedSongQueue.Clear();
+            //Adds the recommended songs to the seperate queue
+            recommendedSongQueue.Clear();
             foreach(Song song in RecommendedSongs)
             {
-                RecommendedSongQueue.Enqueue(song);
+                recommendedSongQueue.Enqueue(song);
             }
         }
 
         public static void AddPlaylistToQueue(Playlist playlist)
         {
-            foreach (Song song in playlist.SongPlaylist)
+            //Adds all songs in the playlist to the queue
+            foreach (Song song in playlist.songPlaylist)
             {
-                SongQueue.Enqueue(song);
+                songQueue.Enqueue(song);
             }
         }
 
         public static void AddSongToPreviousQueue(Song song)
         {
-            PreviousSongs.Push(song);
-            if(PreviousSongs.Count > 10)
+            previousSongs.Push(song);
+            //Removes the oldest placed song when the stack has more than ten songs
+            if(previousSongs.Count > 10)
             {
-                List<Song> PreviousSongsList = new List<Song>(PreviousSongs);
-                PreviousSongsList.RemoveAt(9);
-                PreviousSongs = new Stack<Song>(PreviousSongsList);
+                List<Song> _previousSongsList = new List<Song>(previousSongs);
+                _previousSongsList.RemoveAt(9);
+                previousSongs = new Stack<Song>(_previousSongsList);
             }
-        }
-        
-        public static void RemoveSongFromQueue(int Key)
-        {
-            List<Song> SongList = new List<Song>(SongQueue);
-            SongList.RemoveAt(Key);
-            SongQueue = new Queue<Song>(SongList);
-        }
-
-        public static Song GetSongFromQueue()
-        {
-            if (SongQueue.Count != 0)
-            {
-                Song song = SongQueue.Dequeue();
-                return song;
-            }
-            else
-            {
-                return null; //Temporary, change it later to start playing recommendations
-            }
-        }
-
-        public static List<Song> ReturnSongsInQueue()
-        {
-            List<Song> ReturnList = new List<Song>(SongQueue);
-            return ReturnList;
         }
 
         public static void ShuffleSongs()
         {
-            List<Song> SongList = new List<Song>(SongQueue);
+            List<Song> _songList = new List<Song>(songQueue);
             //Create a seed for the random, this seed makes every shuffle unique
             Random rng1 = new Random();
             int seed = rng1.Next(0, 1000);
 
             Random rng = new Random(seed);
-            SongList = SongList.OrderBy(x => rng.Next()).ToList();
-            SongQueue = new Queue<Song>(SongList);
+            _songList = _songList.OrderBy(x => rng.Next()).ToList();
+            songQueue = new Queue<Song>(_songList);
         }
     }
 }

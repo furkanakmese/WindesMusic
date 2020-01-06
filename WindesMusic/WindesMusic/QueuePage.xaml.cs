@@ -35,7 +35,7 @@ namespace WindesMusic
         {
             InitializeComponent();
             QueueList.Children.Clear();
-            songs = new List<Song>(MusicQueue.SongQueue);
+            songs = new List<Song>(MusicQueue.songQueue);
 
             Thickness SongBlockThickness = new Thickness(5, 2, 0, 0);
             SolidColorBrush whiteText = new SolidColorBrush(System.Windows.Media.Colors.White);
@@ -140,9 +140,9 @@ namespace WindesMusic
             foreach (Playlist pl in Playlists)
             {
                 MenuItem OnePlaylistItem = new MenuItem();
-                OnePlaylistItem.Name = $"Playlist_{pl.PlaylistID}";
+                OnePlaylistItem.Name = $"Playlist_{pl.playlistID}";
                 OnePlaylistItem.Tag = pl;
-                OnePlaylistItem.Header = $"{pl.PlaylistName}";
+                OnePlaylistItem.Header = $"{pl.playlistName}";
                 OnePlaylistItem.Click += AddToPlaylistClick;
                 OnePlaylistItem.Background = new SolidColorBrush(System.Windows.Media.Colors.Black);
                 OnePlaylistItem.Foreground = new SolidColorBrush(System.Windows.Media.Colors.White);
