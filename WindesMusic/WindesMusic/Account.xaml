@@ -13,15 +13,15 @@
     <Grid>
         <TextBlock x:Name="lblName" Foreground="White" HorizontalAlignment="Left" Margin="10,87,0,0" TextWrapping="Wrap" Text="User: " VerticalAlignment="Top" FontSize="20" Width="126"/>
         <TextBlock x:Name="lblTitle" Foreground="White" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Manage account" VerticalAlignment="Top" FontSize="23" Width="180" Height="41"/>
-        <Button x:Name="btnLogout" Content="Log out" HorizontalAlignment="Left" Margin="10,147,0,0" VerticalAlignment="Top" Width="200" Height="30" Click="btnLogout_Click" FontSize="15"/>
+        <Button x:Name="btnLogout" Content="Log out" HorizontalAlignment="Left" Margin="10,147,0,0" VerticalAlignment="Top" Width="150" Height="30" Click="btnLogout_Click" FontSize="15"/>
         <Button x:Name="btnRequestArtistStatus" Content="Request artist status" HorizontalAlignment="Left" Margin="10,191,0,0" VerticalAlignment="Top" Width="200" Height="30" FontSize="15" Click="btnRequestArtistStatus_Click"/>
         <TextBlock x:Name="lblMessage" Foreground="White" FontSize="20" HorizontalAlignment="Left" Margin="10,226,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="53" Width="315"/>
         <TextBlock x:Name="lblRequestAd" Foreground="White" HorizontalAlignment="Left" Margin="177,87,0,0" TextWrapping="Wrap" Text="Submit song for advertising" VerticalAlignment="Top" FontSize="20" Width="252"/>
-        <ComboBox x:Name="boxSongs" HorizontalAlignment="Left" Margin="177,147,0,0" VerticalAlignment="Top" Width="148" SelectionChanged="boxSongs_SelectionChanged"/>
+        <ComboBox x:Name="boxSongs" HorizontalAlignment="Left" Margin="177,147,0,0" VerticalAlignment="Top" Width="148" SelectionChanged="boxSongs_SelectionChanged" Foreground="White"/>
         <Button x:Name="btnSubmit" Content="Submit" HorizontalAlignment="Left" Margin="177,191,0,0" VerticalAlignment="Top" Width="148" Height="30" FontSize="14" Click="btnSubmit_Click"/>
 
-        <TextBox x:Name="inputCredits" HorizontalAlignment="Left" Height="23" Margin="636,146,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="148"/>
-        <ComboBox x:Name="boxArtists" HorizontalAlignment="Left" Margin="636,174,0,0" VerticalAlignment="Top" Width="148"/>
+        <TextBox x:Name="inputCredits" HorizontalAlignment="Left" Height="23" Margin="636,146,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="148" Foreground="White"/>
+        <ComboBox x:Name="boxArtists" HorizontalAlignment="Left" Margin="636,174,0,0" VerticalAlignment="Top" Width="148" Foreground="White"/>
         <Button x:Name="btnSubmitCredits" Content="Submit" HorizontalAlignment="Left" Margin="636,206,0,0" VerticalAlignment="Top" Width="148" Height="30" FontSize="14" Click="btnSubmitCredits_Click"/>
         <Button x:Name="btnStatistics" Content="Statistics" HorizontalAlignment="Right" Margin="0,148,29,0" VerticalAlignment="Top" Width="148" Height="30" Click="btnStatisticsClick" FontSize="15"/>
         <Button x:Name="btnArtistStatistics" Content="Artist Statistics" HorizontalAlignment="Right" Margin="0,148,200,0" VerticalAlignment="Top" Width="148" Height="30" Click="btnArtistStatisticsClick" FontSize="15"/>
