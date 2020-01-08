@@ -17,111 +17,120 @@ namespace WindesMusic
     public partial class UserStatistics : Window
     {
         private Database db = new Database();
-        private Button ReturnButton;
-        private Label WindowName;
-        private ScrollViewer StatsScrollViewer;
-        private StackPanel Statistics;
-        private CartesianChart History;
-        private List<Label> StatLabels = new List<Label>();
+        private Button returnButton;
+        private Label windowName;
+        private ScrollViewer statsScrollViewer;
+        private StackPanel statistics;
+        private CartesianChart history;
+        private List<Label> statLabels = new List<Label>();
         private List<DateTimePoint> graphPoints = new List<DateTimePoint>();
         private Grid statGrid;
-        private ColumnSeries ColumnSeries;
+        private ColumnSeries columnSeries;
         private ChartValues<int> dateTimePoints;
-        private List<string> Dates;
-        private new double Width;
-        private new double Height;
+        private List<string> dates;
+        private double width;
+        private double height;
 
         public UserStatistics()
         {
             InitializeComponent();
 
-            Width = SystemParameters.PrimaryScreenWidth / 2;
-            Height = SystemParameters.PrimaryScreenHeight;
+            width = SystemParameters.PrimaryScreenWidth / 2;
+            height = SystemParameters.PrimaryScreenHeight;
 
+            //gets userdata from database.
             LoadUserStatistics();
             GetGraphValues();
+
             this.SizeToContent = SizeToContent.WidthAndHeight;
 
-            //drawgraphs moet voor BuildScreens wanneer gegevens locaal worden bewaard.
+            //builds screen with user data
             BuildScreens();
         }
 
         private void BuildScreens()
         {
+            //empties previous data
             WindowStackPanel.Children.Clear();
-            Statistics?.Children.Clear();
+            statistics?.Children.Clear();
 
-            ReturnButton = new Button
+            //adds return button
+            returnButton = new Button
             {
-                Height = Height * .1,
-                Width = Width * .15,
-                Margin = new Thickness(Width * .025, Height * .025, Width * .025, Height * .8),
+                Height = height * .1,
+                Width = width * .15,
+                Margin = new Thickness(width * .025, height * .025, width * .025, height * .8),
                 Content = "Return",
                 FontSize = 20
             };
-            ReturnButton.Click += new RoutedEventHandler(ReturnClick);
-            WindowStackPanel.Children.Add(ReturnButton);
+            returnButton.Click += new RoutedEventHandler(ReturnClick);
+            WindowStackPanel.Children.Add(returnButton);
 
-            WindowName = new Label
+            //adds window name
+            windowName = new Label
             {
-                Height = Height * .1,
-                Width = Width * .75,
-                Margin = new Thickness(Width * .025, Height * .025, Width * .025, Height * .8),
+                Height = height * .1,
+                Width = width * .75,
+                Margin = new Thickness(width * .025, height * .025, width * .025, height * .8),
                 Content = "User statistics",
                 Foreground = new SolidColorBrush(Colors.White),
                 HorizontalContentAlignment = HorizontalAlignment.Center,
                 FontSize = 30
             };
-            WindowStackPanel.Children.Add(WindowName);
+            WindowStackPanel.Children.Add(windowName);
 
+            //adds grid for user statistics in plain text. 
             statGrid = new Grid
             {
                 //Width = Width * .95,
                 //Height = Height * .8,
                 //Margin = new Thickness(-Width * .975, Height * .2, Width * .025, Height * .025)
-                Margin = new Thickness(0, Height * .2, 0, Height * .025 + 30)
+                Margin = new Thickness(0, height * .2, 0, height * .025 + 30)
             };
             WindowStackPanel.Children.Add(statGrid);
 
-
-            StatsScrollViewer = new ScrollViewer
+            //adds scrollviewer to grid for user data.
+            statsScrollViewer = new ScrollViewer
             {
-                Width = Width * .95,
-                Height = Height * .8,
+                Width = width * .95,
+                Height = height * .8,
                 //Margin = new Thickness(-Width * .975, Height * .2, Width * .025, Height * .025),
-                Margin = new Thickness(-Width * .975, 0, Width * .025, 50),
+                Margin = new Thickness(-width * .975, 0, width * .025, 50),
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Auto
             };
-            statGrid.Children.Add(StatsScrollViewer);
+            statGrid.Children.Add(statsScrollViewer);
 
-            Statistics = new StackPanel();
-            StatsScrollViewer.Content = Statistics;
+            //statistics has all statlabels
+            statistics = new StackPanel();
+            statsScrollViewer.Content = statistics;
 
-
-            ColumnSeries = new ColumnSeries
+            //columnSeries is used to display a graph.
+            columnSeries = new ColumnSeries
             {
                 Values = dateTimePoints,
                 DataContext = this,
-                Width = Width * .95,
-                Height = Height * .80,
-                Margin = new Thickness(Width * .025, Height * .025, Width * .025, Height * .025)
+                Width = width * .95,
+                Height = height * .80,
+                Margin = new Thickness(width * .025, height * .025, width * .025, height * .025)
             };
 
-
-            History = new CartesianChart
+            //CartesianChart is used to display data.
+            history = new CartesianChart
             {
                 DataContext = this,
-                Width = Width * .95,
-                Height = Height * .80,
-                Margin = new Thickness(Width * .025, Height * .025, Width * .025, Height * .025)
+                Width = width * .95,
+                Height = height * .80,
+                Margin = new Thickness(width * .025, height * .025, width * .025, height * .025)
             };
 
-            History.AxisX.Add(new Axis
+            //adds labels to x-axis.
+            history.AxisX.Add(new Axis
             {
-                Labels = Dates
+                Labels = dates
             });
 
-            History.AxisY.Add(new Axis
+            //adds labels to y-axis.
+            history.AxisY.Add(new Axis
             {
                 Separator = new Separator
                 {
@@ -129,26 +138,29 @@ namespace WindesMusic
                 }
             });
 
+            //empties previous chart values.
+            history.Series.Clear();
 
-            History.Series.Clear();
-            History.Series.Add(ColumnSeries);
-            WindowStackPanel.Children.Add(History);
+            //adds new values and displays new values.
+            history.Series.Add(columnSeries);
+            WindowStackPanel.Children.Add(history);
 
-
-            foreach (Label label in StatLabels)
+            //adds plaintext user data to stackpanel. 
+            foreach (Label label in statLabels)
             {
-                Statistics.Children.Add(label);
+                statistics.Children.Add(label);
             }
         }
 
+        //gets userdata for graphvalues.
         public void GetGraphValues()
         {
             List<DateTimePoint> dbResult = db.getSongsListened();
             dateTimePoints = new ChartValues<int>();
-            Dates = new List<string>();
+            dates = new List<string>();
             DateTime today = DateTime.Today;
 
-            //add missing dates with new dates with value = 0
+            //adds dates on which no music was listened with # of songs listened = 0.
             bool isMissing;
             for(int i = 7; i >= 0; i--)
             {
@@ -168,33 +180,34 @@ namespace WindesMusic
                 
             }
 
-            for(int i = 7; i >= 0; i--)
+            //creates a list of all datetimepoints.
+            for (int i = 7; i >= 0; i--)
             {
-                foreach(DateTimePoint dateTimePoint in dbResult)
+                foreach (DateTimePoint dateTimePoint in dbResult)
                 {
-                    if(dateTimePoint.DateTime.Date == today.Date.AddDays(-i))
+                    if (dateTimePoint.DateTime.Date == today.Date.AddDays(-i))
                     {
                         graphPoints.Add(dateTimePoint);
                     }
                 }
             }
 
-
+            //adds all datetimepoints to chartvalues.
             foreach (DateTimePoint dateTimePoint in graphPoints)
             {
                 dateTimePoints.Add((int)dateTimePoint.Value);
-                Dates.Add(dateTimePoint.DateTime.ToString("d", CultureInfo.CreateSpecificCulture("nl-NL")));
+                dates.Add(dateTimePoint.DateTime.ToString("d", CultureInfo.CreateSpecificCulture("nl-NL")));
             }
         }
 
 
-        //SELECT COUNT(*), s.Name FROM History h LEFT JOIN Song s on h.SongID=s.SongID WHERE h.UserID = 1 GROUP BY s.Name;
+        //gets user statistics.
         protected void LoadUserStatistics()
         {
             List<string> result = db.GetUserSongStatistic();
 
-            //song statistics
-            StatLabels.Add(new Label { Content = "Song", FontSize = 40, Foreground = new SolidColorBrush(Colors.White) });
+            //gets song statistics from database and creates labels.
+            statLabels.Add(new Label { Content = "Song", FontSize = 40, Foreground = new SolidColorBrush(Colors.White) });
             for (int i = 0; i < result.Count; i += 2)
             {
                 Label songLabel = new Label
@@ -203,12 +216,12 @@ namespace WindesMusic
                     FontSize = 20,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
-                StatLabels.Add(songLabel);
+                statLabels.Add(songLabel);
             }
 
-            //genre statistics
+            //gets genre statistics from database and creates labels.
             result = db.GetGenreStatistic();
-            StatLabels.Add(new Label { Content = "Genre", FontSize = 40, Foreground = new SolidColorBrush(Colors.White) });
+            statLabels.Add(new Label { Content = "Genre", FontSize = 40, Foreground = new SolidColorBrush(Colors.White) });
             for (int i = 0; i < result.Count; i += 2)
             {
                 Label songLabel = new Label
@@ -217,13 +230,13 @@ namespace WindesMusic
                     FontSize = 20,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
-                StatLabels.Add(songLabel);
+                statLabels.Add(songLabel);
             }
 
 
-            //artist statistics
+            //gets artist statistics from database and creates labels.
             result = db.GetArtistStatistic();
-            StatLabels.Add(new Label { Content = "Artist", FontSize = 40, Foreground = new SolidColorBrush(Colors.White) });
+            statLabels.Add(new Label { Content = "Artist", FontSize = 40, Foreground = new SolidColorBrush(Colors.White) });
             for (int i = 0; i < result.Count; i += 2)
             {
                 Label songLabel = new Label
@@ -232,11 +245,12 @@ namespace WindesMusic
                     FontSize = 20,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
-                StatLabels.Add(songLabel);
+                statLabels.Add(songLabel);
             }
 
+            //gets period statistics from database and creates labels.
             List<int> periodResult = db.GetPeriodStatistic();
-            StatLabels.Add(new Label { Content = "Period", FontSize = 40, Foreground = new SolidColorBrush(Colors.White) });
+            statLabels.Add(new Label { Content = "Period", FontSize = 40, Foreground = new SolidColorBrush(Colors.White) });
             for (int i = 0; i < periodResult.Count; i += 2)
             {
                 Label songLabel = new Label
@@ -245,7 +259,7 @@ namespace WindesMusic
                     FontSize = 20,
                     Foreground = new SolidColorBrush(Colors.White)
                 };
-                StatLabels.Add(songLabel);
+                statLabels.Add(songLabel);
             }
 
 
@@ -256,10 +270,11 @@ namespace WindesMusic
             this.Close();
         }
 
+        
         private void WindowOnSizeChanged(object sender, SizeChangedEventArgs args)
         {
-            Width = this.DesiredSize.Width / 2;
-            Height = this.DesiredSize.Height;
+            width = this.DesiredSize.Width / 2;
+            height = this.DesiredSize.Height;
             BuildScreens();
         }
     }

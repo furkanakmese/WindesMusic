@@ -205,7 +205,7 @@ namespace WindesMusic
         private void PlayButtonClick(object sender, RoutedEventArgs e)
         {
             audioPlayer.OnButtonPlayClick(sender, e);
-            if(PackIconPlay.Kind == MaterialDesignThemes.Wpf.PackIconKind.Play && audioPlayer._CurrentSong != null)
+            if(PackIconPlay.Kind == MaterialDesignThemes.Wpf.PackIconKind.Play && audioPlayer.currentSong != null)
             {
                 PackIconPlay.Kind = MaterialDesignThemes.Wpf.PackIconKind.Pause;
             }
